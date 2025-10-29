@@ -1,4 +1,4 @@
-# 💅 Web Estético — ERP para Centros de Estética
+# 💅 Web Karito Centro Estético — ERP para Centros de Estética
 
 Aplicación **ERP (Enterprise Resource Planning)** desarrollada para la **gestión integral de un centro estético**.
 Permite administrar clientes, servicios, empleados, citas, inventarios, reportes y más, desde una interfaz moderna, rápida y escalable.
