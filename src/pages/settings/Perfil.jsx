@@ -20,7 +20,7 @@ export default function Perfil({ user, setUser }) {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/usuarios/${user.id}`,
+        `${import.meta.env.VITE_API_URL}/api/usuarios/${user.id}`,
         {
           method: "PUT",
           headers: {

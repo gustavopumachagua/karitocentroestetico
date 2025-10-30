@@ -19,7 +19,7 @@ export default function CitasDoctor() {
   const fetchCitas = async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/citas`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/citas`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -96,7 +96,7 @@ export default function CitasDoctor() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/citas/${id}/estado`,
+        `${import.meta.env.VITE_API_URL}/api/citas/${id}/estado`,
         {
           method: "PUT",
           headers: {

@@ -66,7 +66,7 @@ export default function PagosCitas() {
   const fetchPagos = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/pagos`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/pagos`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPagos(Array.isArray(res.data) ? res.data : []);
@@ -129,7 +129,7 @@ export default function PagosCitas() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(`${import.meta.env.VITE_API_URL}/pagos`, nuevoPago, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/pagos`, nuevoPago, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

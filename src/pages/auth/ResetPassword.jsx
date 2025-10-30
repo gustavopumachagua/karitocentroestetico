@@ -51,9 +51,12 @@ export default function ResetPassword() {
 
     try {
       setLoading(true);
-      await axios.post(`${import.meta.env.VITE_API_URL}/auth/reset-password`, {
-        email,
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/reset-password`,
+        {
+          email,
+        }
+      );
       setSuccess(true);
     } catch (err) {
       console.error("Error al enviar correo:", err);

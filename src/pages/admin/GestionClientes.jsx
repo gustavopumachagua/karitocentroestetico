@@ -14,9 +14,9 @@ export default function GestionClientes() {
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 
   const clientesPorPagina = 9;
-  const API_TRATAMIENTOS = `${import.meta.env.VITE_API_URL}/tratamientos`;
-  const API_PAGOS = `${import.meta.env.VITE_API_URL}/pagos`;
-  const API_BUSCAR = `${import.meta.env.VITE_API_URL}/citas/buscar`;
+  const API_TRATAMIENTOS = `${import.meta.env.VITE_API_URL}/api/tratamientos`;
+  const API_PAGOS = `${import.meta.env.VITE_API_URL}/api/pagos`;
+  const API_BUSCAR = `${import.meta.env.VITE_API_URL}/api/citas/buscar`;
 
   useEffect(() => {
     obtenerClientes();

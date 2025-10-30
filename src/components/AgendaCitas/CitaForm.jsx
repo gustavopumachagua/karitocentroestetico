@@ -21,7 +21,7 @@ export default function CitaForm({ usuarios, onRegistrarCita }) {
 
   useEffect(() => {
     if (!nuevaCita.rol) return;
-    fetch(`${import.meta.env.VITE_API_URL}/inventario/${nuevaCita.rol}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/inventario/${nuevaCita.rol}`)
       .then((res) => res.json())
       .then((data) => {
         const serviciosDelRol = data

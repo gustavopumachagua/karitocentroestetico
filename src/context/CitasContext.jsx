@@ -3,7 +3,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 
 const CitasContext = createContext();
-const API_URL = `${import.meta.env.VITE_API_URL}/citas`;
+const API_URL = `${import.meta.env.VITE_API_URL}/api/citas`;
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 export function CitasProvider({ children }) {
@@ -117,7 +117,7 @@ export function CitasProvider({ children }) {
     setTratamientos((prev) => [...prev, nuevoTratamiento]);
   };
 
-  const API_TRATAMIENTOS = `${import.meta.env.VITE_API_URL}/tratamientos`;
+  const API_TRATAMIENTOS = `${import.meta.env.VITE_API_URL}/api/tratamientos`;
 
   const obtenerTratamientos = async () => {
     try {
@@ -145,7 +145,7 @@ export function CitasProvider({ children }) {
   const obtenerPagos = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/pagos`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/pagos`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (Array.isArray(res.data)) {
@@ -163,7 +163,7 @@ export function CitasProvider({ children }) {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/inventario/${rol}`,
+        `${import.meta.env.VITE_API_URL}/api/inventario/${rol}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

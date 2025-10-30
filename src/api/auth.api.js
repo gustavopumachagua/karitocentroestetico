@@ -13,7 +13,7 @@ export const register = async (userData) => {
 
 export const changePassword = async (email, password) => {
   const res = await axios.post(
-    `${import.meta.env.VITE_API_URL}/auth/change-password`,
+    `${import.meta.env.VITE_API_URL}/api/auth/change-password`,
     {
       email,
       newPassword: password,

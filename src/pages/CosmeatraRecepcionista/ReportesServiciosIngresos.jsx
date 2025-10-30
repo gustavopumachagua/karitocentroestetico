@@ -71,7 +71,7 @@ export default function ReportesServiciosIngresos() {
       const res = await axios.get(
         `${
           import.meta.env.VITE_API_URL
-        }/tratamientos/buscar/${encodeURIComponent(nombre)}`,
+        }/api/tratamientos/buscar/${encodeURIComponent(nombre)}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const historial = tratamientos.filter(

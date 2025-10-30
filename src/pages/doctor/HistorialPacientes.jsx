@@ -36,7 +36,7 @@ export default function HistorialPacientes() {
         setCargando(true);
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/citas/buscar?nombre=${busqueda}`,
+          `${import.meta.env.VITE_API_URL}/api/citas/buscar?nombre=${busqueda}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setSugerencias(response.data);

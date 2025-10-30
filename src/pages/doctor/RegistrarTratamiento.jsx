@@ -103,7 +103,7 @@ export default function RegistrarTratamiento() {
         const res = await fetch(
           `${
             import.meta.env.VITE_API_URL
-          }/tratamientos/buscar/${encodeURIComponent(formData.nombre)}`,
+          }/api/tratamientos/buscar/${encodeURIComponent(formData.nombre)}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -240,11 +240,14 @@ export default function RegistrarTratamiento() {
         formDataToSend.append("imagenes", img.file);
       });
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/tratamientos`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formDataToSend,
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/tratamientos`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formDataToSend,
+        }
+      );
 
       if (res.ok) {
         setFormData({

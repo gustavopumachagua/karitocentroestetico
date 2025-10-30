@@ -39,7 +39,7 @@ export default function GestionCitas() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch(`${import.meta.env.VITE_API_URL}/usuarios/profesionales`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/profesionales`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
@@ -53,7 +53,7 @@ export default function GestionCitas() {
   const fetchCitas = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/citas`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/citas`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -73,7 +73,7 @@ export default function GestionCitas() {
   const registrarCita = async (nuevaCita) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/citas`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/citas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +98,7 @@ export default function GestionCitas() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/citas/${id}/estado`,
+        `${import.meta.env.VITE_API_URL}/api/citas/${id}/estado`,
         {
           method: "PUT",
           headers: {
