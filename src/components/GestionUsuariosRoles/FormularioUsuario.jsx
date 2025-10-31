@@ -81,7 +81,7 @@ export default function FormularioUsuario({
           disabled={!formularioValido}
           className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-white transition-all duration-300 ${
             formularioValido
-              ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:scale-[1.02] shadow-md"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:scale-[1.02] shadow-md cursor-pointer"
               : "bg-gray-600 cursor-not-allowed opacity-70"
           }`}
         >
