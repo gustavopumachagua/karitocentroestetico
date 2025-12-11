@@ -3,6 +3,7 @@ import {
   FaVenusMars,
   FaCalendarAlt,
   FaStethoscope,
+  FaPhoneAlt,
 } from "react-icons/fa";
 
 export default function InfoPaciente({ paciente }) {
@@ -51,6 +52,16 @@ export default function InfoPaciente({ paciente }) {
             <p className="text-gray-400 text-sm">Sexo</p>
             <p className="text-white font-medium text-base sm:text-lg">
               {paciente.sexo || "—"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-gray-700/40 p-3 rounded-lg">
+          <FaPhoneAlt className="text-blue-400 text-lg sm:text-xl" />
+          <div>
+            <p className="text-gray-400 text-sm">Celular</p>
+            <p className="text-white font-medium text-base sm:text-lg">
+              {paciente.celular || "—"}
             </p>
           </div>
         </div>

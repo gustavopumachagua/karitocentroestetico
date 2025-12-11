@@ -69,42 +69,42 @@ if (!self.define) {
 }
 define(['./workbox-47da91e0'], (function (workbox) { 'use strict';
 
-  self.skipWaiting();
-  workbox.clientsClaim();
+	self.skipWaiting();
+	workbox.clientsClaim();
 
-  /**
-   * The precacheAndRoute() method efficiently caches and responds to
-   * requests for URLs in the manifest.
-   * See https://goo.gl/S9QRab
-   */
-  workbox.precacheAndRoute([{
-    "url": "index.html",
-    "revision": "0.i3rbga5ohg"
-  }], {});
-  workbox.cleanupOutdatedCaches();
-  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
-    allowlist: [/^\/$/]
-  }));
-  workbox.registerRoute(({
-    request
-  }) => request.destination === "document" || request.destination === "script" || request.destination === "style" || request.destination === "image" || request.destination === "font", new workbox.CacheFirst({
-    "cacheName": "karito-static-cache",
-    plugins: [new workbox.ExpirationPlugin({
-      maxEntries: 200,
-      maxAgeSeconds: 2592000
-    }), new workbox.CacheableResponsePlugin({
-      statuses: [0, 200]
-    })]
-  }), 'GET');
-  workbox.registerRoute(/^https:\/\/.*/i, new workbox.NetworkFirst({
-    "cacheName": "karito-api-cache",
-    "networkTimeoutSeconds": 10,
-    plugins: [new workbox.ExpirationPlugin({
-      maxEntries: 50,
-      maxAgeSeconds: 86400
-    }), new workbox.CacheableResponsePlugin({
-      statuses: [0, 200]
-    })]
-  }), 'GET');
+	/**
+	 * The precacheAndRoute() method efficiently caches and responds to
+	 * requests for URLs in the manifest.
+	 * See https://goo.gl/S9QRab
+	 */
+	workbox.precacheAndRoute([{
+	  "url": "index.html",
+	  "revision": "0.100ts4p4f2g"
+	}], {});
+	workbox.cleanupOutdatedCaches();
+	workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
+	  allowlist: [/^\/$/]
+	}));
+	workbox.registerRoute(({
+	  request
+	}) => ["document", "script", "style", "image", "font"].includes(request.destination), new workbox.CacheFirst({
+	  "cacheName": "karito-static-cache",
+	  plugins: [new workbox.ExpirationPlugin({
+	    maxEntries: 200,
+	    maxAgeSeconds: 2592000
+	  }), new workbox.CacheableResponsePlugin({
+	    statuses: [0, 200]
+	  })]
+	}), 'GET');
+	workbox.registerRoute(/^https:\/\/.*/i, new workbox.NetworkFirst({
+	  "cacheName": "karito-api-cache",
+	  "networkTimeoutSeconds": 10,
+	  plugins: [new workbox.ExpirationPlugin({
+	    maxEntries: 50,
+	    maxAgeSeconds: 86400
+	  }), new workbox.CacheableResponsePlugin({
+	    statuses: [0, 200]
+	  })]
+	}), 'GET');
 
 }));

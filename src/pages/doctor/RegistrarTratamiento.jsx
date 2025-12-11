@@ -25,6 +25,7 @@ export default function RegistrarTratamiento() {
     nombre: "",
     edad: "",
     sexo: "",
+    celular: "",
     servicio: "",
     fecha: "",
     observacion: "",
@@ -115,6 +116,7 @@ export default function RegistrarTratamiento() {
             ...prev,
             edad: data.edad || "",
             sexo: data.sexo || "",
+            celular: data.celular || "",
           }));
           setPacienteExistente(true);
         } else {
@@ -154,14 +156,16 @@ export default function RegistrarTratamiento() {
   }, []);
 
   useEffect(() => {
-    if (citaSeleccionada) {
-      setFormData((prev) => ({
+    if (!citaSeleccionada) return;
+
+    setFormData((prev) => {
+      return {
         ...prev,
-        nombre: citaSeleccionada.cliente || "",
-        servicio: citaSeleccionada.servicio || "",
-        fecha: citaSeleccionada.fecha || "",
-      }));
-    }
+        nombre: prev.nombre || citaSeleccionada.cliente || "",
+        servicio: prev.servicio || citaSeleccionada.servicio || "",
+        fecha: prev.fecha || citaSeleccionada.fecha || "",
+      };
+    });
   }, [citaSeleccionada]);
 
   const handleImageChange = (e) => {
@@ -212,7 +216,7 @@ export default function RegistrarTratamiento() {
       return;
     }
 
-    if (!formData.edad || !formData.sexo) {
+    if (!formData.edad || !formData.sexo || !formData.celular) {
       setModal({
         show: true,
         message: "⚠️ Completa los datos del paciente antes de guardar.",
@@ -254,6 +258,7 @@ export default function RegistrarTratamiento() {
           nombre: "",
           edad: "",
           sexo: "",
+          celular: "",
           servicio: "",
           fecha: "",
           observacion: "",
@@ -330,7 +335,7 @@ export default function RegistrarTratamiento() {
               max="80"
               placeholder="Ingrese la edad"
               value={formData.edad}
-              readOnly={pacienteExistente || formBloqueado}
+              readOnly={formBloqueado}
               error={
                 formData.edad !== "" &&
                 (formData.edad < 18 || formData.edad > 80)
@@ -338,10 +343,29 @@ export default function RegistrarTratamiento() {
                   : ""
               }
               onChange={(e) => {
-                if (pacienteExistente) return;
                 const value = e.target.value;
                 if (value === "" || (/^\d+$/.test(value) && value <= 120)) {
                   setFormData({ ...formData, edad: value });
+                }
+              }}
+            />
+            <InputField
+              label="Celular"
+              type="text"
+              placeholder="Ingrese número de celular"
+              value={formData.celular}
+              readOnly={formBloqueado}
+              maxLength={9}
+              error={
+                formData.celular !== "" && !/^\d{9}$/.test(formData.celular)
+                  ? "Debe contener 9 dígitos"
+                  : ""
+              }
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (/^\d{0,9}$/.test(value)) {
+                  setFormData({ ...formData, celular: value });
                 }
               }}
             />
@@ -465,6 +489,7 @@ export default function RegistrarTratamiento() {
               setFormData({
                 nombre: "",
                 edad: "",
+                celular: "",
                 sexo: "",
                 servicio: "",
                 fecha: "",

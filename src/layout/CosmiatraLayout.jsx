@@ -8,13 +8,13 @@ import {
 } from "react-router-dom";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Topbar from "../components/Topbar/Topbar";
-import { MenuItemsCosmeatraRecepcionista } from "./MenuItemsCosmeatraRecepcionista";
+import { MenuItemsCosmeatraRecepcionista } from "./MenuItemsCosmiatra";
 
-import GestionCitas from "../pages/CosmeatraRecepcionista/GestionCitas";
+import GestionCitas from "../pages/cosmiatra/GestionCitas";
 import RegistrarTratamiento from "../pages/doctor/RegistrarTratamiento";
-import GestionPagos from "../pages/CosmeatraRecepcionista/GestionPagos";
+import GestionPagos from "../pages/cosmiatra/GestionPagos";
 import HistorialClientes from "../pages/doctor/HistorialPacientes";
-import ReportesServiciosIngresos from "../pages/CosmeatraRecepcionista/ReportesServiciosIngresos";
+import ReportesServiciosIngresos from "../pages/cosmiatra/ReportesServiciosIngresos";
 import Perfil from "../pages/settings/Perfil";
 import Contrasena from "../pages/settings/Contrasena";
 
@@ -31,20 +31,20 @@ export default function CosmeatraRecepcionistaLayout() {
 
   useEffect(() => {
     if (window.location.pathname === "/cosmiatra") {
-      navigate("/cosmiatra/GestiondeCitas", { replace: true });
+      navigate("/cosmiatra/gestion-de-citas", { replace: true });
     }
   }, [location.pathname, navigate]);
 
   useEffect(() => {
     const path = location.pathname.split("/").pop();
     const routeMap = {
-      GestiondeCitas: "Gestion de Citas",
-      RegistrarTratamiento: "Registrar Tratamiento",
-      GestiondePagos: "Gestion de Pagos",
-      HistorialdeClientes: "Historial de Clientes",
-      ReportesdeServicioseIngresos: "Reportes de Servicios e Ingresos",
-      Perfil: "Perfil",
-      Contraseña: "Contraseña",
+      "gestion-de-citas": "Gestion de Citas",
+      "registrar-tratamiento": "Registrar Tratamiento",
+      "gestion-de-pagos": "Gestion de Pagos",
+      "historial-de-clientes": "Historial de Clientes",
+      "reportes-de-servicios-e-ingresos": "Reportes de Servicios e Ingresos",
+      perfil: "Perfil",
+      contrasena: "Contraseña",
     };
 
     const newActive = routeMap[path];
@@ -79,28 +79,31 @@ export default function CosmeatraRecepcionistaLayout() {
         />
 
         <Routes>
-          <Route path="GestiondeCitas" element={<GestionCitas />} />
+          <Route path="gestion-de-citas" element={<GestionCitas />} />
           <Route
-            path="RegistrarTratamiento"
+            path="registrar-tratamiento"
             element={<RegistrarTratamiento />}
           />
-          <Route path="GestiondePagos" element={<GestionPagos />} />
-          <Route path="HistorialdeClientes" element={<HistorialClientes />} />
+          <Route path="gestion-de-pagos" element={<GestionPagos />} />
+          <Route path="historial-de-clientes" element={<HistorialClientes />} />
           <Route
-            path="ReportesdeServicioseIngresos"
+            path="reportes-de-servicios-e-ingresos"
             element={<ReportesServiciosIngresos />}
           />
 
           <Route
-            path="Ajustes/Perfil"
+            path="ajustes/perfil"
             element={<Perfil user={user} setUser={setUser} />}
           />
           <Route
-            path="Ajustes/Contraseña"
+            path="ajustes/contrasena"
             element={<Contrasena user={user} setUser={setUser} />}
           />
 
-          <Route path="*" element={<Navigate to="GestiondeCitas" replace />} />
+          <Route
+            path="*"
+            element={<Navigate to="gestion-de-citas" replace />}
+          />
         </Routes>
       </main>
     </div>

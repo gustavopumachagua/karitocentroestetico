@@ -7,7 +7,7 @@ import Newpassword from "./pages/auth/Newpassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Doctor from "./layout/DoctorLayout";
 import AdminLayout from "./layout/AdminLayout";
-import CosmeatraRecepcionistaLayout from "./layout/CosmeatraRecepcionistaLayout";
+import CosmeatraRecepcionistaLayout from "./layout/CosmiatraLayout";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import OfflineAlert from "./components/OfflineAlert/OfflineAlert";
 import ProtectedRoute from "./components/common/ProtectedRoute";

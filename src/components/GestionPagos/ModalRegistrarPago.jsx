@@ -18,7 +18,7 @@ export default function ModalRegistrarPago({
       <div className="bg-gray-900 w-full max-w-lg rounded-2xl shadow-2xl border border-gray-700 p-6 sm:p-8 relative overflow-y-auto max-h-[90vh] transition-all duration-300">
         <button
           onClick={onCancelar}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition cursor-pointer"
           aria-label="Cerrar"
         >
           <FaTimes size={18} />

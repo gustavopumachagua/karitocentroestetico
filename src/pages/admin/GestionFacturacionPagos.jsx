@@ -1,4 +1,4 @@
-import ReportesServiciosIngresos from "../../pages/CosmeatraRecepcionista/ReportesServiciosIngresos";
+import ReportesServiciosIngresos from "../../pages/cosmiatra/ReportesServiciosIngresos";
 
 export default function GestionFacturacionPagos() {
   return <ReportesServiciosIngresos />;

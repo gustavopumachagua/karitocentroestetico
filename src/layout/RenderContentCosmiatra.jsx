@@ -1,8 +1,8 @@
-import GestionCitas from "../pages/CosmeatraRecepcionista/GestionCitas";
+import GestionCitas from "../pages/cosmiatra/GestionCitas";
 import RegistrarTratamiento from "../pages/doctor/RegistrarTratamiento";
-import GestionPagos from "../pages/CosmeatraRecepcionista/GestionPagos";
+import GestionPagos from "../pages/cosmiatra/GestionPagos";
 import HistorialClientes from "../pages/doctor/HistorialPacientes";
-import ReportesServiciosIngresos from "../pages/CosmeatraRecepcionista/ReportesServiciosIngresos";
+import ReportesServiciosIngresos from "../pages/cosmiatra/ReportesServiciosIngresos";
 import Perfil from "../pages/settings/Perfil";
 import Contrasena from "../pages/settings/Contrasena";
 

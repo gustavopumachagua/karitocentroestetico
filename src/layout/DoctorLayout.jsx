@@ -10,7 +10,7 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import Topbar from "../components/Topbar/Topbar";
 import { MenuItemsDoctor } from "./MenuItemsDoctor";
 
-import CitasDocto from "../pages/doctor/CitasDoctor";
+import CitasDoctor from "../pages/doctor/CitasDoctor";
 import HistorialPacientes from "../pages/doctor/HistorialPacientes";
 import RegistrarTratamiento from "../pages/doctor/RegistrarTratamiento";
 import MisReportes from "../pages/doctor/MisReportes";
@@ -30,19 +30,19 @@ export default function DoctorLayout() {
 
   useEffect(() => {
     if (location.pathname === "/doctor") {
-      navigate("/doctor/AgendadeCitas", { replace: true });
+      navigate("/doctor/agenda-de-citas", { replace: true });
     }
   }, [location.pathname, navigate]);
 
   useEffect(() => {
     const path = location.pathname.split("/").pop();
     const routeMap = {
-      AgendadeCitas: "Agenda de Citas",
-      HistorialdePacientes: "Historial de Pacientes",
-      RegistrarTratamiento: "Registrar Tratamiento",
-      MisReportes: "Mis Reportes",
-      Perfil: "Perfil",
-      Contraseña: "Contraseña",
+      "agenda-de-citas": "Agenda de Citas",
+      "historial-de-pacientes": "Historial de Pacientes",
+      "registrar-tratamiento": "Registrar Tratamiento",
+      "mis-reportes": "Mis Reportes",
+      perfil: "Perfil",
+      contrasena: "Contraseña",
     };
 
     const newActive = routeMap[path];
@@ -77,24 +77,27 @@ export default function DoctorLayout() {
         />
 
         <Routes>
-          <Route path="AgendadeCitas" element={<CitasDocto />} />
-          <Route path="HistorialdePacientes" element={<HistorialPacientes />} />
+          <Route path="agenda-de-citas" element={<CitasDoctor />} />
           <Route
-            path="RegistrarTratamiento"
+            path="historial-de-pacientes"
+            element={<HistorialPacientes />}
+          />
+          <Route
+            path="registrar-tratamiento"
             element={<RegistrarTratamiento />}
           />
-          <Route path="MisReportes" element={<MisReportes />} />
+          <Route path="mis-reportes" element={<MisReportes />} />
 
           <Route
-            path="Ajustes/Perfil"
+            path="ajustes/perfil"
             element={<Perfil user={user} setUser={setUser} />}
           />
           <Route
-            path="Ajustes/Contraseña"
+            path="ajustes/contrasena"
             element={<Contrasena user={user} setUser={setUser} />}
           />
 
-          <Route path="*" element={<Navigate to="AgendadeCitas" replace />} />
+          <Route path="*" element={<Navigate to="agenda-de-citas" replace />} />
         </Routes>
       </main>
     </div>

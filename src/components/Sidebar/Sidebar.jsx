@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import LogoutButton from "../LogoutButton/LogoutButton";
 
 export default function Sidebar({
@@ -12,6 +12,7 @@ export default function Sidebar({
 }) {
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const basePath =
     user?.rol?.toLowerCase() === "doctor"
@@ -20,12 +21,43 @@ export default function Sidebar({
       ? "/cosmiatra"
       : "/administrador";
 
+  const formatRoute = (text) => {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "-");
+  };
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+
+    menuItems.forEach((item) => {
+      const route = `${basePath}/${formatRoute(item.key)}`;
+
+      if (currentPath === route) {
+        setActive(item.key);
+      }
+
+      if (item.subItems) {
+        item.subItems.forEach((sub) => {
+          const subRoute = `${basePath}/ajustes/${formatRoute(sub.key)}`;
+
+          if (currentPath === subRoute) {
+            setActive(sub.key);
+            setOpenSubmenu(item.key);
+          }
+        });
+      }
+    });
+  }, [location.pathname]);
+
   const handleClick = (item) => {
     if (item.subItems) {
       setOpenSubmenu(openSubmenu === item.key ? null : item.key);
     } else {
       setActive(item.key);
-      const route = `${basePath}/${item.key.replace(/\s+/g, "")}`;
+      const route = `${basePath}/${formatRoute(item.key)}`;
       navigate(route);
       if (window.innerWidth < 768) setSidebarOpen(false);
     }
@@ -33,7 +65,7 @@ export default function Sidebar({
 
   const handleSubClick = (sub) => {
     setActive(sub.key);
-    const route = `${basePath}/Ajustes/${sub.key.replace(/\s+/g, "")}`;
+    const route = `${basePath}/ajustes/${formatRoute(sub.key)}`;
     navigate(route);
     if (window.innerWidth < 768) setSidebarOpen(false);
   };

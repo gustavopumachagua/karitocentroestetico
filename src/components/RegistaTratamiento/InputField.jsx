@@ -6,6 +6,7 @@ export default function InputField({
   readOnly = false,
   min,
   max,
+  maxLength,
   placeholder = "",
   error = "",
 }) {
@@ -28,6 +29,7 @@ export default function InputField({
         readOnly={readOnly}
         min={min}
         max={max}
+        maxLength={maxLength}
         placeholder={placeholder}
         className={`w-full px-4 py-2 rounded-lg bg-gray-700 text-white
              border ${error ? "border-red-500" : "border-gray-600"}

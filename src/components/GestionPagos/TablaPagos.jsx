@@ -1,6 +1,11 @@
 import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 
-export default function TablaPagos({ citas, pagoPorCita, onSeleccionCita }) {
+export default function TablaPagos({
+  citas,
+  pagoPorCita,
+  onSeleccionCita,
+  onVerTicket,
+}) {
   return (
     <div className="w-full">
       <div className="hidden md:block overflow-x-auto rounded-xl border border-gray-700 shadow-md">
@@ -27,10 +32,13 @@ export default function TablaPagos({ citas, pagoPorCita, onSeleccionCita }) {
                   key={cita._id}
                   className={`border-b border-gray-700 ${
                     bloqueado
-                      ? "opacity-60 cursor-not-allowed"
+                      ? "opacity-60 cursor-pointer"
                       : "hover:bg-gray-700/40 cursor-pointer"
                   } transition`}
-                  onClick={() => !bloqueado && onSeleccionCita(cita)}
+                  onClick={() => {
+                    if (bloqueado) onVerTicket(cita);
+                    else onSeleccionCita(cita);
+                  }}
                 >
                   <td className="p-3 font-medium text-white truncate">
                     {cita.cliente}
@@ -85,12 +93,15 @@ export default function TablaPagos({ citas, pagoPorCita, onSeleccionCita }) {
           return (
             <div
               key={cita._id}
-              onClick={() => !bloqueado && onSeleccionCita(cita)}
-              className={`p-4 bg-gray-700/60 rounded-xl border border-gray-600 shadow-md transition ${
+              className={`border-b border-gray-700 ${
                 bloqueado
-                  ? "opacity-60 cursor-not-allowed"
-                  : "hover:border-indigo-400 hover:bg-gray-700/80 cursor-pointer"
-              }`}
+                  ? "opacity-60 cursor-pointer"
+                  : "hover:bg-gray-700/40 cursor-pointer"
+              } transition`}
+              onClick={() => {
+                if (bloqueado) onVerTicket(cita);
+                else onSeleccionCita(cita);
+              }}
             >
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-semibold text-white text-sm">

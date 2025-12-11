@@ -7,6 +7,7 @@ import BuscadorPagos from "../../components/GestionPagos/BuscadorPagos";
 import TablaPagos from "../../components/GestionPagos/TablaPagos";
 import Paginacion from "../../components/HistorialPacientes/Paginacion";
 import ModalRegistrarPago from "../../components/GestionPagos/ModalRegistrarPago";
+import ModalTicket from "../../components/GestionPagos/ModalTicket";
 
 export default function PagosCitas() {
   const { citas, obtenerCitas, modalInfo, setModalInfo } = useCitas();
@@ -19,6 +20,15 @@ export default function PagosCitas() {
   const [total, setTotal] = useState(0);
   const [paginaActual, setPaginaActual] = useState(1);
   const registrosPorPagina = 10;
+  const [ticketSeleccionado, setTicketSeleccionado] = useState(null);
+  const [mostrarTicket, setMostrarTicket] = useState(false);
+
+  const handleVerTicket = (cita) => {
+    const pago = pagoPorCita(cita._id);
+    if (!pago) return;
+    setTicketSeleccionado({ cita, pago });
+    setMostrarTicket(true);
+  };
 
   useEffect(() => {
     obtenerCitas();
@@ -175,6 +185,7 @@ export default function PagosCitas() {
             setMetodoPago("");
             setMostrarFormulario(true);
           }}
+          onVerTicket={handleVerTicket}
         />
         {totalPaginas > 1 && (
           <div className="flex justify-center">
@@ -206,6 +217,11 @@ export default function PagosCitas() {
         message={modalInfo.message}
         type={modalInfo.type}
         onClose={() => setModalInfo({ ...modalInfo, show: false })}
+      />
+      <ModalTicket
+        isOpen={mostrarTicket}
+        onClose={() => setMostrarTicket(false)}
+        ticket={ticketSeleccionado}
       />
     </section>
   );

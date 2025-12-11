@@ -2,9 +2,12 @@ import { useState, useMemo } from "react";
 import {
   FaArrowLeft,
   FaUser,
+  FaMale,
+  FaFemale,
   FaVenusMars,
   FaMoneyBillWave,
   FaClinicMedical,
+  FaPhoneAlt,
 } from "react-icons/fa";
 import TratamientoCard from "./TratamientoCard";
 import Paginacion from "../HistorialPacientes/Paginacion";
@@ -12,6 +15,13 @@ import Paginacion from "../HistorialPacientes/Paginacion";
 export default function ClienteDetalle({ cliente, volver }) {
   const tratamientosPorPagina = 9;
   const [paginaActual, setPaginaActual] = useState(1);
+
+  const IconoUsuario =
+    cliente.sexo?.toLowerCase() === "masculino"
+      ? FaMale
+      : cliente.sexo?.toLowerCase() === "femenino"
+      ? FaFemale
+      : FaUser;
 
   const totalPaginas = Math.ceil(
     cliente.tratamientos.length / tratamientosPorPagina
@@ -22,12 +32,6 @@ export default function ClienteDetalle({ cliente, volver }) {
     const fin = inicio + tratamientosPorPagina;
     return cliente.tratamientos.slice(inicio, fin);
   }, [paginaActual, cliente.tratamientos]);
-
-  const cambiarPagina = (nuevaPagina) => {
-    if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
-      setPaginaActual(nuevaPagina);
-    }
-  };
 
   return (
     <div>
@@ -40,12 +44,18 @@ export default function ClienteDetalle({ cliente, volver }) {
 
       <div className="bg-gray-700 rounded-2xl p-6 border border-gray-600 shadow-lg">
         <h2 className="text-3xl font-bold mb-2 text-white flex items-center gap-2">
-          <FaUser /> {cliente.nombre}
+          <IconoUsuario className="text-indigo-400" /> {cliente.nombre}
         </h2>
 
         <p className="text-gray-300 flex items-center gap-2 mb-1">
           <FaVenusMars className="text-pink-400" /> Sexo: {cliente.sexo}
         </p>
+
+        {cliente.celular && (
+          <p className="text-gray-300 flex items-center gap-2 mb-1">
+            <FaPhoneAlt className="text-blue-400" /> Celular: {cliente.celular}
+          </p>
+        )}
 
         <p className="text-gray-300 flex items-center gap-2 mb-4">
           <FaMoneyBillWave className="text-green-400" /> Total invertido:{" "}
@@ -68,7 +78,7 @@ export default function ClienteDetalle({ cliente, volver }) {
           <Paginacion
             paginaActual={paginaActual}
             totalPaginas={totalPaginas}
-            cambiarPagina={cambiarPagina}
+            cambiarPagina={setPaginaActual}
           />
         )}
       </div>

@@ -4,7 +4,6 @@ import BuscadorClientes from "../../components/GestionClientes/BuscadorClientes"
 import ClienteCard from "../../components/GestionClientes/ClienteCard";
 import ClienteDetalle from "../../components/GestionClientes/ClienteDetalle";
 import Paginacion from "../../components/HistorialPacientes/Paginacion";
-import { FaUser } from "react-icons/fa";
 
 export default function GestionClientes() {
   const [clientes, setClientes] = useState([]);
@@ -39,10 +38,12 @@ export default function GestionClientes() {
             nombre: t.nombre,
             edad: t.edad,
             sexo: t.sexo || "No especificado",
+            celular: t.celular || "",
             tratamientos: [],
             totalInvertido: 0,
           };
         }
+
         mapa[t.nombre].tratamientos.push(t);
       });
 
@@ -101,7 +102,7 @@ export default function GestionClientes() {
             />
 
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-              <FaUser className="text-indigo-400" /> Clientes Registrados
+              <div className="text-indigo-400" /> Clientes Registrados
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

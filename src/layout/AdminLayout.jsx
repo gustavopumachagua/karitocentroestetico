@@ -25,7 +25,7 @@ export default function AdminLayout() {
 
   useEffect(() => {
     if (window.location.pathname === "/administrador") {
-      navigate("/administrador/Dashboardgeneral", { replace: true });
+      navigate("/administrador/dashboard-general", { replace: true });
     }
   }, [navigate]);
 
@@ -35,14 +35,14 @@ export default function AdminLayout() {
     const path = location.pathname.split("/").pop();
 
     const routeMap = {
-      Dashboardgeneral: "Dashboard general",
-      Gestiondeusuariosyroles: "Gestion de usuarios y roles",
-      Gestiondeclientes: "Gestion de clientes",
-      Gestiondeinventario: "Gestion de inventario",
-      Gestiondefacturacionypagos: "Gestion de facturacion y pagos",
-      Reportesavanzados: "Reportes avanzados",
-      Perfil: "Perfil",
-      Contraseña: "Contraseña",
+      "dashboard-general": "Dashboard general",
+      "gestion-de-usuarios-y-roles": "Gestion de usuarios y roles",
+      "gestion-de-clientes": "Gestion de clientes",
+      "gestion-de-inventario": "Gestion de inventario",
+      "gestion-de-facturacion-y-pagos": "Gestion de facturacion y pagos",
+      "reportes-avanzados": "Reportes avanzados",
+      perfil: "Perfil",
+      contrasena: "Contraseña",
     };
 
     if (routeMap[path]) {
@@ -76,26 +76,25 @@ export default function AdminLayout() {
         />
 
         <Routes>
-          <Route path="Dashboardgeneral" element={<DashboardGeneral />} />
+          <Route path="dashboard-general" element={<DashboardGeneral />} />
           <Route
-            path="Gestiondeusuariosyroles"
+            path="gestion-de-usuarios-y-roles"
             element={<GestionUsuariosRoles />}
           />
-          <Route path="Gestiondeclientes" element={<GestionClientes />} />
-          <Route path="Gestiondeinventario" element={<GestionInventario />} />
+          <Route path="gestion-de-clientes" element={<GestionClientes />} />
+          <Route path="gestion-de-inventario" element={<GestionInventario />} />
           <Route
-            path="Gestiondefacturacionypagos"
+            path="gestion-de-facturacion-y-pagos"
             element={<GestionFacturacionPagos />}
           />
-          <Route path="Reportesavanzados" element={<ReportesAvanzados />} />
+          <Route path="reportes-avanzados" element={<ReportesAvanzados />} />
 
           <Route
-            path="Ajustes/Perfil"
+            path="ajustes/perfil"
             element={<Perfil user={user} setUser={setUser} />}
           />
-
           <Route
-            path="Ajustes/Contraseña"
+            path="ajustes/contrasena"
             element={<Contrasena user={user} setUser={setUser} />}
           />
         </Routes>

@@ -25,6 +25,24 @@ export default function ReportesServiciosIngresos() {
 
   const token = localStorage.getItem("token");
 
+  const obtenerDatosActualizados = (tratamientosCliente) => {
+    if (!tratamientosCliente || tratamientosCliente.length === 0) {
+      return {};
+    }
+
+    const ordenados = [...tratamientosCliente].sort(
+      (a, b) => new Date(b.fecha) - new Date(a.fecha)
+    );
+
+    const masReciente = ordenados[0];
+
+    return {
+      edad: masReciente.edad || null,
+      sexo: masReciente.sexo || null,
+      celular: masReciente.celular || null,
+    };
+  };
+
   useEffect(() => {
     const cargarDatos = async () => {
       setLoading(true);
@@ -74,23 +92,39 @@ export default function ReportesServiciosIngresos() {
         }/api/tratamientos/buscar/${encodeURIComponent(nombre)}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       const historial = tratamientos.filter(
         (t) => t.nombre.toLowerCase() === nombre.toLowerCase()
       );
-      setClienteSeleccionado(res.data);
+
+      const datosActualizados = obtenerDatosActualizados(historial);
+
+      setClienteSeleccionado({
+        ...res.data,
+        ...datosActualizados,
+      });
+
       setTratamientosCliente(historial);
     } catch {
       const historial = tratamientos.filter(
         (t) => t.nombre.toLowerCase() === nombre.toLowerCase()
       );
+
       if (historial.length > 0) {
-        setClienteSeleccionado({ nombre });
+        const datosActualizados = obtenerDatosActualizados(historial);
+
+        setClienteSeleccionado({
+          nombre,
+          ...datosActualizados,
+        });
+
         setTratamientosCliente(historial);
       } else {
         setClienteSeleccionado(null);
         setTratamientosCliente([]);
       }
     }
+
     setSugerencias([]);
     setBusqueda("");
   };
@@ -105,12 +139,18 @@ export default function ReportesServiciosIngresos() {
   );
 
   const irACita = (tratamiento) => {
+    const historial = tratamientos.filter(
+      (t) => t.nombre === tratamiento.nombre
+    );
+
+    const datosActualizados = obtenerDatosActualizados(historial);
+
     setClienteSeleccionado({
       nombre: tratamiento.nombre,
-      edad: tratamiento.edad,
-      sexo: tratamiento.sexo,
+      ...datosActualizados,
     });
-    setTratamientosCliente([tratamiento]);
+
+    setTratamientosCliente(historial);
   };
 
   useEffect(() => {
