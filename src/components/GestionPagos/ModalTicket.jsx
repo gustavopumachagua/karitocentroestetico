@@ -45,87 +45,88 @@ export default function ModalTicket({ isOpen, onClose, ticket }) {
       className="bg-white text-black p-4 sm:p-6 md:p-8 rounded-xl w-[95%] max-w-[800px] mx-auto mt-6 shadow-2xl"
       overlayClassName="fixed inset-0 bg-black/50 flex justify-center items-center px-2 z-[9999]"
     >
-      <div
-        ref={componentRef}
-        className="text-xs sm:text-sm font-sans print:w-full"
-      >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 border-b border-[#6b7280] pb-4 gap-2">
+      <div ref={componentRef} className="text-[11px] font-sans text-black">
+        <div className="flex justify-between border-b pb-3 mb-3">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-[#1e3a8a]">
-              CENTRO ESTÉTICO KARITO
+            <h1 className="font-bold text-sm">
+              KARITO BEAUTY ESTHETIC CENTER S.A.C.
             </h1>
-            <p className="text-[#111827] text-xs sm:text-sm">
-              RUC: 20601234567
-            </p>
-            <p className="text-[#374151] text-xs sm:text-sm">
-              Av. Los Olivos 123 - Lima, Perú
-            </p>
-            <p className="text-[#374151] text-xs sm:text-sm">
-              Tel: (01) 555-1234
-            </p>
+            <p>RUC: 20609021366</p>
+            <p>Av. Carlos Izaguirre 1211 - Los Olivos</p>
           </div>
-          <div className="text-left sm:text-right">
-            <p className="text-sm sm:text-lg font-semibold text-[#111827]">
-              Factura de Venta
-            </p>
-            <p className="text-[#374151] text-xs sm:text-sm">
-              Fecha: {dayjs(pago.fecha).format("DD/MM/YYYY HH:mm")}
+
+          <div className="border px-4 py-2 text-center">
+            <p className="font-bold">BOLETA DE VENTA ELECTRÓNICA</p>
+            <p>
+              {pago.serie}-{String(pago.numeroBoleta).padStart(8, "0")}
             </p>
           </div>
         </div>
 
-        <div className="mb-4 sm:mb-6">
-          <h2 className="font-semibold text-[#111827] mb-1 text-sm sm:text-base">
-            Datos del Cliente
-          </h2>
-          <p className="text-[#374151]">
-            <strong>Nombre:</strong> {cita.cliente}
+        <div className="mb-3 space-y-1">
+          <p>
+            <strong>Fecha de emisión:</strong>{" "}
+            {dayjs(pago.fecha).format("YYYY-MM-DD")}
+          </p>
+          <p>
+            <strong>Cliente:</strong> {cita.cliente}
           </p>
         </div>
 
-        <div className="overflow-x-auto mb-6">
-          <table className="min-w-full border-collapse text-xs sm:text-sm">
-            <thead>
-              <tr className="bg-[#dbeafe] text-left border-b border-[#9ca3af]">
-                <th className="border p-2 text-[#111827]">Servicio</th>
-                <th className="border p-2 text-center text-[#111827]">
-                  Precio (S/)
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {pago.servicios.map((s, i) => (
-                <tr key={i} className="hover:bg-[#f3f4f6] text-[#374151]">
-                  <td className="border p-2">{s.nombre}</td>
-                  <td className="border p-2 text-center">
-                    {s.precio.toFixed(2)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <table className="w-full border-collapse mb-3">
+          <thead>
+            <tr className="border-t border-b">
+              <th className="text-left p-1">CANT</th>
+              <th className="text-left p-1">DESCRIPCIÓN</th>
+              <th className="text-right p-1">P. UNIT</th>
+              <th className="text-right p-1">TOTAL</th>
+            </tr>
+          </thead>
 
-        <div className="flex justify-end mb-6">
-          <div className="w-full sm:w-1/2 md:w-1/3 text-sm">
-            <div className="flex justify-between font-bold py-2 text-base sm:text-lg text-[#111827]">
-              <span>Total:</span>
+          <tbody>
+            {pago.servicios.map((s, i) => (
+              <tr key={i}>
+                <td className="p-1">1</td>
+                <td className="p-1">{s.nombre}</td>
+                <td className="text-right p-1">{s.precio.toFixed(2)}</td>
+                <td className="text-right p-1">{s.precio.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="flex justify-end">
+          <div className="w-1/2">
+            <div className="flex justify-between">
+              <span>OP. GRAVADAS:</span>
+              <span>S/ {(pago.total / 1.18).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>IGV:</span>
+              <span>S/ {(pago.total - pago.total / 1.18).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between font-bold border-t mt-1 pt-1">
+              <span>TOTAL A PAGAR:</span>
               <span>S/ {pago.total.toFixed(2)}</span>
             </div>
           </div>
         </div>
 
-        <div className="mb-6 text-xs sm:text-sm text-[#374151]">
+        <p className="mt-3">
+          <strong>SON:</strong> {pago.total.toFixed(2)} SOLES
+        </p>
+
+        <div className="mt-3">
           <p>
-            <strong>Método de Pago:</strong> {pago.metodoPago}
+            <strong>Condición de pago:</strong> Contado
+          </p>
+          <p>
+            <strong>Método:</strong> {pago.metodoPago}
           </p>
         </div>
 
-        <div className="text-center text-[#374151] mt-6 sm:mt-8 border-t pt-4 text-xs sm:text-sm">
-          <p className="font-medium">¡Gracias por confiar en nosotros!</p>
-          <p className="text-[#6b7280]">
-            Centro Estético Karito © {new Date().getFullYear()}
-          </p>
+        <div className="text-center mt-6 text-[10px] border-t pt-2">
+          <p>Representación impresa de la boleta electrónica</p>
         </div>
       </div>
 

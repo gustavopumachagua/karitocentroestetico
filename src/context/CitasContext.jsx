@@ -21,6 +21,7 @@ export function CitasProvider({ children }) {
   useEffect(() => {
     obtenerCitas();
     obtenerTratamientos();
+    obtenerPagos();
 
     if (!socketRef.current) {
       const socket = io(SOCKET_URL, {
@@ -130,15 +131,18 @@ export function CitasProvider({ children }) {
 
       if (Array.isArray(res.data)) {
         setTratamientos(res.data);
+        return res.data;
       } else {
         console.warn(
           "⚠️ La respuesta de tratamientos no es un array:",
           res.data
         );
         setTratamientos([]);
+        return [];
       }
     } catch (error) {
       console.error("Error al obtener tratamientos:", error);
+      return [];
     }
   };
 

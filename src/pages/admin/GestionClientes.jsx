@@ -4,6 +4,7 @@ import BuscadorClientes from "../../components/GestionClientes/BuscadorClientes"
 import ClienteCard from "../../components/GestionClientes/ClienteCard";
 import ClienteDetalle from "../../components/GestionClientes/ClienteDetalle";
 import Paginacion from "../../components/HistorialPacientes/Paginacion";
+import ExportarExcelButton from "../../components/GestionClientes/ExportarExcelButton";
 
 export default function GestionClientes() {
   const [clientes, setClientes] = useState([]);
@@ -85,7 +86,7 @@ export default function GestionClientes() {
   const indiceInicial = (paginaActual - 1) * clientesPorPagina;
   const clientesPagina = clientes.slice(
     indiceInicial,
-    indiceInicial + clientesPorPagina
+    indiceInicial + clientesPorPagina,
   );
   const totalPaginas = Math.ceil(clientes.length / clientesPorPagina);
 
@@ -101,14 +102,18 @@ export default function GestionClientes() {
               manejarSeleccion={manejarSeleccion}
             />
 
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
               <div className="text-indigo-400" /> Clientes Registrados
             </h2>
+
+            <div className="mb-6 w-full sm:w-auto ">
+              <ExportarExcelButton />
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {clientesPagina
                 .filter((c) =>
-                  c.nombre.toLowerCase().includes(busqueda.toLowerCase())
+                  c.nombre.toLowerCase().includes(busqueda.toLowerCase()),
                 )
                 .map((cliente, idx) => (
                   <ClienteCard

@@ -65,7 +65,8 @@ export default function ModalRegistrarPago({
             <option value="">Seleccionar...</option>
             <option value="efectivo">Efectivo</option>
             <option value="tarjeta">Tarjeta</option>
-            <option value="yape">Yape</option>
+            <option value="yape/BCP">Yape/BCP</option>
+            <option value="plin/BBVA">Plin/BBVA</option>
           </select>
         </div>
 
