@@ -37,16 +37,6 @@ export default function InfoPaciente({ paciente }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div className="flex items-center gap-3 bg-gray-700/40 p-3 rounded-lg">
-          <FaUser className="text-indigo-400 text-lg sm:text-xl" />
-          <div>
-            <p className="text-gray-400 text-sm">Edad</p>
-            <p className="text-white font-medium text-base sm:text-lg">
-              {paciente.edad ? `${paciente.edad} años` : "—"}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 bg-gray-700/40 p-3 rounded-lg">
           <FaVenusMars className="text-pink-400 text-lg sm:text-xl" />
           <div>
             <p className="text-gray-400 text-sm">Sexo</p>

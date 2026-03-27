@@ -31,13 +31,12 @@ export default function ReportesServiciosIngresos() {
     }
 
     const ordenados = [...tratamientosCliente].sort(
-      (a, b) => new Date(b.fecha) - new Date(a.fecha)
+      (a, b) => new Date(b.fecha) - new Date(a.fecha),
     );
 
     const masReciente = ordenados[0];
 
     return {
-      edad: masReciente.edad || null,
       sexo: masReciente.sexo || null,
       celular: masReciente.celular || null,
     };
@@ -63,9 +62,9 @@ export default function ReportesServiciosIngresos() {
       ...new Set(
         tratamientos
           .filter((t) =>
-            t.nombre?.toLowerCase().includes(busqueda.toLowerCase())
+            t.nombre?.toLowerCase().includes(busqueda.toLowerCase()),
           )
-          .map((t) => t.nombre)
+          .map((t) => t.nombre),
       ),
     ];
 
@@ -90,11 +89,11 @@ export default function ReportesServiciosIngresos() {
         `${
           import.meta.env.VITE_API_URL
         }/api/tratamientos/buscar/${encodeURIComponent(nombre)}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       const historial = tratamientos.filter(
-        (t) => t.nombre.toLowerCase() === nombre.toLowerCase()
+        (t) => t.nombre.toLowerCase() === nombre.toLowerCase(),
       );
 
       const datosActualizados = obtenerDatosActualizados(historial);
@@ -107,7 +106,7 @@ export default function ReportesServiciosIngresos() {
       setTratamientosCliente(historial);
     } catch {
       const historial = tratamientos.filter(
-        (t) => t.nombre.toLowerCase() === nombre.toLowerCase()
+        (t) => t.nombre.toLowerCase() === nombre.toLowerCase(),
       );
 
       if (historial.length > 0) {
@@ -131,16 +130,16 @@ export default function ReportesServiciosIngresos() {
 
   const totalIngresos = serviciosFiltrados.reduce(
     (acc, t) => acc + calcularMonto(t, pagos),
-    0
+    0,
   );
   const totalHistorial = tratamientosCliente.reduce(
     (acc, t) => acc + calcularMonto(t, pagos),
-    0
+    0,
   );
 
   const irACita = (tratamiento) => {
     const historial = tratamientos.filter(
-      (t) => t.nombre === tratamiento.nombre
+      (t) => t.nombre === tratamiento.nombre,
     );
 
     const datosActualizados = obtenerDatosActualizados(historial);

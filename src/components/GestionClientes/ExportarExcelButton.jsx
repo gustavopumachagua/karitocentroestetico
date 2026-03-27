@@ -100,7 +100,6 @@ export default function ExportarExcelButton() {
           if (nombreNormalizado && !mapaTratamientos[nombreNormalizado]) {
             mapaTratamientos[nombreNormalizado] = {
               nombre: t.nombre,
-              edad: t.edad,
               sexo: t.sexo || "No especificado",
               celular: t.celular || "",
             };
@@ -121,7 +120,6 @@ export default function ExportarExcelButton() {
           const datosTratamiento =
             mapaTratamientos[nombreClienteNormalizado] || {};
 
-          const edadFinal = datosTratamiento.edad || cita?.edad || "-";
           const sexoFinal = datosTratamiento.sexo || cita?.sexo || "-";
           const celularFinal = datosTratamiento.celular || cita?.celular || "-";
 
@@ -141,7 +139,6 @@ export default function ExportarExcelButton() {
           const totalPago = leerNumeroTotal(pago);
           return {
             "Nombre del cliente": cliente.nombre || "-",
-            Edad: edadFinal,
             Sexo: sexoFinal,
             Celular: celularFinal,
             Servicios: nombreservicios || "-",

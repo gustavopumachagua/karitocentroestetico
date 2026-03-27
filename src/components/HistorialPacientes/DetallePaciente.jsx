@@ -28,13 +28,13 @@ export default function DetallePaciente({
     .filter(
       (t) =>
         t.nombre?.toLowerCase() === paciente?.nombre?.toLowerCase() &&
-        t.fecha !== paciente?.fecha
+        t.fecha !== paciente?.fecha,
     )
     .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
   return (
     <div className="space-y-10 animate-fadeIn">
-      <h3 className="text-2xl font-semibold text-indigo-400 text-center md:text-left border-b border-gray-700 pb-4">
+      <h3 className="text-2xl font-semibold text-indigo-300 text-center md:text-left border-b border-gray-700 pb-4">
         {paciente.nombre}
       </h3>
 

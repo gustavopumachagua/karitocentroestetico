@@ -20,11 +20,11 @@ export default function ClienteDetalle({ cliente, volver }) {
     cliente.sexo?.toLowerCase() === "masculino"
       ? FaMale
       : cliente.sexo?.toLowerCase() === "femenino"
-      ? FaFemale
-      : FaUser;
+        ? FaFemale
+        : FaUser;
 
   const totalPaginas = Math.ceil(
-    cliente.tratamientos.length / tratamientosPorPagina
+    cliente.tratamientos.length / tratamientosPorPagina,
   );
 
   const tratamientosVisibles = useMemo(() => {
@@ -59,12 +59,12 @@ export default function ClienteDetalle({ cliente, volver }) {
 
         <p className="text-gray-300 flex items-center gap-2 mb-4">
           <FaMoneyBillWave className="text-green-400" /> Total invertido:{" "}
-          <span className="text-indigo-400 font-semibold">
+          <span className="text-indigo-200 font-semibold">
             S/ {cliente.totalInvertido.toFixed(2)}
           </span>
         </p>
 
-        <h3 className="text-xl font-semibold text-indigo-400 mb-3 flex items-center gap-2">
+        <h3 className="text-xl font-semibold text-indigo-300 mb-3 flex items-center gap-2">
           <FaClinicMedical /> Historial de tratamientos
         </h3>
 

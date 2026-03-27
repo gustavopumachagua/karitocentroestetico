@@ -23,7 +23,6 @@ export default function RegistrarTratamiento() {
   const [pacienteExistente, setPacienteExistente] = useState(false);
   const [formData, setFormData] = useState({
     nombre: "",
-    edad: "",
     sexo: "",
     celular: "",
     servicio: "",
@@ -107,14 +106,13 @@ export default function RegistrarTratamiento() {
           }/api/tratamientos/buscar/${encodeURIComponent(formData.nombre)}`,
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
 
         if (res.ok) {
           const data = await res.json();
           setFormData((prev) => ({
             ...prev,
-            edad: data.edad || "",
             sexo: data.sexo || "",
             celular: data.celular || "",
           }));
@@ -216,7 +214,7 @@ export default function RegistrarTratamiento() {
       return;
     }
 
-    if (!formData.edad || !formData.sexo || !formData.celular) {
+    if (!formData.sexo || !formData.celular) {
       setModal({
         show: true,
         message: "⚠️ Completa los datos del paciente antes de guardar.",
@@ -250,13 +248,12 @@ export default function RegistrarTratamiento() {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
           body: formDataToSend,
-        }
+        },
       );
 
       if (res.ok) {
         setFormData({
           nombre: "",
-          edad: "",
           sexo: "",
           celular: "",
           servicio: "",
@@ -329,27 +326,6 @@ export default function RegistrarTratamiento() {
               readOnly
             />
             <InputField
-              label="Edad"
-              type="number"
-              min="18"
-              max="80"
-              placeholder="Ingrese la edad"
-              value={formData.edad}
-              readOnly={formBloqueado}
-              error={
-                formData.edad !== "" &&
-                (formData.edad < 18 || formData.edad > 80)
-                  ? "Debe estar entre 18 y 80 años"
-                  : ""
-              }
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === "" || (/^\d+$/.test(value) && value <= 120)) {
-                  setFormData({ ...formData, edad: value });
-                }
-              }}
-            />
-            <InputField
               label="Celular"
               type="text"
               placeholder="Ingrese número de celular"
@@ -389,11 +365,11 @@ export default function RegistrarTratamiento() {
               Array.isArray(formData.servicio)
                 ? formData.servicio.join(", ")
                 : typeof formData.servicio === "string"
-                ? formData.servicio
-                    .split(",")
-                    .map((s) => s.trim())
-                    .join(", ")
-                : ""
+                  ? formData.servicio
+                      .split(",")
+                      .map((s) => s.trim())
+                      .join(", ")
+                  : ""
             }
             readOnly
           />
@@ -427,7 +403,7 @@ export default function RegistrarTratamiento() {
                   prev.map((insumo) => ({
                     ...insumo,
                     visible: insumo.nombre.toLowerCase().includes(filtro),
-                  }))
+                  })),
                 );
               }}
             />
@@ -452,7 +428,7 @@ export default function RegistrarTratamiento() {
                         onChange={() => {
                           const nuevos = seleccionado
                             ? formData.insumos.filter(
-                                (i) => i !== insumo.nombre
+                                (i) => i !== insumo.nombre,
                               )
                             : [...formData.insumos, insumo.nombre];
                           setFormData({ ...formData, insumos: nuevos });
@@ -488,7 +464,6 @@ export default function RegistrarTratamiento() {
             onCancel={() => {
               setFormData({
                 nombre: "",
-                edad: "",
                 celular: "",
                 sexo: "",
                 servicio: "",

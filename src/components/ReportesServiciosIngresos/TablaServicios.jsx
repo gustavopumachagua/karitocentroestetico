@@ -1,5 +1,5 @@
 import { FaCalendarAlt, FaMoneyBillWave } from "react-icons/fa";
-import { calcularMonto } from "./calcularMonto";
+import { calcularMonto, obtenerPagoRelacionado } from "./calcularMonto";
 
 export default function TablaServicios({
   fechaFiltro,
@@ -43,44 +43,45 @@ export default function TablaServicios({
           </thead>
           <tbody>
             {servicios.length > 0 ? (
-              servicios.map((t, idx) => (
-                <tr
-                  key={idx}
-                  onClick={() => buscarCliente(t.nombre)}
-                  className="hover:bg-gray-700/40 cursor-pointer transition-all duration-200"
-                >
-                  <td className="p-4 border-b border-gray-700 whitespace-nowrap">
-                    {new Date(t.fecha).toLocaleDateString("es-PE")}
-                  </td>
-                  <td className="p-4 border-b border-gray-700">{t.nombre}</td>
-                  <td className="p-4 border-b border-gray-700">
-                    {Array.isArray(t.servicio)
-                      ? t.servicio.join(", ")
-                      : t.servicio}
-                  </td>
-                  <td className="p-4 border-b border-gray-700 text-indigo-300">
-                    {t.rol || "—"}
-                  </td>
-                  <td className="p-4 border-b border-gray-700">
-                    {t.profesional || "—"}
-                  </td>
-                  <td className="p-4 border-b border-gray-700">
-                    {pagos.find(
-                      (p) =>
-                        p.cliente.toLowerCase() === t.nombre.toLowerCase() &&
-                        new Date(p.fecha).toDateString() ===
-                          new Date(t.fecha).toDateString()
-                    )?.metodoPago || (
-                      <span className="text-gray-500 italic">
-                        No registrado
-                      </span>
-                    )}
-                  </td>
-                  <td className="p-4 border-b border-gray-700 text-right text-green-400 font-semibold whitespace-nowrap">
-                    S/. {calcularMonto(t, pagos)}
-                  </td>
-                </tr>
-              ))
+              servicios.map((t, idx) => {
+                const pagoRelacionado = obtenerPagoRelacionado(t, pagos);
+                const monto = Number(calcularMonto(t, pagos)).toFixed(2);
+                const keyFila = t._id || `${t.nombre}-${t.fecha}-${idx}`;
+
+                return (
+                  <tr
+                    key={keyFila}
+                    onClick={() => buscarCliente(t.nombre)}
+                    className="hover:bg-gray-700/40 cursor-pointer transition-all duration-200"
+                  >
+                    <td className="p-4 border-b border-gray-700 whitespace-nowrap">
+                      {new Date(t.fecha).toLocaleDateString("es-PE")}
+                    </td>
+                    <td className="p-4 border-b border-gray-700">{t.nombre}</td>
+                    <td className="p-4 border-b border-gray-700">
+                      {Array.isArray(t.servicio)
+                        ? t.servicio.join(", ")
+                        : t.servicio}
+                    </td>
+                    <td className="p-4 border-b border-gray-700 text-indigo-300">
+                      {t.rol || "—"}
+                    </td>
+                    <td className="p-4 border-b border-gray-700">
+                      {t.profesional || "—"}
+                    </td>
+                    <td className="p-4 border-b border-gray-700">
+                      {pagoRelacionado?.metodoPago || (
+                        <span className="text-gray-500 italic">
+                          No registrado
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4 border-b border-gray-700 text-right text-green-400 font-semibold whitespace-nowrap">
+                      S/. {monto}
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td
@@ -97,47 +98,52 @@ export default function TablaServicios({
 
       <div className="sm:hidden space-y-4">
         {servicios.length > 0 ? (
-          servicios.map((t, idx) => (
-            <div
-              key={idx}
-              onClick={() => buscarCliente(t.nombre)}
-              className="bg-gray-700/50 border border-gray-600 rounded-xl p-4 text-gray-200 hover:bg-gray-700/70 transition-all duration-200 cursor-pointer"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-400">
-                  {new Date(t.fecha).toLocaleDateString("es-PE")}
-                </span>
-                <span className="text-green-400 font-semibold">
-                  S/. {calcularMonto(t, pagos)}
-                </span>
+          servicios.map((t, idx) => {
+            const pagoRelacionado = obtenerPagoRelacionado(t, pagos);
+            const monto = Number(calcularMonto(t, pagos)).toFixed(2);
+            const keyFila = t._id || `${t.nombre}-${t.fecha}-${idx}`;
+
+            return (
+              <div
+                key={keyFila}
+                onClick={() => buscarCliente(t.nombre)}
+                className="bg-gray-700/50 border border-gray-600 rounded-xl p-4 text-gray-200 hover:bg-gray-700/70 transition-all duration-200 cursor-pointer"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-gray-400">
+                    {new Date(t.fecha).toLocaleDateString("es-PE")}
+                  </span>
+                  <span className="text-green-400 font-semibold">
+                    S/. {monto}
+                  </span>
+                </div>
+                <p className="text-base font-medium">{t.nombre}</p>
+                <p className="text-sm text-indigo-300">
+                  {Array.isArray(t.servicio)
+                    ? t.servicio.join(", ")
+                    : t.servicio}
+                </p>
+                <div className="mt-2 text-sm space-y-1">
+                  <p>
+                    <span className="text-gray-400">Rol: </span>
+                    {t.rol || "—"}
+                  </p>
+                  <p>
+                    <span className="text-gray-400">Profesional: </span>
+                    {t.profesional || "—"}
+                  </p>
+                  <p>
+                    <span className="text-gray-400">Pago: </span>
+                    {pagoRelacionado?.metodoPago || (
+                      <span className="text-gray-500 italic">
+                        No registrado
+                      </span>
+                    )}
+                  </p>
+                </div>
               </div>
-              <p className="text-base font-medium">{t.nombre}</p>
-              <p className="text-sm text-indigo-300">
-                {Array.isArray(t.servicio) ? t.servicio.join(", ") : t.servicio}
-              </p>
-              <div className="mt-2 text-sm space-y-1">
-                <p>
-                  <span className="text-gray-400">Rol: </span>
-                  {t.rol || "—"}
-                </p>
-                <p>
-                  <span className="text-gray-400">Profesional: </span>
-                  {t.profesional || "—"}
-                </p>
-                <p>
-                  <span className="text-gray-400">Pago: </span>
-                  {pagos.find(
-                    (p) =>
-                      p.cliente.toLowerCase() === t.nombre.toLowerCase() &&
-                      new Date(p.fecha).toDateString() ===
-                        new Date(t.fecha).toDateString()
-                  )?.metodoPago || (
-                    <span className="text-gray-500 italic">No registrado</span>
-                  )}
-                </p>
-              </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <div className="text-center text-gray-400 italic p-5 bg-gray-700/20 rounded-xl border border-gray-600">
             No hay servicios registrados para esta fecha.
@@ -150,7 +156,8 @@ export default function TablaServicios({
           Total ingresos del día:
         </span>
         <span className="text-green-400 font-bold text-lg sm:text-2xl flex items-center gap-2">
-          <FaMoneyBillWave className="text-green-500" /> S/. {totalIngresos}
+          <FaMoneyBillWave className="text-green-500" /> S/.{" "}
+          {Number(totalIngresos).toFixed(2)}
         </span>
       </div>
     </div>

@@ -37,7 +37,6 @@ export default function GestionClientes() {
         if (!mapa[t.nombre]) {
           mapa[t.nombre] = {
             nombre: t.nombre,
-            edad: t.edad,
             sexo: t.sexo || "No especificado",
             celular: t.celular || "",
             tratamientos: [],
