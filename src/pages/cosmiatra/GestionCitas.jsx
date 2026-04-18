@@ -4,6 +4,7 @@ import CitaForm from "../../components/AgendaCitas/CitaForm";
 import CitaTable from "../../components/AgendaCitas/CitaTable";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import { convertirFechaCitaAISOString } from "../../utils/citasFecha";
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
@@ -73,13 +74,18 @@ export default function GestionCitas() {
   const registrarCita = async (nuevaCita) => {
     try {
       const token = localStorage.getItem("token");
+      const citaPayload = {
+        ...nuevaCita,
+        fecha: convertirFechaCitaAISOString(nuevaCita.fecha),
+      };
+
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/citas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(nuevaCita),
+        body: JSON.stringify(citaPayload),
       });
 
       const data = await res.json();

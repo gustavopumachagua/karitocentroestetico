@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { CitaRow } from "../TablaCitas/CitaRow";
 import { CitaCard } from "../TablaCitas/CitaCard";
 import Paginacion from "../HistorialPacientes/Paginacion";
+import { obtenerTimestampCita } from "../../utils/citasFecha";
 
 export default function CitaTable({
   citas,
@@ -13,7 +14,7 @@ export default function CitaTable({
 
   const citasOrdenadas = useMemo(() => {
     return [...(citas || [])].sort(
-      (a, b) => new Date(b.fecha) - new Date(a.fecha)
+      (a, b) => obtenerTimestampCita(b.fecha) - obtenerTimestampCita(a.fecha)
     );
   }, [citas]);
 

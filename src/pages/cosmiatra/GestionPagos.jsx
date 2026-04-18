@@ -57,14 +57,14 @@ export default function PagosCitas() {
   useEffect(() => {
     const suma = serviciosConPrecio.reduce(
       (acc, s) => acc + Number(s.precio || 0),
-      0
+      0,
     );
     setTotal(suma);
   }, [serviciosConPrecio]);
 
   const todosPreciosValidos = () =>
     serviciosConPrecio.every(
-      (s) => s.precio !== "" && !isNaN(s.precio) && Number(s.precio) > 0
+      (s) => s.precio !== "" && !isNaN(s.precio) && Number(s.precio) >= 0,
     );
 
   const handlePrecioChange = (index, value) => {
@@ -90,14 +90,14 @@ export default function PagosCitas() {
 
   const citasAtendidas = useMemo(
     () => citas.filter((c) => c.estado === "atendido"),
-    [citas]
+    [citas],
   );
 
   const citasFiltradas = useMemo(() => {
     let filtradas = citasAtendidas;
     if (busqueda) {
       filtradas = filtradas.filter((c) =>
-        c.cliente.toLowerCase().includes(busqueda.toLowerCase())
+        c.cliente.toLowerCase().includes(busqueda.toLowerCase()),
       );
     }
 
@@ -117,7 +117,7 @@ export default function PagosCitas() {
   const indiceInicio = (paginaActual - 1) * registrosPorPagina;
   const citasPaginadas = citasFiltradas.slice(
     indiceInicio,
-    indiceInicio + registrosPorPagina
+    indiceInicio + registrosPorPagina,
   );
   const totalPaginas = Math.ceil(citasFiltradas.length / registrosPorPagina);
 
@@ -180,7 +180,7 @@ export default function PagosCitas() {
             if (pago?.estadoPago === "pagado") return;
             setCitaSeleccionada(cita);
             setServiciosConPrecio(
-              cita.servicio.map((s) => ({ nombre: s, precio: "" }))
+              cita.servicio.map((s) => ({ nombre: s, precio: "0" })),
             );
             setMetodoPago("");
             setMostrarFormulario(true);
