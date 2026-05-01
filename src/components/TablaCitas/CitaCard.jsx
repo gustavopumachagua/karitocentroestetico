@@ -7,6 +7,7 @@ export function CitaCard({
   cita,
   actualizarEstado,
   onSeleccionarCita,
+  onEditarCita,
   showAcciones = true,
 }) {
   return (
@@ -63,8 +64,10 @@ export function CitaCard({
         <div className="flex justify-end">
           <AccionButtons
             id={cita._id || cita.id}
+            cita={cita}
             estado={cita.estado}
             actualizarEstado={actualizarEstado}
+            onEditarCita={onEditarCita}
           />
         </div>
       )}

@@ -5,6 +5,10 @@ export default function DeleteConfirmationModal({
   onConfirm,
   onCancel,
   userName,
+  title = "Confirmar Eliminación",
+  message,
+  warningText = "Todos los datos asociados serán eliminados permanentemente.",
+  confirmText = "Eliminar Usuario",
 }) {
   if (!show) return null;
 
@@ -16,9 +20,7 @@ export default function DeleteConfirmationModal({
             <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
               <FaExclamationTriangle className="text-red-500 text-xl" />
             </div>
-            <h3 className="text-xl font-bold text-white">
-              Confirmar Eliminación
-            </h3>
+            <h3 className="text-xl font-bold text-white">{title}</h3>
           </div>
           <button
             onClick={onCancel}
@@ -30,15 +32,19 @@ export default function DeleteConfirmationModal({
 
         <div className="p-6 space-y-4">
           <p className="text-gray-300 text-base leading-relaxed">
-            ¿Estás seguro de que deseas eliminar a{" "}
-            <span className="font-semibold text-white">{userName}</span>?
+            {message || (
+              <>
+                ¿Estás seguro de que deseas eliminar a{" "}
+                <span className="font-semibold text-white">{userName}</span>?
+              </>
+            )}
           </p>
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
             <p className="text-red-400 text-sm flex items-start gap-2">
               <FaExclamationTriangle className="mt-0.5 flex-shrink-0" />
               <span>
-                <strong>Esta acción no se puede deshacer.</strong> Todos los
-                datos asociados serán eliminados permanentemente.
+                <strong>Esta acción no se puede deshacer.</strong>{" "}
+                {warningText}
               </span>
             </p>
           </div>
@@ -55,7 +61,7 @@ export default function DeleteConfirmationModal({
             onClick={onConfirm}
             className="flex-1 px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-all duration-200 hover:scale-105 shadow-lg shadow-red-500/30 cursor-pointer"
           >
-            Eliminar Usuario
+            {confirmText}
           </button>
         </div>
       </div>

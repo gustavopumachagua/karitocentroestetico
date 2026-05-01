@@ -47,6 +47,29 @@ export function convertirFechaCitaAISOString(fecha) {
   return parsedDate ? parsedDate.toISOString() : fecha;
 }
 
+export function formatearFechaCitaParaInput(fecha) {
+  const parsedDate = parseFechaCita(fecha);
+
+  if (!parsedDate) return "";
+
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TIME_ZONE_LIMA,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  })
+    .formatToParts(parsedDate)
+    .reduce((acc, part) => {
+      acc[part.type] = part.value;
+      return acc;
+    }, {});
+
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+}
+
 export function formatearFechaCita(fecha) {
   const parsedDate = parseFechaCita(fecha);
 

@@ -7,6 +7,7 @@ export function CitaRow({
   actualizarEstado,
   showAcciones = true,
   onSeleccionarCita,
+  onEditarCita,
 }) {
   return (
     <tr
@@ -48,8 +49,10 @@ export function CitaRow({
         <td className="p-3 border border-gray-600">
           <AccionButtons
             id={cita._id || cita.id}
+            cita={cita}
             estado={cita.estado}
             actualizarEstado={actualizarEstado}
+            onEditarCita={onEditarCita}
           />
         </td>
       )}

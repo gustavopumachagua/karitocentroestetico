@@ -3,15 +3,38 @@ import FormSelect from "../CitaForm/FormSelect";
 import FormDateTime from "../CitaForm/FormDateTime";
 import ServiceSelector from "../CitaForm/ServiceSelector";
 import SubmitButton from "../CitaForm/SubmitButton";
+import { FaTimes, FaTrash } from "react-icons/fa";
+import { formatearFechaCitaParaInput } from "../../utils/citasFecha";
 
-export default function CitaForm({ usuarios, onRegistrarCita }) {
-  const [nuevaCita, setNuevaCita] = useState({
-    cliente: "",
-    rol: "",
-    profesional: "",
-    servicio: [],
-    fecha: "",
-  });
+const citaVacia = {
+  cliente: "",
+  rol: "",
+  profesional: "",
+  servicio: [],
+  fecha: "",
+};
+
+function obtenerNombreCliente(cita) {
+  return typeof cita?.cliente === "object"
+    ? cita.cliente?.nombre
+    : cita?.cliente;
+}
+
+function obtenerIdProfesional(cita) {
+  return typeof cita?.profesional === "object"
+    ? cita.profesional?._id
+    : cita?.profesional;
+}
+
+export default function CitaForm({
+  usuarios,
+  onRegistrarCita,
+  citaEditando,
+  onActualizarCita,
+  onEliminarCita,
+  onCancelarEdicion,
+}) {
+  const [nuevaCita, setNuevaCita] = useState(citaVacia);
 
   const [servicios, setServicios] = useState([]);
   const [errorCliente, setErrorCliente] = useState("");
@@ -19,8 +42,40 @@ export default function CitaForm({ usuarios, onRegistrarCita }) {
   const [cargando, setCargando] = useState(false);
   const [valorSeleccionado, setValorSeleccionado] = useState("");
 
+  const estaEditando = Boolean(citaEditando);
+
   useEffect(() => {
-    if (!nuevaCita.rol) return;
+    if (!citaEditando) {
+      setNuevaCita(citaVacia);
+      setErrorCliente("");
+      setSugerencias([]);
+      setValorSeleccionado("");
+      return;
+    }
+
+    const cliente = obtenerNombreCliente(citaEditando) || "";
+
+    setNuevaCita({
+      _id: citaEditando._id || citaEditando.id,
+      cliente,
+      rol: citaEditando.rol || "",
+      profesional: obtenerIdProfesional(citaEditando) || "",
+      servicio: Array.isArray(citaEditando.servicio)
+        ? citaEditando.servicio
+        : [],
+      fecha: formatearFechaCitaParaInput(citaEditando.fecha),
+    });
+    setErrorCliente("");
+    setSugerencias([]);
+    setValorSeleccionado(cliente);
+  }, [citaEditando]);
+
+  useEffect(() => {
+    if (!nuevaCita.rol) {
+      setServicios([]);
+      return;
+    }
+
     fetch(`${import.meta.env.VITE_API_URL}/api/inventario/${nuevaCita.rol}`)
       .then((res) => res.json())
       .then((data) => {
@@ -77,7 +132,7 @@ export default function CitaForm({ usuarios, onRegistrarCita }) {
 
     const delay = setTimeout(buscarClientes, 300);
     return () => clearTimeout(delay);
-  }, [nuevaCita.cliente]);
+  }, [nuevaCita.cliente, valorSeleccionado]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -92,7 +147,13 @@ export default function CitaForm({ usuarios, onRegistrarCita }) {
       }
     }
 
-    setNuevaCita({ ...nuevaCita, [name]: value });
+    setNuevaCita((prev) => {
+      if (name === "rol") {
+        return { ...prev, rol: value, profesional: "", servicio: [] };
+      }
+
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleSuggestionClick = (nombre) => {
@@ -109,17 +170,22 @@ export default function CitaForm({ usuarios, onRegistrarCita }) {
     setNuevaCita({ ...nuevaCita, servicio: updatedServices });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onRegistrarCita(nuevaCita);
-    setNuevaCita({
-      cliente: "",
-      rol: "",
-      profesional: "",
-      servicio: [],
-      fecha: "",
-    });
+  const resetFormulario = () => {
+    setNuevaCita(citaVacia);
     setSugerencias([]);
+    setValorSeleccionado("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const operacionExitosa = estaEditando
+      ? await onActualizarCita(nuevaCita)
+      : await onRegistrarCita(nuevaCita);
+
+    if (operacionExitosa === false) return;
+
+    resetFormulario();
   };
 
   const isFormValid =
@@ -212,7 +278,30 @@ export default function CitaForm({ usuarios, onRegistrarCita }) {
         disabled={!nuevaCita.rol}
       />
 
-      <SubmitButton disabled={!isFormValid}>Registrar Cita</SubmitButton>
+      <SubmitButton disabled={!isFormValid}>
+        {estaEditando ? "Guardar cambios" : "Registrar Cita"}
+      </SubmitButton>
+
+      {estaEditando && (
+        <div className="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={onCancelarEdicion}
+            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition cursor-pointer"
+          >
+            <FaTimes />
+            Cancelar edición
+          </button>
+          <button
+            type="button"
+            onClick={onEliminarCita}
+            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition cursor-pointer"
+          >
+            <FaTrash />
+            Eliminar cita
+          </button>
+        </div>
+      )}
     </form>
   );
 }

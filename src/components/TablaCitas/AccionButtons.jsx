@@ -1,18 +1,36 @@
 import { useState } from "react";
 
-export function AccionButtons({ id, estado, actualizarEstado }) {
+export function AccionButtons({
+  id,
+  cita,
+  estado,
+  actualizarEstado,
+  onEditarCita,
+}) {
   const [seleccionado, setSeleccionado] = useState("");
 
   const handleChange = (e) => {
-    const nuevoEstado = e.target.value;
-    setSeleccionado(nuevoEstado);
-    actualizarEstado(id, nuevoEstado);
+    const accion = e.target.value;
+
+    if (!accion) return;
+
+    if (accion === "editar") {
+      setSeleccionado("");
+      onEditarCita?.(cita);
+      return;
+    }
+
+    setSeleccionado(accion);
+    actualizarEstado(id, accion);
   };
 
   const deshabilitado = estado !== "pendiente";
 
   return (
-    <div>
+    <div
+      className="flex flex-col xl:flex-row gap-2"
+      onClick={(e) => e.stopPropagation()}
+    >
       <select
         value={seleccionado || ""}
         onChange={handleChange}
@@ -24,6 +42,7 @@ export function AccionButtons({ id, estado, actualizarEstado }) {
         <option value="">Seleccionar</option>
         <option value="aplazado">Aplazado</option>
         <option value="cancelado">Cancelado</option>
+        {onEditarCita && <option value="editar">Editar</option>}
       </select>
     </div>
   );

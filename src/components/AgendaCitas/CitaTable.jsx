@@ -7,6 +7,7 @@ import { obtenerTimestampCita } from "../../utils/citasFecha";
 export default function CitaTable({
   citas,
   actualizarEstado,
+  onEditarCita,
   showAcciones = true,
 }) {
   const [paginaActual, setPaginaActual] = useState(1);
@@ -50,6 +51,7 @@ export default function CitaTable({
                 key={cita._id || cita.id}
                 cita={cita}
                 actualizarEstado={actualizarEstado}
+                onEditarCita={onEditarCita}
                 showAcciones={showAcciones}
               />
             ))}
@@ -63,6 +65,7 @@ export default function CitaTable({
             key={cita._id || cita.id}
             cita={cita}
             actualizarEstado={actualizarEstado}
+            onEditarCita={onEditarCita}
             showAcciones={showAcciones}
           />
         ))}
@@ -78,7 +81,7 @@ export default function CitaTable({
           <Paginacion
             paginaActual={paginaActual}
             totalPaginas={totalPaginas}
-            cambiarPagina={setPaginaActual}
+            cambiarPagina={cambiarPagina}
           />
         </div>
       )}
