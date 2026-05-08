@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import FormSelect from "../CitaForm/FormSelect";
 import FormDateTime from "../CitaForm/FormDateTime";
 import ServiceSelector from "../CitaForm/ServiceSelector";
@@ -41,6 +41,8 @@ export default function CitaForm({
   const [sugerencias, setSugerencias] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [valorSeleccionado, setValorSeleccionado] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const envioEnCursoRef = useRef(false);
 
   const estaEditando = Boolean(citaEditando);
 
@@ -176,18 +178,6 @@ export default function CitaForm({
     setValorSeleccionado("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const operacionExitosa = estaEditando
-      ? await onActualizarCita(nuevaCita)
-      : await onRegistrarCita(nuevaCita);
-
-    if (operacionExitosa === false) return;
-
-    resetFormulario();
-  };
-
   const isFormValid =
     nuevaCita.cliente.trim() &&
     nuevaCita.rol &&
@@ -195,6 +185,28 @@ export default function CitaForm({
     nuevaCita.fecha &&
     nuevaCita.servicio.length > 0 &&
     !errorCliente;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!isFormValid || envioEnCursoRef.current) return;
+
+    envioEnCursoRef.current = true;
+    setEnviando(true);
+
+    try {
+      const operacionExitosa = estaEditando
+        ? await onActualizarCita(nuevaCita)
+        : await onRegistrarCita(nuevaCita);
+
+      if (operacionExitosa === false) return;
+
+      resetFormulario();
+    } finally {
+      envioEnCursoRef.current = false;
+      setEnviando(false);
+    }
+  };
 
   return (
     <form
@@ -278,8 +290,14 @@ export default function CitaForm({
         disabled={!nuevaCita.rol}
       />
 
-      <SubmitButton disabled={!isFormValid}>
-        {estaEditando ? "Guardar cambios" : "Registrar Cita"}
+      <SubmitButton disabled={!isFormValid || enviando}>
+        {enviando
+          ? estaEditando
+            ? "Guardando..."
+            : "Registrando..."
+          : estaEditando
+          ? "Guardar cambios"
+          : "Registrar Cita"}
       </SubmitButton>
 
       {estaEditando && (
