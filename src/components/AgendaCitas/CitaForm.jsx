@@ -212,7 +212,7 @@ export default function CitaForm({
     <form
       onSubmit={handleSubmit}
       autoComplete="off"
-      className="max-w-4xl mx-auto bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-2 gap-6 relative"
+      className="page-panel page-panel-pad relative mx-auto grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-2"
     >
       <div className="flex flex-col relative">
         <label className="text-sm text-gray-300 mb-1">Cliente</label>
@@ -224,20 +224,20 @@ export default function CitaForm({
           placeholder="Nombre del cliente"
           autoComplete="off"
           spellCheck="false"
-          className={`p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+          className={`rounded-lg border bg-slate-950/50 p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
             errorCliente
-              ? "focus:ring-red-500 border border-red-500"
-              : "focus:ring-indigo-500"
+              ? "border-red-500 focus:ring-red-500"
+              : "border-white/10 focus:border-cyan-300/70 focus:ring-cyan-300/20"
           }`}
         />
 
         {sugerencias.length > 0 && (
-          <ul className="absolute top-full mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 w-full max-h-40 overflow-y-auto">
+          <ul className="absolute top-full mt-1 bg-slate-900 border border-white/10 rounded-lg shadow-lg z-10 w-full max-h-40 overflow-y-auto">
             {sugerencias.map((s, i) => (
               <li
                 key={i}
                 onClick={() => handleSuggestionClick(s)}
-                className="px-3 py-2 cursor-pointer hover:bg-indigo-600 hover:text-white text-gray-200 text-sm"
+                className="px-3 py-2 cursor-pointer hover:bg-cyan-400/15 hover:text-white text-gray-200 text-sm"
               >
                 {s}
               </li>

@@ -1,35 +1,44 @@
-import { FaFileAlt, FaUserInjured, FaCog } from "react-icons/fa";
-import { MdOutlineAssignment } from "react-icons/md";
+import {
+  FaBoxes,
+  FaChartLine,
+  FaChartPie,
+  FaCog,
+  FaFileInvoiceDollar,
+  FaKey,
+  FaUserCircle,
+  FaUserFriends,
+  FaUsersCog,
+} from "react-icons/fa";
 
 export const menuItemsadmin = [
   {
     name: "Dashboard general",
-    icon: <FaUserInjured />,
+    icon: <FaChartPie />,
     key: "Dashboard general",
   },
   {
     name: "Gestion de usuarios y roles",
-    icon: <MdOutlineAssignment />,
+    icon: <FaUsersCog />,
     key: "Gestion de usuarios y roles",
   },
   {
     name: "Gestion de clientes",
-    icon: <FaFileAlt />,
+    icon: <FaUserFriends />,
     key: "Gestion de clientes",
   },
   {
     name: "Gestion de inventario",
-    icon: <FaFileAlt />,
+    icon: <FaBoxes />,
     key: "Gestion de inventario",
   },
   {
     name: "Gestion de facturacion y pagos",
-    icon: <FaFileAlt />,
+    icon: <FaFileInvoiceDollar />,
     key: "Gestion de facturacion y pagos",
   },
   {
     name: "Reportes avanzados",
-    icon: <FaFileAlt />,
+    icon: <FaChartLine />,
     key: "Reportes avanzados",
   },
 
@@ -38,8 +47,8 @@ export const menuItemsadmin = [
     icon: <FaCog />,
     key: "Ajustes",
     subItems: [
-      { name: "Perfil", key: "Perfil" },
-      { name: "Contraseña", key: "Contraseña" },
+      { name: "Perfil", key: "Perfil", icon: <FaUserCircle /> },
+      { name: "Contraseña", key: "Contraseña", icon: <FaKey /> },
     ],
   },
 ];

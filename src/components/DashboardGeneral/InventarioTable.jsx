@@ -1,3 +1,5 @@
+import { FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+
 export default function InventarioTable({ data, mostrarSoloBajos }) {
   const inventarioFiltrado = mostrarSoloBajos
     ? data.filter((item) => item.cantidad < item.umbral)
@@ -5,14 +7,15 @@ export default function InventarioTable({ data, mostrarSoloBajos }) {
 
   return (
     <section className="bg-gradient-to-br from-gray-800/70 via-gray-900/70 to-gray-800/70 border border-gray-700/60 rounded-3xl p-6 shadow-xl hover:shadow-red-500/10 transition-all duration-300">
-      <h3 className="text-lg sm:text-xl font-semibold text-red-400 mb-6 text-center tracking-wide">
+      <h3 className="text-lg sm:text-xl font-semibold text-red-400 mb-6 text-center">
         Estado de Stock de Insumos
       </h3>
 
       {inventarioFiltrado.length === 0 ? (
-        <p className="text-gray-400 text-center italic py-8">
+        <p className="flex items-center justify-center gap-2 py-8 text-center text-gray-400 italic">
+          {mostrarSoloBajos && <FaCheckCircle className="text-emerald-400" />}
           {mostrarSoloBajos
-            ? "✅ Todos los insumos tienen stock suficiente."
+            ? "Todos los insumos tienen stock suficiente."
             : "No hay insumos registrados en el inventario."}
         </p>
       ) : (
@@ -36,11 +39,11 @@ export default function InventarioTable({ data, mostrarSoloBajos }) {
                   <td className="p-3 text-center">
                     {item.cantidad < item.umbral ? (
                       <span className="inline-flex items-center gap-1 text-red-400 font-semibold">
-                        <span className="text-lg leading-none">⚠</span> Bajo
+                        <FaExclamationTriangle /> Bajo
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 text-green-400 font-semibold">
-                        <span className="text-lg leading-none">✔</span> OK
+                        <FaCheckCircle /> OK
                       </span>
                     )}
                   </td>

@@ -1,5 +1,6 @@
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import enviadoImage from "../../assets/mensaje_enviado.png";
+import { FaArrowRight, FaCheckCircle } from "react-icons/fa";
 
 export default function ResetSuccess({ email: emailProp }) {
   const location = useLocation();
@@ -7,22 +8,32 @@ export default function ResetSuccess({ email: emailProp }) {
   const email = emailProp || emailFromState || "";
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
-      <div className="w-full max-w-md p-8 space-y-6 bg-gray-900 rounded-xl shadow-lg border border-gray-700 text-center animate-fadeIn">
-        <h2 className="text-2xl font-bold text-indigo-400">¡Muchas gracias!</h2>
+    <section className="auth-screen">
+      <div className="auth-card text-center animate-fade-in">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-400/12 text-emerald-300">
+          <FaCheckCircle />
+        </div>
+        <h2 className="text-2xl font-bold text-white">Correo enviado</h2>
         <img
           src={enviadoImage}
           alt="Mensaje enviado"
-          className="mx-auto w-32 sm:w-40 md:w-48 lg:w-56 max-w-full h-auto rounded-2xl shadow-2xl object-contain"
+          className="mx-auto my-6 h-auto w-32 max-w-full rounded-lg object-contain sm:w-40 md:w-48"
         />
         <p className="text-lg font-semibold text-gray-100">
           Se ha enviado el enlace para el reinicio
         </p>
-        <p className="text-sm text-gray-400">
+        <p className="mt-2 break-words text-sm leading-6 text-slate-400">
           Revisa la bandeja de entrada de{" "}
-          <span className="font-medium text-indigo-400">{email}</span>
+          <span className="font-medium text-cyan-200">{email}</span>
         </p>
+        <Link
+          to="/login"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.1] sm:w-auto"
+        >
+          Volver al login
+          <FaArrowRight className="text-xs" />
+        </Link>
       </div>
-    </div>
+    </section>
   );
 }

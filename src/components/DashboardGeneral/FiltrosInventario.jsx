@@ -15,7 +15,7 @@ export default function FiltrosInventario({
           <div className="p-2 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
             <FaFilter className="text-indigo-400 text-lg" />
           </div>
-          <h3 className="text-lg sm:text-xl font-semibold text-white tracking-wide">
+          <h3 className="text-lg sm:text-xl font-semibold text-white">
             Filtros de Inventario
           </h3>
         </div>

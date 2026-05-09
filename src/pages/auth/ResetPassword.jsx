@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ResetHeader from "../../components/ResetPassword/ResetHeader";
 import ResetForm from "../../components/ResetPassword/ResetForm";
 import ResetSuccess from "../../components/ResetPassword/ResetSuccess";
 import ErrorAlert from "../../components/ResetPassword/ErrorAlert";
+import { FaEnvelopeOpenText, FaLock, FaShieldAlt } from "react-icons/fa";
 
 export default function ResetPassword() {
   const location = useLocation();
@@ -19,33 +20,15 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  useEffect(() => {
-    if (userFromStorage && !email) {
-      setEmail(userFromStorage.email);
-    }
-  }, [userFromStorage]);
-
   const validateEmail = (value) =>
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
-
-  const sendResetRequest = async (email) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (email.includes("noexiste")) {
-          reject(new Error("No existe una cuenta con ese correo"));
-        } else {
-          resolve({ ok: true, msg: "Correo de recuperación enviado" });
-        }
-      }, 1200);
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!validateEmail(email)) {
-      setError("❌ Ingresa un correo válido (ej: usuario@dominio.com)");
+      setError("Ingresa un correo válido (ej: usuario@dominio.com)");
       return;
     }
 
@@ -72,18 +55,63 @@ export default function ResetPassword() {
   if (success) return <ResetSuccess email={email} />;
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
-      <div className="w-full max-w-md p-8 space-y-6 bg-gray-900 rounded-xl shadow-lg border border-gray-700">
-        <ResetHeader />
-        {error && <ErrorAlert message={error} />}
-        <ResetForm
-          email={email}
-          setEmail={setEmail}
-          validateEmail={validateEmail}
-          loading={loading}
-          onSubmit={handleSubmit}
-        />
+    <section className="auth-screen">
+      <div className="auth-grid">
+        <div className="auth-visual">
+          <div>
+            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+              <FaEnvelopeOpenText />
+            </div>
+            <p className="text-sm font-semibold uppercase text-cyan-200">
+              Recuperación de acceso
+            </p>
+            <h1 className="mt-3 max-w-lg text-4xl font-black leading-tight text-white">
+              Recupera tu contraseña sin perder el ritmo del trabajo.
+            </h1>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-slate-400">
+              Te enviaremos un enlace seguro al correo asociado a tu cuenta para
+              que puedas crear una nueva contraseña.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-3">
+            <div className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.04] p-4">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+                <FaShieldAlt />
+              </div>
+              <div>
+                <p className="font-semibold text-white">Enlace seguro</p>
+                <p className="mt-1 text-sm leading-5 text-slate-400">
+                  El cambio se confirma desde tu correo registrado.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.04] p-4">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+                <FaLock />
+              </div>
+              <div>
+                <p className="font-semibold text-white">Cuenta protegida</p>
+                <p className="mt-1 text-sm leading-5 text-slate-400">
+                  Si no solicitaste el cambio, ignora el correo recibido.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="auth-card">
+          <ResetHeader />
+          {error && <ErrorAlert message={error} />}
+          <ResetForm
+            email={email}
+            setEmail={setEmail}
+            validateEmail={validateEmail}
+            loading={loading}
+            onSubmit={handleSubmit}
+          />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

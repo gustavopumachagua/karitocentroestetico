@@ -73,7 +73,7 @@ export default function GraficoServiciosRentables({ rol, data, colores }) {
         </ResponsiveContainer>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-gray-400 text-xs uppercase tracking-wide">
+          <span className="text-gray-400 text-xs uppercase">
             Total
           </span>
           <span className="text-yellow-400 text-lg sm:text-xl font-semibold">

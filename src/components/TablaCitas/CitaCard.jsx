@@ -2,6 +2,7 @@ import { EstadoBadge } from "./EstadoBadge";
 import { AccionButtons } from "./AccionButtons";
 import FechaCita from "./FechaCita";
 import DetalleCita from "./DetalleCita";
+import { FaUserMd } from "react-icons/fa";
 
 export function CitaCard({
   cita,
@@ -12,21 +13,22 @@ export function CitaCard({
 }) {
   return (
     <div
-      className="bg-gradient-to-br from-gray-800 via-gray-850 to-gray-900
-                 rounded-2xl border border-gray-700 shadow-lg hover:shadow-indigo-500/20
+      className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950
+                 rounded-lg border border-white/10 shadow-lg hover:border-cyan-300/30 hover:shadow-cyan-950/30
                  transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.01]
                  p-5 cursor-pointer"
       onClick={() => onSeleccionarCita && onSeleccionarCita(cita)}
     >
       <div className="flex justify-between items-start mb-4">
         <div className="space-y-1">
-          <h3 className="text-xl font-bold text-white tracking-wide">
+          <h3 className="text-xl font-bold text-white">
             {typeof cita.cliente === "object"
               ? cita.cliente?.nombre
               : cita.cliente}
           </h3>
-          <p className="text-sm text-gray-400 flex items-center gap-1">
-            👩‍⚕️ {cita.profesional?.nombre || "Sin asignar"}
+          <p className="flex items-center gap-2 text-sm text-slate-400">
+            <FaUserMd className="text-cyan-300" />
+            {cita.profesional?.nombre || "Sin asignar"}
           </p>
         </div>
         <EstadoBadge estado={cita.estado} />

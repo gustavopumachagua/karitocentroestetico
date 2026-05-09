@@ -90,8 +90,8 @@ export default function GestionClientes() {
   const totalPaginas = Math.ceil(clientes.length / clientesPorPagina);
 
   return (
-    <section className="p-6 sm:p-10 bg-gray-900 min-h-screen text-gray-100">
-      <div className="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 p-6 sm:p-8">
+    <section className="page-section">
+      <div className="page-stack">
         {!clienteSeleccionado ? (
           <>
             <BuscadorClientes

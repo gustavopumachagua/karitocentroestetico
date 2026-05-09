@@ -69,29 +69,30 @@ export default function Perfil({ user, setUser }) {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
-      <div className="w-full max-w-3xl p-8 space-y-6 bg-gray-900 rounded-xl shadow-lg border border-gray-700">
-        <h1 className="text-3xl font-bold text-gray-100 text-center">
-          Editar perfil
-        </h1>
-        <p className="text-gray-400 text-sm text-center">
-          Aquí puedes actualizar tu nombre, foto, email y otros datos
-          personales.
-        </p>
+    <section className="page-section">
+      <div className="page-stack page-stack-narrow">
+        <div className="page-panel page-panel-pad space-y-6">
+          <div className="text-center">
+            <h1 className="section-title text-3xl">Editar perfil</h1>
+            <p className="section-muted mt-2 text-sm">
+              Actualiza tu nombre, foto y datos visibles dentro del sistema.
+            </p>
+          </div>
 
-        <div className="flex flex-col items-center">
-          <AvatarUploader avatar={avatar} setAvatar={setAvatar} />
-          <p className="mt-3 text-lg font-semibold text-white">{nombre}</p>
-          <p className="text-sm text-gray-400">{user?.rol || "Rol"}</p>
+          <div className="flex flex-col items-center">
+            <AvatarUploader avatar={avatar} setAvatar={setAvatar} />
+            <p className="mt-3 text-lg font-semibold text-white">{nombre}</p>
+            <p className="text-sm text-gray-400">{user?.rol || "Rol"}</p>
+          </div>
+
+          <ProfileForm
+            nombre={nombre}
+            setNombre={setNombre}
+            onSave={handleSave}
+            onCancel={handleCancel}
+            isSaving={isSaving}
+          />
         </div>
-
-        <ProfileForm
-          nombre={nombre}
-          setNombre={setNombre}
-          onSave={handleSave}
-          onCancel={handleCancel}
-          isSaving={isSaving}
-        />
       </div>
 
       <ConfirmationModal
@@ -100,6 +101,6 @@ export default function Perfil({ user, setUser }) {
         type={modal.type}
         onClose={() => setModal({ show: false, message: "", type: "info" })}
       />
-    </div>
+    </section>
   );
 }

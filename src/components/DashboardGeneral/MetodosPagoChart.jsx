@@ -18,7 +18,7 @@ export default function MetodosPagoChart({ data }) {
           <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
             <FaCreditCard className="text-amber-400 text-xl" />
           </div>
-          <h3 className="text-lg sm:text-xl font-semibold text-white tracking-wide">
+          <h3 className="text-lg sm:text-xl font-semibold text-white">
             Métodos de Pago Más Usados
           </h3>
         </div>

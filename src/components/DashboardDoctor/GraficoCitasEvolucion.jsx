@@ -19,7 +19,7 @@ const CustomTooltip = ({ active, payload, label }) => {
           bg-gray-900/80 backdrop-blur-md border border-indigo-500/30
           p-4 rounded-2xl shadow-2xl min-w-[160px] transition-all"
       >
-        <p className="font-semibold text-indigo-300 mb-3 text-sm tracking-wide">
+        <p className="font-semibold text-indigo-300 mb-3 text-sm">
           {label.toUpperCase()}
         </p>
 

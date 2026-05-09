@@ -85,7 +85,7 @@ export default function HistorialPacientes() {
       );
     };
 
-    const handleTratamientoActualizado = (data) => {
+    const handleTratamientoActualizado = () => {
       obtenerTratamientos();
     };
 
@@ -130,8 +130,8 @@ export default function HistorialPacientes() {
   }
 
   return (
-    <section className="p-6 sm:p-10 bg-gray-900 min-h-screen text-gray-100">
-      <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-6 sm:p-8 max-w-6xl mx-auto">
+    <section className="page-section">
+      <div className="page-stack">
         <BuscadorPacientes
           busqueda={busqueda}
           setBusqueda={setBusqueda}

@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 px-6 lg:px-20 py-8 ">
-      <div className="border-t border-gray-700 mt-10 pt-6 text-center text-sm text-gray-500">
+    <footer className="border-t border-white/10 bg-slate-950/85 px-6 py-6 text-slate-400 lg:px-20">
+      <div className="mx-auto max-w-7xl text-center text-sm">
         © {new Date().getFullYear()} Karito Centro Estético. Todos los derechos
         reservados.
       </div>

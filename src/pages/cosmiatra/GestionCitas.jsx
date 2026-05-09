@@ -280,8 +280,8 @@ export default function GestionCitas() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <section className="p-4 sm:p-8 bg-gray-900 min-h-screen text-gray-100">
-      <div className="bg-gray-800 rounded-2xl border border-gray-700 shadow-xl p-4 sm:p-8 space-y-8">
+    <section className="page-section">
+      <div className="page-stack">
         <CitaForm
           usuarios={usuarios}
           onRegistrarCita={registrarCita}

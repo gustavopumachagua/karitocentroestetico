@@ -12,7 +12,7 @@ const CustomTooltip = ({ active, payload }) => {
     const item = payload[0];
     return (
       <div className="bg-gray-900/95 backdrop-blur-md border border-indigo-500/30 p-3 rounded-xl shadow-lg text-gray-200 min-w-[140px] animate-fade-in">
-        <p className="text-sm font-semibold text-indigo-400 mb-1 tracking-wide">
+        <p className="text-sm font-semibold text-indigo-400 mb-1">
           {item.name}
         </p>
         <p className="text-gray-300 text-sm">
@@ -42,7 +42,7 @@ export default function PieChartCard({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div className="flex items-center justify-center sm:justify-start gap-2">
           {Icon && <Icon className="text-indigo-400 text-2xl" />}
-          <h3 className="text-lg md:text-xl font-semibold text-white tracking-wide">
+          <h3 className="text-lg md:text-xl font-semibold text-white">
             {title}
           </h3>
         </div>

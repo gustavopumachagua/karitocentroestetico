@@ -155,11 +155,11 @@ export default function ReportesServiciosIngresos() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNuevoPago = (nuevoPago) => {
+    const handleNuevoPago = () => {
       obtenerPagos();
     };
 
-    const handleTratamientoActualizado = (data) => {
+    const handleTratamientoActualizado = () => {
       obtenerTratamientos();
     };
 
@@ -181,8 +181,8 @@ export default function ReportesServiciosIngresos() {
   }
 
   return (
-    <section className="p-4 sm:p-8 bg-gray-900 min-h-screen text-gray-100">
-      <div className="max-w-6xl mx-auto bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-4 sm:p-8 space-y-8">
+    <section className="page-section">
+      <div className="page-stack">
         <BuscadorClientes
           busqueda={busqueda}
           setBusqueda={setBusqueda}

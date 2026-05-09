@@ -26,8 +26,8 @@ export default function GestionUsuarios() {
   } = useUsuarios();
 
   return (
-    <section className="p-4 sm:p-10 bg-gray-900 min-h-screen text-gray-100">
-      <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-2 sm:p-8">
+    <section className="page-section">
+      <div className="page-stack">
         <FormularioSection
           busqueda={busqueda}
           setBusqueda={setBusqueda}

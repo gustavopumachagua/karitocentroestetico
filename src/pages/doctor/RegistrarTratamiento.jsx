@@ -10,9 +10,7 @@ import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import { getInventario, descontarInsumos } from "../../api/inventario.api";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
-import { io } from "socket.io-client";
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+import { FaListUl } from "react-icons/fa";
 
 export default function RegistrarTratamiento() {
   const { citas, citaSeleccionada, setCitaSeleccionada } = useCitas();
@@ -185,7 +183,7 @@ export default function RegistrarTratamiento() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleUpdate = (data) => {
+    const handleUpdate = () => {
       obtenerTratamientos();
       setModal({
         show: true,
@@ -316,8 +314,9 @@ export default function RegistrarTratamiento() {
   };
 
   return (
-    <section className="p-6 sm:p-8 bg-gray-900 min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-3xl bg-gray-800 p-6 sm:p-10 rounded-2xl shadow-xl border border-gray-700">
+    <section className="page-section">
+      <div className="page-stack page-stack-narrow">
+        <div className="page-panel page-panel-pad">
         <form className="space-y-6" onSubmit={handleGuardar}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <InputField
@@ -375,21 +374,8 @@ export default function RegistrarTratamiento() {
           />
 
           <div className="bg-gray-700/40 p-5 rounded-xl border border-gray-600 shadow-inner">
-            <label className="block text-gray-200 mb-4 font-semibold text-lg flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 text-indigo-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 7h18M3 12h18M3 17h18"
-                />
-              </svg>
+            <label className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-200">
+              <FaListUl className="text-cyan-300" />
               Insumos utilizados
             </label>
 
@@ -479,6 +465,7 @@ export default function RegistrarTratamiento() {
             disabled={formBloqueado}
           />
         </form>
+        </div>
       </div>
 
       <ConfirmationModal

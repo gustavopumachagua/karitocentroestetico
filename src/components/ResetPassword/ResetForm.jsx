@@ -1,4 +1,4 @@
-import { FaEnvelope } from "react-icons/fa";
+import { FaArrowRight, FaEnvelope, FaPaperPlane } from "react-icons/fa";
 
 export default function ResetForm({
   email,
@@ -14,21 +14,22 @@ export default function ResetForm({
     <form onSubmit={onSubmit} className="space-y-5">
       <div className="relative">
         <FaEnvelope
-          className={`absolute top-3.5 left-3 transition ${
-            isEmailInvalid ? "text-red-500" : "text-gray-500"
+          className={`absolute left-3 top-3.5 transition ${
+            isEmailInvalid ? "text-red-300" : "text-slate-500"
           }`}
         />
         <input
-          type="text"
+          type="email"
           name="email"
+          autoComplete="email"
           placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className={`w-full pl-10 pr-3 py-2.5 bg-gray-800 text-gray-100 border rounded-lg outline-none transition
+          className={`w-full rounded-lg border bg-slate-950/50 py-3 pl-10 pr-3 text-slate-100 outline-none transition placeholder:text-slate-500
             ${
               isEmailInvalid
-                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                : "border-gray-700 focus:ring-indigo-500 focus:border-indigo-500"
+                ? "border-red-400/70 focus:border-red-300 focus:ring-2 focus:ring-red-400/30"
+                : "border-white/10 focus:border-cyan-300/70 focus:ring-2 focus:ring-cyan-300/20"
             }`}
         />
       </div>
@@ -36,14 +37,18 @@ export default function ResetForm({
       <button
         type="submit"
         disabled={!isFormValid || loading}
-        className={`w-full py-2.5 font-semibold text-white rounded-lg shadow-md transition active:scale-95
+        className={`group flex w-full items-center justify-center gap-2 rounded-lg py-3 font-bold shadow-lg transition active:scale-[0.99]
           ${
             !isFormValid || loading
-              ? "bg-gray-600 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
+              ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+              : "bg-cyan-400 text-slate-950 shadow-cyan-950/30 hover:bg-cyan-300"
           }`}
       >
-        {loading ? "Enviando..." : "Enviar"}
+        <FaPaperPlane />
+        {loading ? "Enviando..." : "Enviar enlace"}
+        {!loading && (
+          <FaArrowRight className="text-xs transition-transform group-enabled:group-hover:translate-x-1" />
+        )}
       </button>
     </form>
   );

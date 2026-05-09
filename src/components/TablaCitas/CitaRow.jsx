@@ -12,23 +12,23 @@ export function CitaRow({
   return (
     <tr
       key={cita.id}
-      className="hover:bg-gray-800 transition cursor-pointer"
+      className="cursor-pointer transition hover:bg-white/[0.04]"
       onClick={() => onSeleccionarCita && onSeleccionarCita(cita)}
     >
-      <td className="p-3 border border-gray-600">
+      <td className="p-3 text-slate-100">
         {typeof cita.cliente === "object" ? cita.cliente?.nombre : cita.cliente}
       </td>
-      <td className="p-3 border border-gray-600">{cita.rol}</td>
-      <td className="p-3 border border-gray-600">
+      <td className="p-3 text-slate-300">{cita.rol}</td>
+      <td className="p-3 text-slate-300">
         {cita.profesional?.nombre || "Sin asignar"}
       </td>
-      <td className="p-3 border border-gray-600">
+      <td className="p-3">
         {Array.isArray(cita.servicio) && cita.servicio.length > 0 ? (
           <div className="flex flex-wrap gap-1">
             {cita.servicio.map((serv, idx) => (
               <span
                 key={idx}
-                className="bg-indigo-600 text-white px-2 py-1 rounded-full text-xs"
+                className="rounded-full bg-cyan-300/12 px-2 py-1 text-xs font-medium text-cyan-100"
               >
                 {serv}
               </span>
@@ -39,14 +39,14 @@ export function CitaRow({
         )}
       </td>
 
-      <td className="p-3 border border-gray-600">
+      <td className="p-3 text-slate-300">
         <FechaCita fecha={cita.fecha} />
       </td>
-      <td className="p-3 border border-gray-600">
+      <td className="p-3">
         <EstadoBadge estado={cita.estado} />
       </td>
       {showAcciones && (
-        <td className="p-3 border border-gray-600">
+        <td className="p-3">
           <AccionButtons
             id={cita._id || cita.id}
             cita={cita}

@@ -1,6 +1,7 @@
 import TextInput from "./TextInput";
 import PasswordInput from "./PasswordInput";
 import { Link } from "react-router-dom";
+import { FaArrowRight, FaExclamationCircle, FaSignInAlt } from "react-icons/fa";
 
 const LoginForm = ({
   form,
@@ -17,7 +18,8 @@ const LoginForm = ({
   return (
     <>
       {errors.general && (
-        <div className="p-3 text-sm text-red-400 bg-red-900/40 border border-red-500/40 rounded-lg text-center animate-fadeIn">
+        <div className="flex items-center justify-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 p-3 text-center text-sm text-red-200 animate-fade-in">
+          <FaExclamationCircle />
           {errors.general}
         </div>
       )}
@@ -41,21 +43,23 @@ const LoginForm = ({
         <button
           type="submit"
           disabled={!isFormValid}
-          className={`w-full py-2.5 font-semibold text-white rounded-lg shadow-md transition active:scale-95
+          className={`group flex w-full items-center justify-center gap-2 rounded-lg py-3 font-bold shadow-lg transition active:scale-[0.99]
             ${
               isFormValid
-                ? "bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
-                : "bg-gray-600 cursor-not-allowed"
+                ? "bg-cyan-400 text-slate-950 shadow-cyan-950/30 hover:bg-cyan-300"
+                : "bg-slate-700 text-slate-400 cursor-not-allowed"
             }`}
         >
+          <FaSignInAlt />
           Ingresar
+          <FaArrowRight className="text-xs transition-transform group-enabled:group-hover:translate-x-1" />
         </button>
       </form>
 
-      <div className="text-sm text-center text-gray-400">
+      <div className="text-center text-sm text-slate-400">
         <Link
           to="/reset-password"
-          className="font-medium text-indigo-400 hover:text-indigo-300 hover:underline cursor-pointer transition"
+          className="font-medium text-cyan-200 transition hover:text-cyan-100 hover:underline"
         >
           ¿Has olvidado tu contraseña?
         </Link>

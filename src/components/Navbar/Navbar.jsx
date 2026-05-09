@@ -12,16 +12,16 @@ export default function Navbar() {
     location.pathname === "/new-password";
 
   return (
-    <header className="sticky top-0 z-50 bg-gray-900 shadow-md">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 shadow-2xl shadow-black/20 backdrop-blur-xl">
       <div
-        className={`max-w-7xl mx-auto flex px-6 lg:px-20 py-4 transition-all
+        className={`mx-auto flex max-w-7xl px-5 py-3 transition-all sm:px-6 lg:px-20
           ${
             isAuthPage
               ? "justify-center"
               : "flex-col md:flex-row md:justify-between md:items-center"
           }`}
       >
-        <div className="cursor-default">
+        <div>
           <Logo />
         </div>
 

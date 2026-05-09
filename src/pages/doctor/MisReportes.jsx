@@ -27,15 +27,15 @@ export default function MisReportes() {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("nuevaCita", (nuevaCita) => {
+    socket.on("nuevaCita", () => {
       obtenerCitas();
     });
 
-    socket.on("estadoCitaActualizado", (citaActualizada) => {
+    socket.on("estadoCitaActualizado", () => {
       obtenerCitas();
     });
 
-    socket.on("tratamientoActualizado", (data) => {
+    socket.on("tratamientoActualizado", () => {
       obtenerTratamientos();
     });
 
@@ -111,8 +111,6 @@ export default function MisReportes() {
 
     setCitasEvolucion(dataEvo);
 
-    const idsCitasAtendidas = new Set(citasAtendidas.map((c) => c._id));
-
     const tratamientosFiltrados = tratamientos.filter(
       (t) =>
         t.rol?.toLowerCase() === rol &&
@@ -177,19 +175,24 @@ export default function MisReportes() {
   }, [filtroAnio, filtroMes, citas, tratamientos]);
 
   return (
-    <section className="p-6 sm:p-10 bg-gray-900 min-h-screen text-gray-100">
-      <FiltrosReportes
-        filtroAnio={filtroAnio}
-        setFiltroAnio={setFiltroAnio}
-        filtroMes={filtroMes}
-        setFiltroMes={setFiltroMes}
-      />
+    <section className="page-section">
+      <div className="page-stack">
+        <FiltrosReportes
+          filtroAnio={filtroAnio}
+          setFiltroAnio={setFiltroAnio}
+          filtroMes={filtroMes}
+          setFiltroMes={setFiltroMes}
+        />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <GraficoCitasEvolucion data={citasEvolucion} anio={filtroAnio} />
-        <GraficoTratamientos data={tratamientosDistribucion} colors={COLORS} />
-        <GraficoCitasPorEstado data={citasPorEstado} />
-        <GraficoInsumos data={insumosMasUsados} />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <GraficoCitasEvolucion data={citasEvolucion} anio={filtroAnio} />
+          <GraficoTratamientos
+            data={tratamientosDistribucion}
+            colors={COLORS}
+          />
+          <GraficoCitasPorEstado data={citasPorEstado} />
+          <GraficoInsumos data={insumosMasUsados} />
+        </div>
       </div>
     </section>
   );

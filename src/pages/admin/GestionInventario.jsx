@@ -224,8 +224,8 @@ export default function GestionInventario() {
   );
 
   return (
-    <section className="p-6 sm:p-10 bg-gray-900 text-gray-100 min-h-screen">
-      <div className="max-w-6xl mx-auto bg-gray-800 rounded-2xl p-6 border border-gray-700 shadow-xl">
+    <section className="page-section">
+      <div className="page-stack">
         <InventarioHeader
           roles={roles}
           rolSeleccionado={rolSeleccionado}

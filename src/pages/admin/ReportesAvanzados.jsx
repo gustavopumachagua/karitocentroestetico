@@ -224,8 +224,8 @@ export default function ReportesAvanzados() {
   };
 
   return (
-    <section className="p-6 sm:p-10 bg-gray-900 min-h-screen text-gray-100">
-      <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-6 sm:p-8 space-y-10">
+    <section className="page-section">
+      <div className="page-stack">
         <FiltrosReportes
           filtroAnio={filtroAnio}
           setFiltroAnio={setFiltroAnio}
@@ -233,7 +233,7 @@ export default function ReportesAvanzados() {
           setFiltroMes={setFiltroMes}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <GraficoCitasPorRol
             rol="doctor"
             data={citasPorRol.doctor}
@@ -257,7 +257,7 @@ export default function ReportesAvanzados() {
           anio={filtroAnio}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <GraficoServiciosRentables
             rol="doctor"
             data={serviciosRentables.doctor}

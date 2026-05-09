@@ -42,7 +42,7 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes }) {
           <div className="bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/20">
             <FaChartBar className="text-emerald-400 text-xl" />
           </div>
-          <h3 className="text-xl font-semibold text-white tracking-wide">
+          <h3 className="text-xl font-semibold text-white">
             Ingresos por Servicios Mensuales
           </h3>
         </div>

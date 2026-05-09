@@ -4,21 +4,22 @@ const TextInput = ({ name, value, onChange, placeholder, isInvalid }) => {
   return (
     <div className="relative">
       <FaEnvelope
-        className={`absolute top-3.5 left-3 transition ${
-          isInvalid ? "text-red-500" : "text-gray-500"
+        className={`absolute left-3 top-3.5 transition ${
+          isInvalid ? "text-red-300" : "text-slate-500"
         }`}
       />
       <input
-        type="text"
+        type="email"
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full pl-10 pr-3 py-2.5 bg-gray-800 text-gray-100 border rounded-lg outline-none transition
+        autoComplete="email"
+        className={`w-full rounded-lg border bg-slate-950/50 py-3 pl-10 pr-3 text-slate-100 outline-none transition placeholder:text-slate-500
           ${
             isInvalid
-              ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-              : "border-gray-700 focus:ring-indigo-500 focus:border-indigo-500"
+              ? "border-red-400/70 focus:border-red-300 focus:ring-2 focus:ring-red-400/30"
+              : "border-white/10 focus:border-cyan-300/70 focus:ring-2 focus:ring-cyan-300/20"
           }`}
       />
     </div>

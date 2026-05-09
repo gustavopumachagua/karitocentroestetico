@@ -8,7 +8,7 @@ import FiltrosInventario from "../../components/DashboardGeneral/FiltrosInventar
 import FiltrosReportes from "../../components/DashboardDoctor/FiltrosReportes";
 
 export default function DashboardGeneral() {
-  const { obtenerCitas, obtenerPagos, obtenerInventario, socket } = useCitas();
+  const { obtenerPagos, obtenerInventario, socket } = useCitas();
   const [todasLasCitas, setTodasLasCitas] = useState([]);
   const [todosLosPagos, setTodosLosPagos] = useState([]);
   const [stockInventario, setStockInventario] = useState([]);
@@ -152,16 +152,16 @@ export default function DashboardGeneral() {
   };
 
   return (
-    <section className="p-6 sm:p-10 bg-gray-900 min-h-screen text-gray-100">
-      <FiltrosReportes
-        filtroAnio={filtroAnio}
-        setFiltroAnio={setFiltroAnio}
-        filtroMes={filtroMes}
-        setFiltroMes={setFiltroMes}
-      />
+    <section className="page-section">
+      <div className="page-stack">
+        <FiltrosReportes
+          filtroAnio={filtroAnio}
+          setFiltroAnio={setFiltroAnio}
+          filtroMes={filtroMes}
+          setFiltroMes={setFiltroMes}
+        />
 
-      <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-6 sm:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <ResumenCitas data={resumenCitas} />
           <IngresosMensuales
             data={ingresosFacturacion}
@@ -169,7 +169,7 @@ export default function DashboardGeneral() {
             filtroMes={filtroMes}
           />
 
-          <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 gap-6 lg:col-span-2 lg:grid-cols-2">
             <MetodosPagoChart data={metodosPago} />
 
             <div className="flex flex-col gap-6">

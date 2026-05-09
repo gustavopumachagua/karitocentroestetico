@@ -30,22 +30,22 @@ export default function CitaTable({
 
   return (
     <>
-      <div className="hidden lg:block overflow-x-auto rounded-xl shadow-lg">
-        <table className="w-full text-left border border-gray-700 bg-gray-900 rounded-xl overflow-hidden">
-          <thead className="bg-gray-700 text-white">
+      <div className="page-panel hidden overflow-x-auto lg:block">
+        <table className="w-full min-w-[920px] text-left">
+          <thead className="bg-white/[0.06] text-white">
             <tr>
-              <th className="p-3 border border-gray-600">Cliente</th>
-              <th className="p-3 border border-gray-600">Rol</th>
-              <th className="p-3 border border-gray-600">Profesional</th>
-              <th className="p-3 border border-gray-600">Servicio</th>
-              <th className="p-3 border border-gray-600">Fecha</th>
-              <th className="p-3 border border-gray-600">Estado</th>
+              <th className="p-3">Cliente</th>
+              <th className="p-3">Rol</th>
+              <th className="p-3">Profesional</th>
+              <th className="p-3">Servicio</th>
+              <th className="p-3">Fecha</th>
+              <th className="p-3">Estado</th>
               {showAcciones && (
-                <th className="p-3 border border-gray-600">Acciones</th>
+                <th className="p-3">Acciones</th>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700">
+          <tbody className="divide-y divide-white/10">
             {citasPaginadas.map((cita) => (
               <CitaRow
                 key={cita._id || cita.id}
@@ -72,7 +72,7 @@ export default function CitaTable({
       </div>
 
       {citasOrdenadas.length === 0 && (
-        <div className="text-center py-12">
+        <div className="page-panel py-12 text-center">
           <p className="text-gray-400 text-lg">No hay citas registradas</p>
         </div>
       )}

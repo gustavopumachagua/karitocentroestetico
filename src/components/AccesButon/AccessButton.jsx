@@ -1,14 +1,15 @@
-import { FaSignInAlt } from "react-icons/fa";
+import { FaArrowRight, FaSignInAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export default function AccessButton() {
   return (
     <Link
       to="/login"
-      className="inline-flex items-center bg-indigo-600 text-white px-5 py-2 rounded-lg font-medium text-sm md:text-base shadow hover:bg-indigo-700 transition"
+      className="group inline-flex items-center justify-center gap-2 rounded-lg border border-cyan-300/30 bg-cyan-400 px-5 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-950/30 transition hover:bg-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950 md:text-base"
     >
-      <FaSignInAlt className="mr-2" />
+      <FaSignInAlt className="text-base" />
       Acceder
+      <FaArrowRight className="text-xs transition-transform group-hover:translate-x-1" />
     </Link>
   );
 }

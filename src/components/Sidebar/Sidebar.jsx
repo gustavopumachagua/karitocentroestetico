@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import LogoutButton from "../LogoutButton/LogoutButton";
+import {
+  FaChevronDown,
+  FaChevronRight,
+  FaSpa,
+  FaUserCircle,
+} from "react-icons/fa";
 
 export default function Sidebar({
   active,
@@ -50,7 +56,7 @@ export default function Sidebar({
         });
       }
     });
-  }, [location.pathname]);
+  }, [basePath, location.pathname, menuItems, setActive]);
 
   const handleClick = (item) => {
     if (item.subItems) {
@@ -74,60 +80,95 @@ export default function Sidebar({
     <aside
       className={`fixed md:static inset-y-0 left-0 z-30 transform ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } w-75 bg-gradient-to-b from-indigo-950 to-slate-900 text-gray-100 shadow-xl
-      transition-transform duration-300 md:translate-x-0 flex flex-col justify-between`}
+      } flex w-80 max-w-[88vw] flex-col justify-between border-r border-white/10 bg-slate-950/95 text-slate-100 shadow-2xl shadow-black/40 backdrop-blur-xl
+      transition-transform duration-300 md:translate-x-0`}
     >
-      <div className="p-6">
-        <h2 className="text-2xl font-bold mb-8 text-indigo-400">
-          {user?.rol || "Usuario"}
-        </h2>
-
-        <nav className="flex flex-col gap-1">
-          {menuItems.map((item) => (
-            <div key={item.key}>
-              <button
-                onClick={() => handleClick(item)}
-                className={`flex items-center justify-between w-full px-4 py-2 rounded-lg transition text-sm font-medium cursor-pointer ${
-                  active === item.key
-                    ? "bg-indigo-600 text-white font-semibold shadow"
-                    : "hover:bg-indigo-700/40 text-gray-300"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-lg flex-shrink-0">{item.icon}</span>
-                  <span className="truncate">{item.name}</span>
-                </div>
-                {item.subItems && (
-                  <span className="ml-auto text-xs">
-                    {openSubmenu === item.key ? "▲" : "▼"}
-                  </span>
-                )}
-              </button>
-
-              {item.subItems && openSubmenu === item.key && (
-                <ul className="ml-10 mt-1 flex flex-col gap-1">
-                  {item.subItems.map((sub) => (
-                    <li key={sub.key}>
-                      <button
-                        onClick={() => handleSubClick(sub)}
-                        className={`block w-full text-left px-3 py-1.5 rounded-md text-sm transition cursor-pointer ${
-                          active === sub.key
-                            ? "bg-indigo-500 text-white shadow"
-                            : "hover:bg-indigo-700/40 text-gray-300"
-                        }`}
-                      >
-                        {sub.name}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+      <div className="p-4 sm:p-5">
+        <div className="mb-7 rounded-lg border border-white/10 bg-white/[0.04] p-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+              <FaSpa />
+            </span>
+            <div>
+              <p className="text-sm font-semibold uppercase text-cyan-200">
+                Karito
+              </p>
+              <h2 className="text-lg font-bold text-white">
+                {user?.rol || "Usuario"}
+              </h2>
             </div>
-          ))}
+          </div>
+        </div>
+
+        <nav className="flex flex-col gap-1.5">
+          {menuItems.map((item) => {
+            const isExpanded = openSubmenu === item.key;
+            const isActive =
+              active === item.key ||
+              item.subItems?.some((sub) => sub.key === active);
+
+            return (
+              <div key={item.key}>
+                <button
+                  onClick={() => handleClick(item)}
+                  aria-expanded={item.subItems ? isExpanded : undefined}
+                  className={`flex min-w-0 w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                    isActive
+                      ? "border border-cyan-300/30 bg-cyan-300/12 text-white shadow-lg shadow-cyan-950/20"
+                      : "border border-transparent text-slate-300 hover:border-white/10 hover:bg-white/[0.06] hover:text-white"
+                  }`}
+                >
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <span
+                      className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${
+                        isActive
+                          ? "bg-cyan-300 text-slate-950"
+                          : "bg-slate-800 text-slate-300"
+                      }`}
+                    >
+                      {item.icon}
+                    </span>
+                    <span className="min-w-0 flex-1 break-words text-left leading-snug">
+                      {item.name}
+                    </span>
+                  </div>
+                  {item.subItems && (
+                    <span className="ml-auto text-xs text-slate-400">
+                      {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
+                    </span>
+                  )}
+                </button>
+
+                {item.subItems && isExpanded && (
+                  <ul className="ml-12 mt-1.5 flex flex-col gap-1 border-l border-white/10 pl-3">
+                    {item.subItems.map((sub) => (
+                      <li key={sub.key}>
+                        <button
+                          onClick={() => handleSubClick(sub)}
+                          className={`flex min-w-0 w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition ${
+                            active === sub.key
+                              ? "bg-cyan-300/12 text-cyan-100"
+                              : "text-slate-400 hover:bg-white/[0.06] hover:text-white"
+                          }`}
+                        >
+                          {sub.icon && (
+                            <span className="text-xs">{sub.icon}</span>
+                          )}
+                          <span className="min-w-0 flex-1 break-words leading-snug">
+                            {sub.name}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            );
+          })}
         </nav>
       </div>
 
-      <div className="p-6 border-t border-indigo-800/40">
+      <div className="border-t border-white/10 p-4 sm:p-5">
         <div className="flex items-center gap-3 mb-4">
           <img
             src={
@@ -135,13 +176,16 @@ export default function Sidebar({
               "https://res.cloudinary.com/db8tsilie/image/upload/v1759552820/avatar_ilbvur.jpg"
             }
             alt="Perfil"
-            className="w-10 h-10 rounded-full border-2 border-indigo-500 shadow"
+            className="h-11 w-11 rounded-full border border-cyan-300/40 object-cover shadow"
           />
-          <div>
-            <p className="font-semibold text-white">
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-white">
               {user?.nombre || "Usuario"}
             </p>
-            <p className="text-sm text-gray-400">{user?.rol || "Rol"}</p>
+            <p className="flex items-center gap-1.5 text-sm text-slate-400">
+              <FaUserCircle className="text-cyan-300/80" />
+              {user?.rol || "Rol"}
+            </p>
           </div>
         </div>
         <LogoutButton />

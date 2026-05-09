@@ -51,7 +51,7 @@ export default function AdminLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100">
+    <div className="app-shell flex h-screen text-slate-100">
       <Sidebar
         active={active}
         setActive={setActive}
@@ -68,7 +68,7 @@ export default function AdminLayout() {
         />
       )}
 
-      <main className="flex-1 p-6 md:p-10 overflow-y-auto w-full">
+      <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden w-full p-4 sm:p-6 lg:p-8">
         <Topbar
           active={active}
           sidebarOpen={sidebarOpen}

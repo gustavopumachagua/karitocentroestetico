@@ -122,11 +122,16 @@ export default function CitasDoctor() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <section className="p-6 sm:p-10 bg-gray-900 min-h-screen text-gray-100">
-      <div className="bg-gray-800 rounded-2xl shadow-xl border border-gray-700 p-6 sm:p-8 space-y-8">
-        <h2 className="text-2xl font-bold text-white">
-          Citas de {nombre} ({rol})
-        </h2>
+    <section className="page-section">
+      <div className="page-stack">
+        <div className="page-panel page-panel-pad">
+          <h2 className="section-title text-2xl">
+            Citas de {nombre} ({rol})
+          </h2>
+          <p className="section-muted mt-1 text-sm">
+            Revisa tus citas asignadas y su estado actual.
+          </p>
+        </div>
 
         <CitaTable
           citas={citas}

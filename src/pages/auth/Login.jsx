@@ -1,6 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "../../components/Login/LoginForm";
+import {
+  FaCalendarCheck,
+  FaChartLine,
+  FaShieldAlt,
+  FaUserShield,
+} from "react-icons/fa";
+
+const authHighlights = [
+  {
+    icon: <FaUserShield />,
+    title: "Roles protegidos",
+    text: "Acceso separado para administración, doctor y cosmiatra.",
+  },
+  {
+    icon: <FaCalendarCheck />,
+    title: "Gestión diaria",
+    text: "Citas, tratamientos y pagos reunidos en un solo panel.",
+  },
+  {
+    icon: <FaChartLine />,
+    title: "Reportes claros",
+    text: "Indicadores para revisar operación e ingresos con rapidez.",
+  },
+];
 
 export default function Login({ onLogin }) {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -54,22 +78,70 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
-      <div className="w-full max-w-md p-8 space-y-6 bg-gray-900 rounded-xl shadow-lg border border-gray-700">
-        <h2 className="text-3xl font-bold text-center text-gray-100">
-          Acceder
-        </h2>
+    <section className="auth-screen">
+      <div className="auth-grid">
+        <div className="auth-visual">
+          <div>
+            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+              <FaShieldAlt />
+            </div>
+            <p className="text-sm font-semibold uppercase text-cyan-200">
+              Panel privado
+            </p>
+            <h1 className="mt-3 max-w-lg text-4xl font-black leading-tight text-white">
+              Control interno para el equipo de Karito Centro Estético.
+            </h1>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-slate-400">
+              Ingresa para gestionar la operación diaria con una experiencia
+              oscura, ordenada y optimizada para escritorio y móvil.
+            </p>
+          </div>
 
-        <LoginForm
-          form={form}
-          errors={errors}
-          showPassword={showPassword}
-          setShowPassword={setShowPassword}
-          onChange={handleChange}
-          onSubmit={handleSubmit}
-          validateEmail={validateEmail}
-        />
+          <div className="mt-8 grid gap-3">
+            {authHighlights.map((item) => (
+              <div
+                key={item.title}
+                className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.04] p-4"
+              >
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="font-semibold text-white">{item.title}</p>
+                  <p className="mt-1 text-sm leading-5 text-slate-400">
+                    {item.text}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="auth-card">
+          <div className="mb-7 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+              <FaShieldAlt />
+            </div>
+            <p className="text-xs font-semibold uppercase text-cyan-200">
+              Acceso seguro
+            </p>
+            <h2 className="mt-2 text-3xl font-bold text-white">Ingresar</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              Usa tus credenciales del sistema para continuar.
+            </p>
+          </div>
+
+          <LoginForm
+            form={form}
+            errors={errors}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            validateEmail={validateEmail}
+          />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

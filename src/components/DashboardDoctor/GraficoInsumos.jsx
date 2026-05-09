@@ -14,7 +14,7 @@ const CustomTooltip = ({ active, payload, label }) => {
     const item = payload[0];
     return (
       <div className="bg-gray-900/90 backdrop-blur-md border border-indigo-500/30 p-3 rounded-xl shadow-lg min-w-[140px] animate-fade-in">
-        <p className="text-sm font-semibold text-indigo-400 mb-1 tracking-wide">
+        <p className="text-sm font-semibold text-indigo-400 mb-1">
           {label}
         </p>
         <p className="text-gray-200 text-sm">
@@ -32,7 +32,7 @@ export default function GraficoInsumos({ data }) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
         <div className="flex items-center justify-center sm:justify-start gap-2">
           <FaClipboardList className="text-indigo-400 text-2xl" />
-          <h3 className="text-lg md:text-xl font-semibold text-white tracking-wide">
+          <h3 className="text-lg md:text-xl font-semibold text-white">
             Insumos más Usados
           </h3>
         </div>

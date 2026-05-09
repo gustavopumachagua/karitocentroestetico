@@ -24,9 +24,9 @@ export default function FiltrosReportes({
   };
 
   return (
-    <div className="bg-gray-800/60 border border-gray-700 rounded-2xl p-5 sm:p-6 mb-8 shadow-md max-w-4xl mx-auto">
+    <div className="page-panel page-panel-pad mx-auto w-full max-w-4xl">
       <div className="flex items-center justify-center gap-2 mb-4">
-        <FaFilter className="text-indigo-400 text-lg" />
+        <FaFilter className="text-cyan-300 text-lg" />
         <h3 className="text-lg sm:text-xl font-semibold text-white">
           Filtros de Reporte
         </h3>
@@ -44,12 +44,12 @@ export default function FiltrosReportes({
             showMonthYearPicker
             locale="es"
             placeholderText="Seleccionar una fecha"
-            className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm sm:text-base w-full placeholder-gray-400"
+            className="w-full rounded-lg border border-white/10 bg-slate-950/50 px-3 py-2 text-sm text-gray-200 outline-none placeholder-gray-500 focus:border-cyan-300/70 focus:ring-2 focus:ring-cyan-300/20 sm:text-base"
           />
         </div>
         <button
           onClick={handleClear}
-          className="bg-indigo-600 hover:bg-indigo-700 transition text-white font-medium rounded-lg px-4 py-2 mt-5 sm:mt-0 cursor-pointer"
+          className="mt-5 rounded-lg bg-cyan-400 px-4 py-2 font-semibold text-slate-950 transition hover:bg-cyan-300 sm:mt-0"
         >
           Limpiar Filtros
         </button>

@@ -7,7 +7,7 @@ export default function ResumenCitas({ data }) {
         <div className="bg-indigo-500/10 p-2 rounded-lg border border-indigo-500/20">
           <FaClipboardList className="text-indigo-400 text-xl" />
         </div>
-        <h3 className="text-xl font-semibold text-white tracking-wide">
+        <h3 className="text-xl font-semibold text-white">
           Resumen de Citas Total
         </h3>
       </div>

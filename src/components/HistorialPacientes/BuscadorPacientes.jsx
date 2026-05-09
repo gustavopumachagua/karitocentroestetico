@@ -19,7 +19,7 @@ export default function BuscadorPacientes({
           setBusqueda(e.target.value);
           setMostrandoSugerencias(true);
         }}
-        placeholder="Buscar paciente por nombre..."
+        placeholder="Buscar paciente..."
         className="w-full pl-10 py-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
 

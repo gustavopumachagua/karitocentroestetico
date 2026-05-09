@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import { changePassword } from "../../api/auth.api";
 import ChangePasswordForm from "../../components/NewPassword/ChangePasswordForm";
+import { FaKey, FaLock, FaShieldAlt } from "react-icons/fa";
 
 const NewPassword = () => {
   const [password, setPassword] = useState("");
@@ -45,7 +46,7 @@ const NewPassword = () => {
           navigate("/login");
         }
       }, 2500);
-    } catch (error) {
+    } catch {
       setModal({
         show: true,
         message: "Error al cambiar contraseña",
@@ -55,27 +56,80 @@ const NewPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
-      <div className="w-full max-w-md p-8 space-y-6 bg-gray-900 rounded-xl shadow-lg border border-gray-700">
-        <h2 className="text-2xl font-bold text-center text-gray-100">
-          Crear nueva contraseña
-        </h2>
+    <section className="auth-screen">
+      <div className="auth-grid">
+        <div className="auth-visual">
+          <div>
+            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+              <FaKey />
+            </div>
+            <p className="text-sm font-semibold uppercase text-cyan-200">
+              Nueva credencial
+            </p>
+            <h1 className="mt-3 max-w-lg text-4xl font-black leading-tight text-white">
+              Crea una contraseña más segura para tu cuenta.
+            </h1>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-slate-400">
+              Usa una clave fácil de recordar para ti, pero difícil de adivinar
+              para cualquier otra persona.
+            </p>
+          </div>
 
-        <p className="text-sm text-gray-400 text-center">
-          Para proteger tu cuenta, escoge una contraseña de más de 6 caracteres.
-        </p>
+          <div className="mt-8 grid gap-3">
+            <div className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.04] p-4">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+                <FaLock />
+              </div>
+              <div>
+                <p className="font-semibold text-white">Mínimo recomendado</p>
+                <p className="mt-1 text-sm leading-5 text-slate-400">
+                  Utiliza al menos 6 caracteres y evita espacios.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.04] p-4">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+                <FaShieldAlt />
+              </div>
+              <div>
+                <p className="font-semibold text-white">Confirmación</p>
+                <p className="mt-1 text-sm leading-5 text-slate-400">
+                  Repite tu contraseña para evitar errores al guardarla.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <ChangePasswordForm
-          password={password}
-          confirmPassword={confirmPassword}
-          setPassword={setPassword}
-          setConfirmPassword={setConfirmPassword}
-          showPassword={showPassword}
-          setShowPassword={setShowPassword}
-          showConfirmPassword={showConfirmPassword}
-          setShowConfirmPassword={setShowConfirmPassword}
-          onSubmit={handleChangePassword}
-        />
+        <div className="auth-card">
+          <div className="mb-7 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-300/12 text-cyan-200">
+              <FaKey />
+            </div>
+            <p className="text-xs font-semibold uppercase text-cyan-200">
+              Seguridad
+            </p>
+            <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
+              Crear nueva contraseña
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              Para proteger tu cuenta, escoge una contraseña de mínimo 6
+              caracteres.
+            </p>
+          </div>
+
+          <ChangePasswordForm
+            password={password}
+            confirmPassword={confirmPassword}
+            setPassword={setPassword}
+            setConfirmPassword={setConfirmPassword}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
+            showConfirmPassword={showConfirmPassword}
+            setShowConfirmPassword={setShowConfirmPassword}
+            onSubmit={handleChangePassword}
+          />
+        </div>
       </div>
 
       <ConfirmationModal
@@ -84,7 +138,7 @@ const NewPassword = () => {
         type={modal.type}
         onClose={() => setModal({ ...modal, show: false })}
       />
-    </div>
+    </section>
   );
 };
 

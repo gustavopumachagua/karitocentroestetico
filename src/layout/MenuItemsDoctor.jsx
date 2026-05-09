@@ -1,5 +1,12 @@
-import { FaCalendarAlt, FaFileAlt, FaUserInjured, FaCog } from "react-icons/fa";
-import { MdOutlineAssignment } from "react-icons/md";
+import {
+  FaCalendarAlt,
+  FaChartLine,
+  FaCog,
+  FaKey,
+  FaNotesMedical,
+  FaUserCircle,
+  FaUserInjured,
+} from "react-icons/fa";
 
 export const MenuItemsDoctor = [
   { name: "Agenda de Citas", icon: <FaCalendarAlt />, key: "Agenda de Citas" },
@@ -10,18 +17,18 @@ export const MenuItemsDoctor = [
   },
   {
     name: "Registrar Tratamiento",
-    icon: <MdOutlineAssignment />,
+    icon: <FaNotesMedical />,
     key: "Registrar Tratamiento",
   },
-  { name: "Mis Reportes", icon: <FaFileAlt />, key: "Mis Reportes" },
+  { name: "Mis Reportes", icon: <FaChartLine />, key: "Mis Reportes" },
 
   {
     name: "Ajustes",
     icon: <FaCog />,
     key: "Ajustes",
     subItems: [
-      { name: "Perfil", key: "Perfil" },
-      { name: "Contraseña", key: "Contraseña" },
+      { name: "Perfil", key: "Perfil", icon: <FaUserCircle /> },
+      { name: "Contraseña", key: "Contraseña", icon: <FaKey /> },
     ],
   },
 ];
