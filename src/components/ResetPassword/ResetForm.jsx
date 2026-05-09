@@ -1,4 +1,4 @@
-import { FaArrowRight, FaEnvelope, FaPaperPlane } from "react-icons/fa";
+import { FaEnvelope, FaPaperPlane } from "react-icons/fa";
 
 export default function ResetForm({
   email,
@@ -46,9 +46,7 @@ export default function ResetForm({
       >
         <FaPaperPlane />
         {loading ? "Enviando..." : "Enviar enlace"}
-        {!loading && (
-          <FaArrowRight className="text-xs transition-transform group-enabled:group-hover:translate-x-1" />
-        )}
+        {!loading}
       </button>
     </form>
   );

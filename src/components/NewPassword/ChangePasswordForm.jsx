@@ -1,5 +1,5 @@
 import PasswordInput from "./PasswordInput";
-import { FaArrowRight, FaCheckCircle, FaKey } from "react-icons/fa";
+import { FaCheckCircle, FaKey } from "react-icons/fa";
 
 const ChangePasswordForm = ({
   password,
@@ -22,15 +22,14 @@ const ChangePasswordForm = ({
     Number(/[0-9]/.test(password)) +
     Number(/[^A-Za-zÁÉÍÓÚáéíóúÑñ0-9]/.test(password));
 
-  const isDisabled =
-    !isLongEnough || hasSpaces || password !== confirmPassword;
+  const isDisabled = !isLongEnough || hasSpaces || password !== confirmPassword;
 
   const strengthLabel =
     password.length === 0
       ? "Sin contraseña"
       : passwordScore >= 3
-      ? "Buena seguridad"
-      : "Seguridad básica";
+        ? "Buena seguridad"
+        : "Seguridad básica";
 
   return (
     <form
@@ -61,9 +60,7 @@ const ChangePasswordForm = ({
 
       <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
         <div className="mb-2 flex items-center justify-between gap-3 text-xs">
-          <span className="font-semibold text-slate-300">
-            {strengthLabel}
-          </span>
+          <span className="font-semibold text-slate-300">{strengthLabel}</span>
           <span className={hasSpaces ? "text-red-300" : "text-cyan-200"}>
             Sin espacios
           </span>
@@ -73,9 +70,7 @@ const ChangePasswordForm = ({
             <span
               key={item}
               className={`h-1.5 rounded-full ${
-                passwordScore > item
-                  ? "bg-cyan-300"
-                  : "bg-slate-700"
+                passwordScore > item ? "bg-cyan-300" : "bg-slate-700"
               }`}
             />
           ))}
@@ -98,7 +93,6 @@ const ChangePasswordForm = ({
       >
         <FaKey />
         Cambiar contraseña
-        <FaArrowRight className="text-xs transition-transform group-enabled:group-hover:translate-x-1" />
       </button>
     </form>
   );

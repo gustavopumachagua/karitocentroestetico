@@ -1,7 +1,7 @@
 import TextInput from "./TextInput";
 import PasswordInput from "./PasswordInput";
 import { Link } from "react-router-dom";
-import { FaArrowRight, FaExclamationCircle, FaSignInAlt } from "react-icons/fa";
+import { FaExclamationCircle, FaSignInAlt } from "react-icons/fa";
 
 const LoginForm = ({
   form,
@@ -52,7 +52,6 @@ const LoginForm = ({
         >
           <FaSignInAlt />
           Ingresar
-          <FaArrowRight className="text-xs transition-transform group-enabled:group-hover:translate-x-1" />
         </button>
       </form>
 

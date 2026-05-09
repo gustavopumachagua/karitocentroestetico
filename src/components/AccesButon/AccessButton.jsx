@@ -1,4 +1,4 @@
-import { FaArrowRight, FaSignInAlt } from "react-icons/fa";
+import { FaSignInAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export default function AccessButton() {
@@ -9,7 +9,6 @@ export default function AccessButton() {
     >
       <FaSignInAlt className="text-base" />
       Acceder
-      <FaArrowRight className="text-xs transition-transform group-hover:translate-x-1" />
     </Link>
   );
 }
