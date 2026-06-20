@@ -1,0 +1,750 @@
+@import "tailwindcss";
+
+/* ─── Design System Tokens ─── */
+:root {
+  color-scheme: dark;
+
+  /* Background */
+  --bg-primary: #050a18;
+  --bg-surface: rgba(12, 20, 42, 0.82);
+  --bg-card: rgba(15, 23, 48, 0.72);
+  --bg-elevated: rgba(20, 30, 58, 0.65);
+  --bg-hover: rgba(34, 211, 238, 0.06);
+
+  /* Borders */
+  --border-subtle: rgba(148, 163, 184, 0.12);
+  --border-hover: rgba(34, 211, 238, 0.25);
+  --border-active: rgba(34, 211, 238, 0.45);
+
+  /* Accent */
+  --accent-cyan: #22d3ee;
+  --accent-cyan-soft: rgba(34, 211, 238, 0.14);
+  --accent-violet: #8b5cf6;
+  --accent-violet-soft: rgba(139, 92, 246, 0.14);
+  --accent-emerald: #34d399;
+  --accent-emerald-soft: rgba(52, 211, 153, 0.12);
+
+  /* Text */
+  --text-primary: #f0f4fc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Skeleton */
+  --skeleton-base: rgba(30, 41, 72, 0.7);
+  --skeleton-shine: rgba(56, 78, 126, 0.5);
+
+  /* Glow */
+  --glow-cyan: 0 0 40px rgba(34, 211, 238, 0.12);
+  --glow-violet: 0 0 40px rgba(139, 92, 246, 0.10);
+
+  /* Chart Tooltip */
+  --tooltip-bg: rgba(12, 20, 42, 0.95);
+  --tooltip-border: rgba(148, 163, 184, 0.15);
+  --tooltip-text: #e2e8f0;
+  --tooltip-label: #a5b4fc;
+
+  /* Typography */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+html {
+  background: var(--bg-primary);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.28);
+  color: #ffffff;
+}
+
+/* ─── Shell Backgrounds ─── */
+.app-shell,
+.public-shell {
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(8, 145, 178, 0.12), transparent),
+    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(79, 70, 229, 0.10), transparent),
+    linear-gradient(180deg, #050a18 0%, #0a1428 48%, #050a18 100%);
+}
+
+/* ─── Glass Surface ─── */
+.dark-surface {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), var(--glow-cyan);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* ─── Page Layout ─── */
+.page-section {
+  min-height: calc(100vh - 112px);
+  padding: 0 0 2rem;
+  color: var(--text-primary);
+}
+
+.page-stack {
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page-stack-narrow {
+  max-width: 56rem;
+}
+
+/* ─── Glass Panel ─── */
+.page-panel {
+  background:
+    linear-gradient(145deg, rgba(15, 23, 48, 0.85), rgba(5, 10, 24, 0.72)),
+    var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.20);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.page-panel-pad {
+  padding: clamp(1rem, 2.5vw, 2rem);
+}
+
+/* ─── Auth Screens ─── */
+.auth-screen {
+  min-height: calc(100dvh - 145px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.25rem, 4vw, 3rem) 1rem;
+}
+
+.auth-grid {
+  width: 100%;
+  max-width: 64rem;
+  display: grid;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+@media (min-width: 900px) {
+  .auth-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(22rem, 27rem);
+  }
+}
+
+.auth-card,
+.auth-visual {
+  background:
+    linear-gradient(145deg, rgba(15, 23, 48, 0.9), rgba(5, 10, 24, 0.78)),
+    var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.30);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
+
+.auth-visual {
+  min-height: 100%;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .auth-visual {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+/* ─── Typography ─── */
+.section-title {
+  color: #ffffff;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.section-muted {
+  color: var(--text-secondary);
+}
+
+/* ─── Scrollbar ─── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.45) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.5);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
+}
+
+/* ─── Sidebar Scrollbar ─── */
+.sidebar-scroll {
+  scrollbar-width: none;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  transition: background 0.3s;
+}
+
+.sidebar-scroll:hover {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 211, 238, 0.15) transparent;
+}
+
+.sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.2);
+}
+
+/* ─── Autofill ─── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  caret-color: var(--text-primary);
+  box-shadow: 0 0 0 1000px #0c1428 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* ─── Animations ─── */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    background-position: -200% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+}
+
+/* ─── Skeleton ─── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-shine) 40%,
+    var(--skeleton-base) 60%,
+    var(--skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 2s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+.skeleton-circle {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-shine) 40%,
+    var(--skeleton-base) 60%,
+    var(--skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 2s ease-in-out infinite;
+  border-radius: 9999px;
+}
+
+/* ─── Glass Card Utility ─── */
+.glass-card {
+  background: linear-gradient(
+    145deg,
+    rgba(15, 23, 48, 0.78),
+    rgba(8, 14, 32, 0.62)
+  );
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25), var(--glow-cyan);
+  transform: translateY(-2px);
+}
+
+/* ─── Glow Border ─── */
+.glow-border {
+  position: relative;
+}
+
+.glow-border::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--accent-cyan-soft), transparent, var(--accent-violet-soft));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glow-border:hover::after {
+  opacity: 1;
+}
+
+/* ─── Shimmer Effect ─── */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 100%
+  );
+  animation: shimmer 3s infinite;
+}
+
+/* ─── Pulse Dot ─── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--accent-emerald);
+  animation: pulse-dot 2s ease-in-out infinite;
+  box-shadow: 0 0 8px var(--accent-emerald-soft);
+}
+
+/* ─── Floating Animation ─── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* ─── Progress Bar ─── */
+@keyframes progress-bar {
+  0% { width: 0%; }
+  50% { width: 70%; }
+  100% { width: 100%; }
+}
+
+.progress-bar-animated {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet));
+  animation: progress-bar 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* ─── Chart Tooltip (unified) ─── */
+.chart-tooltip {
+  background: var(--tooltip-bg) !important;
+  border: 1px solid var(--tooltip-border) !important;
+  border-radius: 12px !important;
+  padding: 10px 14px !important;
+  color: var(--tooltip-text) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ─── Search Fields (unified) ─── */
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0 0.875rem;
+  background: rgba(2, 6, 23, 0.34);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.18);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.search-field:focus-within {
+  background: rgba(2, 6, 23, 0.46);
+  border-color: rgba(34, 211, 238, 0.42);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.10), 0 14px 36px rgba(2, 6, 23, 0.22);
+}
+
+.search-icon {
+  flex: 0 0 auto;
+  color: rgba(103, 232, 249, 0.78);
+}
+
+.search-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.85rem 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.search-input::placeholder {
+  color: rgba(148, 163, 184, 0.62);
+}
+
+.search-clear {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 999px;
+  color: rgba(226, 232, 240, 0.74);
+  background: rgba(15, 23, 42, 0.6);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.search-clear:hover {
+  color: #ffffff;
+  border-color: rgba(34, 211, 238, 0.32);
+  background: rgba(34, 211, 238, 0.12);
+}
+
+.search-suggestion-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 30;
+  max-height: 14rem;
+  overflow-y: auto;
+  background: rgba(12, 20, 42, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 0.75rem;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.search-suggestion-item,
+.search-empty {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  color: rgb(203, 213, 225);
+  font-size: 0.92rem;
+  text-align: left;
+}
+
+.search-suggestion-item {
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.search-suggestion-item:hover {
+  color: #ffffff;
+  background: rgba(34, 211, 238, 0.10);
+}
+
+.search-empty {
+  color: rgb(148, 163, 184);
+  font-style: italic;
+}
+
+/* ─── DatePicker Dark Theme ─── */
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  width: 100%;
+}
+
+.app-datepicker-popper {
+  z-index: 10000 !important;
+}
+
+.react-datepicker {
+  background: rgba(12, 20, 42, 0.95) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 12px !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.react-datepicker__header {
+  background: rgba(15, 23, 48, 0.9) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name,
+.react-datepicker-year-header {
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__header--time,
+.react-datepicker-time__header,
+.react-datepicker-time__caption {
+  color: #e0f2fe !important;
+  font-weight: 700 !important;
+}
+
+.react-datepicker-time__caption {
+  width: 100% !important;
+  text-align: left !important;
+}
+
+.react-datepicker-time__caption:empty {
+  display: none !important;
+}
+
+.react-datepicker__month-text {
+  color: var(--text-secondary) !important;
+}
+
+.react-datepicker__day,
+.react-datepicker__time-name {
+  color: var(--text-secondary) !important;
+}
+
+.react-datepicker__day:hover,
+.react-datepicker__month-text:hover {
+  background: rgba(34, 211, 238, 0.12) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__month-text--selected,
+.react-datepicker__month-text--keyboard-selected {
+  background: rgba(34, 211, 238, 0.2) !important;
+  color: var(--accent-cyan) !important;
+}
+
+.react-datepicker__day--disabled {
+  color: rgba(100, 116, 139, 0.55) !important;
+}
+
+.react-datepicker__time-container {
+  border-left: 1px solid var(--border-subtle) !important;
+}
+
+.react-datepicker__time-container,
+.react-datepicker__time,
+.react-datepicker__time-box {
+  background: rgba(12, 20, 42, 0.95) !important;
+  color: var(--text-secondary) !important;
+}
+
+.react-datepicker__time-list-item {
+  color: var(--text-secondary) !important;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.react-datepicker__time-list-item:hover,
+.react-datepicker__time-list-item--selected {
+  background: rgba(34, 211, 238, 0.16) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__input-time-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  box-sizing: border-box !important;
+  width: calc(100% - 2rem) !important;
+  max-width: calc(100% - 2rem) !important;
+  float: none !important;
+  margin: 0.75rem 1rem 1rem !important;
+  padding-top: 0.85rem !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.14) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker-time__input-container,
+.react-datepicker-time__input {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+}
+
+.app-time-select-grid {
+  display: grid;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+.app-time-select-column {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.app-time-select-label {
+  color: #c4eafe;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.app-time-select-grid button[aria-haspopup="listbox"] {
+  min-width: 0;
+  padding-left: 0.65rem;
+  padding-right: 0.65rem;
+}
+
+@media (max-width: 380px) {
+  .app-time-select-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.app-time-input {
+  width: 100%;
+  min-height: 2.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 0.65rem;
+  background: rgba(2, 6, 23, 0.55);
+  color: #f8fafc;
+  padding: 0.45rem 0.75rem;
+  outline: none;
+  color-scheme: dark;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.app-time-input:focus {
+  border-color: rgba(34, 211, 238, 0.55);
+  background: rgba(2, 6, 23, 0.72);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.11);
+}
+
+.app-time-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(87%) sepia(37%) saturate(731%) hue-rotate(145deg);
+  opacity: 0.85;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: var(--text-secondary) !important;
+}
