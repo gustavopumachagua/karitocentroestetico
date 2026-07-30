@@ -1,11 +1,7 @@
 import heroImage from "../../assets/Home.avif";
 import logo from "../../assets/Logo.jpg";
 import AccessButton from "../AccesButon/AccessButton";
-import {
-  FaCalendarCheck,
-  FaChartLine,
-  FaShieldAlt,
-} from "react-icons/fa";
+import { FaCalendarCheck, FaChartLine, FaShieldAlt } from "react-icons/fa";
 
 const highlights = [
   {
@@ -59,16 +55,25 @@ export default function Hero() {
       className="relative isolate flex min-h-screen items-center overflow-hidden px-6 py-20 text-slate-100 sm:px-8 lg:px-24"
     >
       {/* Base background */}
-      <div className="absolute inset-0 -z-30" style={{ background: 'var(--bg-primary)' }} />
+      <div
+        className="absolute inset-0 -z-30"
+        style={{ background: "var(--bg-primary)" }}
+      />
 
       {/* Decorative floating elements */}
-      <div className="absolute top-20 left-10 w-72 h-72 rounded-full -z-20 animate-float"
-        style={{ background: 'radial-gradient(circle, rgba(34, 211, 238, 0.06), transparent 70%)' }}
-      />
-      <div className="absolute bottom-32 right-20 w-96 h-96 rounded-full -z-20"
+      <div
+        className="absolute top-20 left-10 w-72 h-72 rounded-full -z-20 animate-float"
         style={{
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.05), transparent 70%)',
-          animation: 'float 8s ease-in-out infinite reverse',
+          background:
+            "radial-gradient(circle, rgba(34, 211, 238, 0.06), transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute bottom-32 right-20 w-96 h-96 rounded-full -z-20"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(139, 92, 246, 0.05), transparent 70%)",
+          animation: "float 8s ease-in-out infinite reverse",
         }}
       />
 
@@ -93,18 +98,25 @@ export default function Hero() {
           lg:w-[45%]
           xl:w-[42%]
         "
-        style={{ filter: 'brightness(0.9) contrast(1.05)' }}
+        style={{ filter: "brightness(0.9) contrast(1.05)" }}
       />
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 -z-10" style={{
-        background: 'linear-gradient(90deg, rgba(5, 10, 24, 0.98) 0%, rgba(5, 10, 24, 0.92) 40%, rgba(5, 10, 24, 0.30) 100%)',
-      }} />
+      <div
+        className="absolute inset-0 -z-10"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(5, 10, 24, 0.98) 0%, rgba(5, 10, 24, 0.92) 40%, rgba(5, 10, 24, 0.30) 100%)",
+        }}
+      />
 
       {/* Bottom fade */}
-      <div className="absolute inset-x-0 bottom-0 -z-10 h-40" style={{
-        background: 'linear-gradient(to top, var(--bg-primary), transparent)',
-      }} />
+      <div
+        className="absolute inset-x-0 bottom-0 -z-10 h-40"
+        style={{
+          background: "linear-gradient(to top, var(--bg-primary), transparent)",
+        }}
+      />
 
       <div className="mx-auto grid w-full max-w-7xl items-center gap-14 lg:grid-cols-2">
         <div className="max-w-3xl lg:pr-12 animate-slide-up">
@@ -112,37 +124,42 @@ export default function Hero() {
           <div
             className="mb-6 inline-flex items-center gap-3 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-cyan-300"
             style={{
-              background: 'rgba(34, 211, 238, 0.06)',
-              border: '1px solid rgba(34, 211, 238, 0.15)',
-              backdropFilter: 'blur(12px)',
+              background: "rgba(34, 211, 238, 0.06)",
+              border: "1px solid rgba(34, 211, 238, 0.15)",
+              backdropFilter: "blur(12px)",
             }}
           >
             <img
               src={logo}
               alt="Karito"
               className="h-7 w-7 rounded-lg object-cover"
-              style={{ border: '1px solid rgba(34, 211, 238, 0.2)' }}
+              style={{ border: "1px solid rgba(34, 211, 238, 0.2)" }}
             />
-            Centro Estético Karito
+            Karito Centro Estético
           </div>
 
           {/* Title with gradient */}
           <h1 className="text-4xl font-black leading-[1.1] sm:text-5xl lg:text-6xl tracking-tight">
-            <span style={{
-              background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, #94a3b8 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
+            <span
+              style={{
+                background:
+                  "linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, #94a3b8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
               Karito Centro
             </span>
             <br />
-            <span style={{
-              background: 'linear-gradient(135deg, #22d3ee 0%, #8b5cf6 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
+            <span
+              style={{
+                background: "linear-gradient(135deg, #22d3ee 0%, #8b5cf6 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
               Estético
             </span>
           </h1>
@@ -171,18 +188,21 @@ export default function Hero() {
                   style={{
                     background: colors.bg,
                     border: `1px solid ${colors.border}`,
-                    backdropFilter: 'blur(16px)',
+                    backdropFilter: "blur(16px)",
                     animationDelay: `${index * 100}ms`,
-                    boxShadow: '0 4px 24px rgba(0, 0, 0, 0.12)',
-                    transition: 'border-color 0.3s, transform 0.3s, box-shadow 0.3s',
+                    boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
+                    transition:
+                      "border-color 0.3s, transform 0.3s, box-shadow 0.3s",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = colors.borderHover;
-                    e.currentTarget.style.boxShadow = '0 8px 40px rgba(0, 0, 0, 0.20)';
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 40px rgba(0, 0, 0, 0.20)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = colors.border;
-                    e.currentTarget.style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.12)';
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 24px rgba(0, 0, 0, 0.12)";
                   }}
                 >
                   <div
@@ -192,7 +212,9 @@ export default function Hero() {
                     {item.icon}
                   </div>
 
-                  <p className="text-sm font-semibold text-white">{item.label}</p>
+                  <p className="text-sm font-semibold text-white">
+                    {item.label}
+                  </p>
                   <p className="mt-1 text-sm text-slate-400">{item.value}</p>
                 </div>
               );

@@ -51,7 +51,7 @@ export default function DashboardGeneral() {
 
     socket.on("estadoCitaActualizado", (citaActualizada) => {
       setTodasLasCitas((prev) =>
-        prev.map((c) => (c._id === citaActualizada._id ? citaActualizada : c))
+        prev.map((c) => (c._id === citaActualizada._id ? citaActualizada : c)),
       );
     });
 
@@ -64,7 +64,7 @@ export default function DashboardGeneral() {
         setStockInventario((prev) => [...prev, data.item]);
       } else if (data.action === "eliminar") {
         setStockInventario((prev) =>
-          prev.filter((item) => item._id !== data.item._id)
+          prev.filter((item) => item._id !== data.item._id),
         );
       }
     });
@@ -142,7 +142,7 @@ export default function DashboardGeneral() {
       Object.keys(conteo).map((m) => ({
         name: m.charAt(0).toUpperCase() + m.slice(1),
         value: conteo[m],
-      }))
+      })),
     );
   };
 
@@ -152,7 +152,7 @@ export default function DashboardGeneral() {
         insumo: item.nombre.charAt(0).toUpperCase() + item.nombre.slice(1),
         cantidad: item.stock,
         umbral: item.umbral,
-      }))
+      })),
     );
   };
 

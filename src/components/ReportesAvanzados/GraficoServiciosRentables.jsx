@@ -1,4 +1,10 @@
-import { PieChart, Pie, Tooltip, Cell, Legend, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Tooltip,
+  Cell,
+  ResponsiveContainer,
+} from "recharts";
 import { FaChartPie } from "react-icons/fa";
 
 const CustomTooltip = ({ active, payload }) => {
@@ -16,7 +22,14 @@ const CustomTooltip = ({ active, payload }) => {
           minWidth: "160px",
         }}
       >
-        <p style={{ color: item.color || "#fbbf24", fontWeight: 700, fontSize: "14px", marginBottom: "6px" }}>
+        <p
+          style={{
+            color: item.color || "#fbbf24",
+            fontWeight: 700,
+            fontSize: "14px",
+            marginBottom: "6px",
+          }}
+        >
           {item.name}
         </p>
         <p style={{ color: "#e2e8f0", fontSize: "13px" }}>
@@ -33,7 +46,7 @@ const CustomTooltip = ({ active, payload }) => {
 // Colores más vibrantes y diferenciados para distinguirse del fondo oscuro
 const CHART_COLORS = ["#34d399", "#60a5fa", "#fbbf24", "#f472b6", "#a78bfa"];
 
-export default function GraficoServiciosRentables({ rol, data, colores }) {
+export default function GraficoServiciosRentables({ rol, data }) {
   const total = data.reduce((acc, item) => acc + item.value, 0);
   const chartColors = CHART_COLORS;
 
@@ -84,11 +97,15 @@ export default function GraficoServiciosRentables({ rol, data, colores }) {
               ))}
             </Pie>
 
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip
+              content={<CustomTooltip />}
+              position={{ x: 12, y: 12 }}
+              wrapperStyle={{ pointerEvents: "none", zIndex: 5 }}
+            />
           </PieChart>
         </ResponsiveContainer>
 
-        <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center pointer-events-none">
+        <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center pointer-events-none ">
           <span className="text-slate-500 text-[10px] uppercase tracking-widest font-medium">
             Total
           </span>

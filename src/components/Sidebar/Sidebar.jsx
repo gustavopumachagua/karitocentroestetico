@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import LogoutButton from "../LogoutButton/LogoutButton";
 import logo from "../../assets/Logo.jpg";
-import {
-  FaChevronDown,
-  FaChevronRight,
-  FaUserCircle,
-} from "react-icons/fa";
+import { FaChevronDown, FaChevronRight, FaUserCircle } from "react-icons/fa";
 
 export default function Sidebar({
   active,
@@ -24,8 +20,8 @@ export default function Sidebar({
     user?.rol?.toLowerCase() === "doctor"
       ? "/doctor"
       : user?.rol?.toLowerCase() === "cosmiatra"
-      ? "/cosmiatra"
-      : "/administrador";
+        ? "/cosmiatra"
+        : "/administrador";
 
   const formatRoute = (text) => {
     return text
@@ -108,7 +104,7 @@ export default function Sidebar({
             />
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-cyan-300/90">
-                Karito
+                Karito Centro Estético
               </p>
               <h2 className="text-sm font-bold text-white">
                 {user?.rol || "Usuario"}
