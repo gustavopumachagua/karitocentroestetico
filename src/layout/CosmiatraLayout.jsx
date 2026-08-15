@@ -1,13 +1,4 @@
-import { useState, useEffect } from "react";
-import {
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
-import Sidebar from "../components/Sidebar/Sidebar";
-import Topbar from "../components/Topbar/Topbar";
+import DashboardLayout from "./DashboardLayout";
 import { MenuItemsCosmeatraRecepcionista } from "./MenuItemsCosmiatra";
 
 import GestionCitas from "../pages/cosmiatra/GestionCitas";
@@ -18,94 +9,36 @@ import ReportesServiciosIngresos from "../pages/cosmiatra/ReportesServiciosIngre
 import Perfil from "../pages/settings/Perfil";
 import Contrasena from "../pages/settings/Contrasena";
 
+const ROUTE_MAP = {
+  "gestion-de-citas": "Gestión de citas",
+  "registrar-tratamiento": "Registrar tratamiento",
+  "gestion-de-pagos": "Gestión de pagos",
+  "historial-de-clientes": "Historial de clientes",
+  "reportes-de-servicios-e-ingresos": "Reportes de servicios e ingresos",
+  perfil: "Perfil",
+  contrasena: "Contraseña",
+};
+
+const ROUTES = [
+  { path: "gestion-de-citas", element: GestionCitas },
+  { path: "registrar-tratamiento", element: RegistrarTratamiento },
+  { path: "gestion-de-pagos", element: GestionPagos },
+  { path: "historial-de-clientes", element: HistorialClientes },
+  { path: "reportes-de-servicios-e-ingresos", element: ReportesServiciosIngresos },
+  { path: "ajustes/perfil", element: Perfil, props: { needsUser: true } },
+  { path: "ajustes/contrasena", element: Contrasena, props: { needsUser: true } },
+];
+
+const DEFAULT_ROUTE = { path: "gestion-de-citas", label: "Gestión de citas" };
+
 export default function CosmeatraRecepcionistaLayout() {
-  const [active, setActive] = useState("Gestión de citas");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (user) localStorage.setItem("user", JSON.stringify(user));
-  }, [user]);
-
-  useEffect(() => {
-    if (window.location.pathname === "/cosmiatra") {
-      navigate("/cosmiatra/gestion-de-citas", { replace: true });
-    }
-  }, [location.pathname, navigate]);
-
-  useEffect(() => {
-    const path = location.pathname.split("/").pop();
-    const routeMap = {
-      "gestion-de-citas": "Gestión de citas",
-      "registrar-tratamiento": "Registrar tratamiento",
-      "gestion-de-pagos": "Gestión de pagos",
-      "historial-de-clientes": "Historial de clientes",
-      "reportes-de-servicios-e-ingresos": "Reportes de servicios e ingresos",
-      perfil: "Perfil",
-      contrasena: "Contraseña",
-    };
-
-    const newActive = routeMap[path];
-    if (newActive && newActive !== active) {
-      setActive(newActive);
-    }
-  }, [active, location.pathname]);
-
   return (
-    <div className="app-shell flex h-screen text-slate-100">
-      <Sidebar
-        active={active}
-        setActive={setActive}
-        menuItems={MenuItemsCosmeatraRecepcionista}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-        user={user}
-      />
-
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 md:hidden z-20"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden w-full p-4 sm:p-6 lg:p-8">
-        <Topbar
-          active={active}
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-
-        <Routes>
-          <Route path="gestion-de-citas" element={<GestionCitas />} />
-          <Route
-            path="registrar-tratamiento"
-            element={<RegistrarTratamiento />}
-          />
-          <Route path="gestion-de-pagos" element={<GestionPagos />} />
-          <Route path="historial-de-clientes" element={<HistorialClientes />} />
-          <Route
-            path="reportes-de-servicios-e-ingresos"
-            element={<ReportesServiciosIngresos />}
-          />
-
-          <Route
-            path="ajustes/perfil"
-            element={<Perfil user={user} setUser={setUser} />}
-          />
-          <Route
-            path="ajustes/contrasena"
-            element={<Contrasena user={user} setUser={setUser} />}
-          />
-
-          <Route
-            path="*"
-            element={<Navigate to="gestion-de-citas" replace />}
-          />
-        </Routes>
-      </main>
-    </div>
+    <DashboardLayout
+      basePath="/cosmiatra"
+      defaultRoute={DEFAULT_ROUTE}
+      menuItems={MenuItemsCosmeatraRecepcionista}
+      routeMap={ROUTE_MAP}
+      routes={ROUTES}
+    />
   );
 }

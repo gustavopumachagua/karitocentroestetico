@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react";
-import axios from "axios";
 import { io } from "socket.io-client";
+import { getCitas, registrarCita as registrarCitaAPI } from "../api/citas.api";
+import { getTratamientos } from "../api/tratamientos.api";
+import { getPagos } from "../api/pagos.api";
+import { getInventario } from "../api/inventario.api";
 
 const CitasContext = createContext();
-const API_URL = `${import.meta.env.VITE_API_URL}/api/citas`;
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 export function CitasProvider({ children }) {
@@ -54,18 +56,13 @@ export function CitasProvider({ children }) {
 
   const obtenerCitas = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(API_URL, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const data = await getCitas();
 
-      if (Array.isArray(res.data)) {
-        setCitas(res.data);
-        return res.data;
+      if (Array.isArray(data)) {
+        setCitas(data);
+        return data;
       } else {
-        console.warn("⚠️ La respuesta no es un array:", res.data);
+        console.warn("⚠️ La respuesta no es un array:", data);
         setCitas([]);
         return [];
       }
@@ -85,14 +82,9 @@ export function CitasProvider({ children }) {
 
   const registrarCita = async (nuevaCita) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.post(API_URL, nuevaCita, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await registrarCitaAPI(nuevaCita);
 
-      setCitas((prev) => [...prev, res.data]);
+      setCitas((prev) => [...prev, res]);
       setModalInfo({
         show: true,
         message: "✅ Cita registrada correctamente",
@@ -118,24 +110,17 @@ export function CitasProvider({ children }) {
     setTratamientos((prev) => [...prev, nuevoTratamiento]);
   };
 
-  const API_TRATAMIENTOS = `${import.meta.env.VITE_API_URL}/api/tratamientos`;
-
   const obtenerTratamientos = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(API_TRATAMIENTOS, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const data = await getTratamientos();
 
-      if (Array.isArray(res.data)) {
-        setTratamientos(res.data);
-        return res.data;
+      if (Array.isArray(data)) {
+        setTratamientos(data);
+        return data;
       } else {
         console.warn(
           "⚠️ La respuesta de tratamientos no es un array:",
-          res.data
+          data
         );
         setTratamientos([]);
         return [];
@@ -148,13 +133,10 @@ export function CitasProvider({ children }) {
 
   const obtenerPagos = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/pagos`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (Array.isArray(res.data)) {
-        setPagos(res.data);
-        return res.data;
+      const data = await getPagos();
+      if (Array.isArray(data)) {
+        setPagos(data);
+        return data;
       }
       return [];
     } catch (err) {
@@ -165,14 +147,8 @@ export function CitasProvider({ children }) {
 
   const obtenerInventario = async (rol) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/inventario/${rol}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      return Array.isArray(res.data) ? res.data : [];
+      const data = await getInventario(rol);
+      return Array.isArray(data) ? data : [];
     } catch (err) {
       console.error("Error al obtener inventario:", err);
       return [];
@@ -190,6 +166,7 @@ export function CitasProvider({ children }) {
         modalInfo,
         setModalInfo,
         tratamientos,
+        setTratamientos,
         registrarTratamiento,
         obtenerTratamientos,
         obtenerCitas,

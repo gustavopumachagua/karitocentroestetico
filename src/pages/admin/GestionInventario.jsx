@@ -6,6 +6,7 @@ import {
   eliminarItem,
   actualizarItem,
 } from "../../api/inventario.api";
+import { useModal } from "../../hooks/useModal";
 import EditarItemModal from "../../components/GestionInventario/EditarItemModal";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import DeleteConfirmationModal from "../../components/GestionUsuariosRoles/DeleteConfirmationModal";
@@ -26,19 +27,16 @@ export default function GestionInventario() {
     umbral: "",
     stock: "",
   });
-  const [token] = useState(localStorage.getItem("token"));
 
-  const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [modalMessage, setModalMessage] = useState("");
-  const [modalType, setModalType] = useState("info");
   const [sugerencias, setSugerencias] = useState([]);
   const [indexSeleccionado, setIndexSeleccionado] = useState(-1);
   const [paginaInsumos, setPaginaInsumos] = useState(1);
   const [paginaServicios, setPaginaServicios] = useState(1);
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemEditando, setItemEditando] = useState(null);
+  const { modal, mostrarModal, cerrarModal } = useModal();
 
   const handleEditar = (item) => {
     setItemEditando(item);
@@ -47,28 +45,21 @@ export default function GestionInventario() {
 
   const handleGuardarEdicion = async (form) => {
     try {
-      const { message, item } = await actualizarItem(
-        itemEditando._id,
-        form,
-        token
-      );
+      const { message, item } = await actualizarItem(itemEditando._id, form);
       setInventario((prev) => prev.map((i) => (i._id === item._id ? item : i)));
-      setModalMessage(message);
-      setModalType("success");
+      mostrarModal(message);
       setShowEditModal(false);
-      setShowModal(true);
     } catch {
-      setModalMessage("Error al actualizar el ítem");
-      setModalType("error");
-      setShowModal(true);
+      mostrarModal("Error al actualizar el ítem", "error");
     }
   };
+
   const itemsPorPagina = 10;
 
   useEffect(() => {
     const fetchInventario = async () => {
       try {
-        const data = await getInventario(rolSeleccionado.toLowerCase(), token);
+        const data = await getInventario(rolSeleccionado.toLowerCase());
         setInventario(data);
       } catch (err) {
         console.error(err);
@@ -155,27 +146,20 @@ export default function GestionInventario() {
       nuevo.tipo === "insumo" &&
       (nuevo.stock === "" || nuevo.umbral === "")
     ) {
-      setModalMessage("Debe ingresar stock y umbral para el insumo");
-      setModalType("error");
-      setShowModal(true);
+      mostrarModal("Debe ingresar stock y umbral para el insumo", "error");
       return;
     }
 
     try {
-      const { message, item } = await agregarItem(
-        {
-          rol: rolSeleccionado.toLowerCase(),
-          tipo: nuevo.tipo,
-          nombre: nuevo.nombre,
-          umbral: nuevo.tipo === "insumo" ? Number(nuevo.umbral) : undefined,
-          stock: nuevo.tipo === "insumo" ? Number(nuevo.stock) : undefined,
-        },
-        token
-      );
+      const { message, item } = await agregarItem({
+        rol: rolSeleccionado.toLowerCase(),
+        tipo: nuevo.tipo,
+        nombre: nuevo.nombre,
+        umbral: nuevo.tipo === "insumo" ? Number(nuevo.umbral) : undefined,
+        stock: nuevo.tipo === "insumo" ? Number(nuevo.stock) : undefined,
+      });
 
-      setModalMessage(message);
-      setModalType("success");
-      setShowModal(true);
+      mostrarModal(message);
 
       setInventario((prev) => {
         const existente = prev.find((i) => i._id === item._id);
@@ -188,24 +172,18 @@ export default function GestionInventario() {
       setSugerencias([]);
     } catch (err) {
       console.error(err);
-      setModalMessage("Error al agregar el ítem");
-      setModalType("error");
-      setShowModal(true);
+      mostrarModal("Error al agregar el ítem", "error");
     }
   };
 
   const handleEliminar = async () => {
     try {
-      await eliminarItem(selectedItem._id, token);
+      await eliminarItem(selectedItem._id);
       setInventario((prev) => prev.filter((i) => i._id !== selectedItem._id));
-      setModalMessage("Ítem eliminado correctamente");
-      setModalType("success");
+      mostrarModal("Ítem eliminado correctamente");
       setShowDeleteModal(false);
-      setShowModal(true);
     } catch {
-      setModalMessage("Error al eliminar");
-      setModalType("error");
-      setShowModal(true);
+      mostrarModal("Error al eliminar", "error");
     }
   };
 
@@ -303,10 +281,10 @@ export default function GestionInventario() {
         onSave={handleGuardarEdicion}
       />
       <ConfirmationModal
-        show={showModal}
-        message={modalMessage}
-        type={modalType}
-        onClose={() => setShowModal(false)}
+        show={modal.show}
+        message={modal.message}
+        type={modal.type}
+        onClose={cerrarModal}
       />
     </section>
   );

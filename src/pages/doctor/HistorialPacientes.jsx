@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useCitas } from "../../context/CitasContext";
+import { useAuth } from "../../hooks/useAuth";
+import { buscarCitas } from "../../api/citas.api";
 import BuscadorPacientes from "../../components/HistorialPacientes/BuscadorPacientes";
 import ListaTratamientos from "../../components/HistorialPacientes/ListaTratamientos";
 import DetallePaciente from "../../components/HistorialPacientes/DetallePaciente";
@@ -8,6 +9,8 @@ import DetallePaciente from "../../components/HistorialPacientes/DetallePaciente
 export default function HistorialPacientes() {
   const { tratamientos, setTratamientos, socket, obtenerTratamientos } =
     useCitas();
+  const { rol, nombre } = useAuth();
+  const nombreLower = nombre.toLowerCase();
 
   const [busqueda, setBusqueda] = useState("");
   const [pacienteSeleccionado, setPacienteSeleccionado] = useState(null);
@@ -34,12 +37,8 @@ export default function HistorialPacientes() {
     const obtenerSugerencias = async () => {
       try {
         setCargando(true);
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/citas/buscar?nombre=${busqueda}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setSugerencias(response.data);
+        const data = await buscarCitas(busqueda);
+        setSugerencias(data);
       } catch (error) {
         console.error("Error al autocompletar:", error);
       } finally {
@@ -100,10 +99,6 @@ export default function HistorialPacientes() {
     };
   }, [socket, setTratamientos]);
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const rol = user?.rol?.toLowerCase();
-  const nombre = user?.nombre?.toLowerCase();
-
   const tratamientosFiltrados = tratamientos.filter((tratamiento) => {
     if (!tratamiento) return false;
 
@@ -111,7 +106,7 @@ export default function HistorialPacientes() {
       case "doctor":
       case "cosmiatra":
         return (
-          tratamiento.profesional?.toLowerCase() === nombre &&
+          tratamiento.profesional?.toLowerCase() === nombreLower &&
           tratamiento.rol?.toLowerCase() === rol
         );
       case "admin":

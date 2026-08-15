@@ -5,6 +5,15 @@ import CitaTable from "../../components/AgendaCitas/CitaTable";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import DeleteConfirmationModal from "../../components/GestionUsuariosRoles/DeleteConfirmationModal";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import { useModal } from "../../hooks/useModal";
+import {
+  getCitas,
+  registrarCita as registrarCitaAPI,
+  actualizarCita as actualizarCitaAPI,
+  actualizarEstadoCita,
+  eliminarCita as eliminarCitaAPI,
+  getProfesionales,
+} from "../../api/citas.api";
 import { convertirFechaCitaAISOString } from "../../utils/citasFecha";
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
@@ -22,18 +31,10 @@ function obtenerNombreCliente(cita) {
 export default function GestionCitas() {
   const [citas, setCitas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const [modalType, setModalType] = useState("info");
   const [isLoading, setIsLoading] = useState(false);
   const [citaEditando, setCitaEditando] = useState(null);
-
-  const mostrarModal = (message, type = "success") => {
-    setModalMessage(message);
-    setModalType(type);
-    setShowModal(true);
-  };
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { modal, mostrarModal, cerrarModal } = useModal();
 
   useEffect(() => {
     const socket = io(SOCKET_URL);
@@ -80,29 +81,20 @@ export default function GestionCitas() {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/profesionales`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-        return res.json();
-      })
-      .then((data) => setUsuarios(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Error al obtener usuarios:", err));
+    const fetchUsuarios = async () => {
+      try {
+        const data = await getProfesionales();
+        setUsuarios(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error al obtener usuarios:", err);
+      }
+    };
+    fetchUsuarios();
   }, []);
 
   const fetchCitas = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/citas`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error(`Error ${res.status}`);
-
-      const data = await res.json();
+      const data = await getCitas();
       setCitas(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error al obtener citas:", err);
@@ -115,23 +107,12 @@ export default function GestionCitas() {
 
   const registrarCita = async (nuevaCita) => {
     try {
-      const token = localStorage.getItem("token");
       const citaPayload = {
         ...nuevaCita,
         fecha: convertirFechaCitaAISOString(nuevaCita.fecha),
       };
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/citas`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(citaPayload),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error al registrar cita");
+      const data = await registrarCitaAPI(citaPayload);
 
       setCitas((prev) =>
         prev.some((c) => obtenerIdCita(c) === obtenerIdCita(data.cita))
@@ -148,22 +129,7 @@ export default function GestionCitas() {
 
   const actualizarEstado = async (id, nuevoEstado) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/citas/${id}/estado`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ estado: nuevoEstado }),
-        }
-      );
-
-      const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.message || "Error al actualizar estado");
+      const data = await actualizarEstadoCita(id, nuevoEstado);
 
       setCitas((prev) =>
         prev.map((c) => (obtenerIdCita(c) === id ? data.cita : c))
@@ -171,7 +137,7 @@ export default function GestionCitas() {
       mostrarModal("✅ Estado actualizado correctamente");
       return true;
     } catch (error) {
-      mostrarModal("❌ " + error.message, "error");
+      mostrarModal("❌ " + (error.response?.data?.message || error.message), "error");
       return false;
     }
   };
@@ -197,27 +163,12 @@ export default function GestionCitas() {
     }
 
     try {
-      const token = localStorage.getItem("token");
       const citaPayload = {
         ...datosCita,
         fecha: convertirFechaCitaAISOString(datosCita.fecha),
       };
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/citas/${citaId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(citaPayload),
-        }
-      );
-
-      const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.message || "Error al actualizar la cita");
+      const data = await actualizarCitaAPI(citaId, citaPayload);
 
       setCitas((prev) =>
         prev.map((c) => (obtenerIdCita(c) === citaId ? data.cita : c))
@@ -226,7 +177,7 @@ export default function GestionCitas() {
       mostrarModal("✅ Cita actualizada correctamente");
       return true;
     } catch (error) {
-      mostrarModal("❌ " + error.message, "error");
+      mostrarModal("❌ " + (error.response?.data?.message || error.message), "error");
       return false;
     }
   };
@@ -240,17 +191,7 @@ export default function GestionCitas() {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/citas/${citaId}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error al eliminar la cita");
+      await eliminarCitaAPI(citaId);
 
       setCitas((prev) => prev.filter((c) => obtenerIdCita(c) !== citaId));
       setCitaEditando(null);
@@ -259,15 +200,15 @@ export default function GestionCitas() {
       return true;
     } catch (error) {
       setShowDeleteModal(false);
-      mostrarModal("❌ " + error.message, "error");
+      mostrarModal("❌ " + (error.response?.data?.message || error.message), "error");
       return false;
     }
   };
 
   const handleModalClose = () => {
-    setShowModal(false);
+    cerrarModal();
 
-    if (modalMessage.includes("✅")) {
+    if (modal.message.includes("✅")) {
       setTimeout(() => {
         setIsLoading(true);
         setTimeout(() => {
@@ -318,9 +259,9 @@ export default function GestionCitas() {
       />
 
       <ConfirmationModal
-        show={showModal}
-        message={modalMessage}
-        type={modalType}
+        show={modal.show}
+        message={modal.message}
+        type={modal.type}
         onClose={handleModalClose}
       />
     </section>

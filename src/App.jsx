@@ -5,7 +5,7 @@ import Home from "./components/Home/Home";
 import NavbarFooterLayout from "./layout/NavbarFooterLayout";
 import Newpassword from "./pages/auth/Newpassword";
 import ResetPassword from "./pages/auth/ResetPassword";
-import Doctor from "./layout/DoctorLayout";
+import DoctorLayout from "./layout/DoctorLayout";
 import AdminLayout from "./layout/AdminLayout";
 import CosmeatraRecepcionistaLayout from "./layout/CosmiatraLayout";
 import LoadingSpinner from "./components/common/LoadingSpinner";
@@ -13,7 +13,6 @@ import OfflineAlert from "./components/OfflineAlert/OfflineAlert";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,7 +43,7 @@ function App() {
           path="/login"
           element={
             <NavbarFooterLayout>
-              <Login onLogin={() => setIsAuthenticated(true)} />
+              <Login onLogin={() => {}} />
             </NavbarFooterLayout>
           }
         />
@@ -69,7 +68,7 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/administrador/*" element={<AdminLayout />} />
-          <Route path="/doctor/*" element={<Doctor />} />
+          <Route path="/doctor/*" element={<DoctorLayout />} />
           <Route
             path="/cosmiatra/*"
             element={<CosmeatraRecepcionistaLayout />}

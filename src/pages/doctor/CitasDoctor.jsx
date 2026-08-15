@@ -3,29 +3,21 @@ import { io } from "socket.io-client";
 import CitaTable from "../../components/AgendaCitas/CitaTable";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import { useAuth } from "../../hooks/useAuth";
+import { useModal } from "../../hooks/useModal";
+import { getCitas, actualizarEstadoCita } from "../../api/citas.api";
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 export default function CitasDoctor() {
   const [citas, setCitas] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const user = JSON.parse(localStorage.getItem("user"));
-  const nombre = user?.nombre || "";
-  const rol = user?.rol?.toLowerCase() || "";
+  const { nombre, rol } = useAuth();
+  const { modal, mostrarModal, cerrarModal } = useModal();
 
   const fetchCitas = async () => {
-    const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/citas`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error(`Error ${res.status}`);
-
-      const data = await res.json();
+      const data = await getCitas();
       const citasFiltradas = Array.isArray(data)
         ? data.filter((cita) => {
             const prof = cita.profesional;
@@ -48,8 +40,7 @@ export default function CitasDoctor() {
   }, [nombre, rol]);
 
   const mostrarModalYLuegoSpinner = async (mensaje) => {
-    setModalMessage(mensaje);
-    setShowModal(true);
+    mostrarModal(mensaje);
   };
 
   const iniciarRecarga = async () => {
@@ -85,7 +76,7 @@ export default function CitasDoctor() {
   }, [nombre, rol]);
 
   const handleModalClose = () => {
-    setShowModal(false);
+    cerrarModal();
 
     setTimeout(() => {
       iniciarRecarga();
@@ -94,28 +85,10 @@ export default function CitasDoctor() {
 
   const actualizarEstado = async (id, nuevoEstado) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/citas/${id}/estado`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ estado: nuevoEstado }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok)
-        throw new Error(data.message || "Error al actualizar estado");
-
+      await actualizarEstadoCita(id, nuevoEstado);
       mostrarModalYLuegoSpinner("✅ Estado actualizado correctamente");
     } catch (error) {
-      setModalMessage("❌ " + error.message);
-      setShowModal(true);
+      mostrarModal("❌ " + (error.response?.data?.message || error.message), "error");
     }
   };
 
@@ -141,9 +114,9 @@ export default function CitasDoctor() {
       </div>
 
       <ConfirmationModal
-        show={showModal}
-        message={modalMessage}
-        type={modalMessage.includes("Error") ? "error" : "success"}
+        show={modal.show}
+        message={modal.message}
+        type={modal.message.includes("Error") ? "error" : "success"}
         onClose={handleModalClose}
       />
     </section>

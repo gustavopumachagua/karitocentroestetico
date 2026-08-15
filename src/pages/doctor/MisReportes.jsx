@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useCitas } from "../../context/CitasContext";
+import { useAuth } from "../../hooks/useAuth";
 import FiltrosReportes from "../../components/DashboardDoctor/FiltrosReportes";
 import GraficoCitasEvolucion from "../../components/DashboardDoctor/GraficoCitasEvolucion";
 import GraficoTratamientos from "../../components/DashboardDoctor/GraficoTratamientos";
@@ -9,6 +10,8 @@ import GraficoInsumos from "../../components/DashboardDoctor/GraficoInsumos";
 export default function MisReportes() {
   const { citas, tratamientos, obtenerCitas, obtenerTratamientos, socket } =
     useCitas();
+  const { rol, nombre } = useAuth();
+  const nombreLower = nombre.toLowerCase();
 
   const [filtroAnio, setFiltroAnio] = useState(new Date().getFullYear());
   const [filtroMes, setFiltroMes] = useState("");
@@ -48,25 +51,24 @@ export default function MisReportes() {
 
   useEffect(() => {
     if (!citas.length || !tratamientos.length) return;
+    if (!rol || !nombreLower) return;
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    const rol = user?.rol?.toLowerCase();
-    const nombre = user?.nombre?.toLowerCase();
-    if (!rol || !nombre) return;
+    const obtenerNombreProfesional = (c) =>
+      typeof c.profesional === "string"
+        ? c.profesional.toLowerCase()
+        : c.profesional?.nombre?.toLowerCase() || "";
+
+    const esMiCita = (c) =>
+      c.rol?.toLowerCase() === rol &&
+      obtenerNombreProfesional(c) === nombreLower;
 
     const citasFiltradas = citas.filter((c) => {
       const fechaCita = new Date(c.fecha.replace(" ", "T"));
       const anioCita = fechaCita.getFullYear();
       const mesCita = fechaCita.getMonth() + 1;
 
-      const nombreProfesional =
-        typeof c.profesional === "string"
-          ? c.profesional.toLowerCase()
-          : c.profesional?.nombre?.toLowerCase() || "";
-
       return (
-        c.rol?.toLowerCase() === rol &&
-        nombreProfesional === nombre &&
+        esMiCita(c) &&
         [Number(filtroAnio), Number(filtroAnio) - 1].includes(anioCita) &&
         (!filtroMes || mesCita === Number(filtroMes))
       );
@@ -114,7 +116,7 @@ export default function MisReportes() {
     const tratamientosFiltrados = tratamientos.filter(
       (t) =>
         t.rol?.toLowerCase() === rol &&
-        t.profesional?.toLowerCase() === nombre &&
+        t.profesional?.toLowerCase() === nombreLower &&
         new Date(t.fecha).getFullYear() === Number(filtroAnio) &&
         (!filtroMes || new Date(t.fecha).getMonth() + 1 === Number(filtroMes))
     );
@@ -134,14 +136,8 @@ export default function MisReportes() {
       const anioCita = fechaCita.getFullYear();
       const mesCita = fechaCita.getMonth() + 1;
 
-      const nombreProfesional =
-        typeof c.profesional === "string"
-          ? c.profesional.toLowerCase()
-          : c.profesional?.nombre?.toLowerCase() || "";
-
       return (
-        c.rol?.toLowerCase() === rol &&
-        nombreProfesional === nombre &&
+        esMiCita(c) &&
         anioCita === Number(filtroAnio) &&
         (!filtroMes || mesCita === Number(filtroMes))
       );

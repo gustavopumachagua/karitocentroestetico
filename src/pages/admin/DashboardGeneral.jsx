@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useCitas } from "../../context/CitasContext";
+import { getCitas } from "../../api/citas.api";
 import ResumenCitas from "../../components/DashboardGeneral/ResumenCitas";
 import IngresosMensuales from "../../components/DashboardGeneral/IngresosMensuales";
 import MetodosPagoChart from "../../components/DashboardGeneral/MetodosPagoChart";
@@ -25,8 +26,8 @@ export default function DashboardGeneral() {
     const cargarDatos = async () => {
       try {
         setLoading(true);
-        const citasData = await obtenerCitasDesdeContext();
-        setTodasLasCitas(citasData);
+        const citasData = await getCitas();
+        setTodasLasCitas(Array.isArray(citasData) ? citasData : []);
 
         const pagosData = await obtenerPagos();
         setTodosLosPagos(pagosData);
@@ -76,14 +77,6 @@ export default function DashboardGeneral() {
       socket.off("inventarioActualizado");
     };
   }, [socket]);
-
-  const obtenerCitasDesdeContext = async () => {
-    const token = localStorage.getItem("token");
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/citas`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return res.ok ? await res.json() : [];
-  };
 
   useEffect(() => {
     if (todasLasCitas.length === 0 && todosLosPagos.length === 0) return;

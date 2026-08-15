@@ -2,40 +2,24 @@ import { useState } from "react";
 import AvatarUploader from "../../components/Perfil/AvatarUploader";
 import ProfileForm from "../../components/Perfil/ProfileForm";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
+import { useModal } from "../../hooks/useModal";
+import API from "../../api/axiosConfig";
+
+const DEFAULT_AVATAR =
+  "https://res.cloudinary.com/db8tsilie/image/upload/v1759552820/avatar_ilbvur.jpg";
 
 export default function Perfil({ user, setUser }) {
-  const [avatar, setAvatar] = useState(
-    user?.avatar ||
-      "https://res.cloudinary.com/db8tsilie/image/upload/v1759552820/avatar_ilbvur.jpg"
-  );
+  const [avatar, setAvatar] = useState(user?.avatar || DEFAULT_AVATAR);
   const [nombre, setNombre] = useState(user?.nombre || "");
   const [isSaving, setIsSaving] = useState(false);
-  const [modal, setModal] = useState({ show: false, message: "" });
+  const { modal, setModal, cerrarModal } = useModal();
 
   const handleSave = async (e) => {
     e.preventDefault();
     setIsSaving(true);
 
     try {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/usuarios/${user.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ nombre, avatar }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Error al actualizar perfil");
-      }
+      const { data } = await API.put(`/usuarios/${user.id}`, { nombre, avatar });
 
       setUser(data.user);
       setModal({
@@ -47,7 +31,7 @@ export default function Perfil({ user, setUser }) {
       console.error(err);
       setModal({
         show: true,
-        message: err.message,
+        message: err.response?.data?.message || err.message,
         type: "error",
       });
     } finally {
@@ -57,10 +41,7 @@ export default function Perfil({ user, setUser }) {
 
   const handleCancel = () => {
     setNombre(user?.nombre || "");
-    setAvatar(
-      user?.avatar ||
-        "https://res.cloudinary.com/db8tsilie/image/upload/v1759552820/avatar_ilbvur.jpg"
-    );
+    setAvatar(user?.avatar || DEFAULT_AVATAR);
     setModal({
       show: true,
       message: "Cambios cancelados.",
@@ -99,7 +80,7 @@ export default function Perfil({ user, setUser }) {
         show={modal.show}
         message={modal.message}
         type={modal.type}
-        onClose={() => setModal({ show: false, message: "", type: "info" })}
+        onClose={() => cerrarModal()}
       />
     </section>
   );

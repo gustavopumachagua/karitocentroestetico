@@ -5,13 +5,13 @@ import {
   suspenderUsuario as suspenderUsuarioAPI,
   eliminarUsuario as eliminarUsuarioAPI,
 } from "../api/user.api";
+import { useModal } from "./useModal";
+import { isValidName, isValidEmail, isValidRole } from "../utils/validators";
 
 export const useUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const [modalType, setModalType] = useState("info");
+  const { modal: confirmModal, mostrarModal, cerrarModal } = useModal();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [usuarioToDelete, setUsuarioToDelete] = useState(null);
@@ -26,9 +26,8 @@ export const useUsuarios = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const token = localStorage.getItem("token");
       try {
-        const data = await getAllUsers(token);
+        const data = await getAllUsers();
         setUsuarios(data);
       } catch (error) {
         console.error("Error al cargar usuarios:", error);
@@ -37,15 +36,10 @@ export const useUsuarios = () => {
     fetchUsers();
   }, []);
 
-  const validarNombre = (nombre) => /^[a-zA-ZÀ-ÿ\s]{3,}$/.test(nombre.trim());
-  const validarEmail = (email) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-  const validarRol = (rol) => ["doctor", "cosmiatra"].includes(rol);
-
   const formularioValido =
-    validarNombre(nuevoUsuario.nombre) &&
-    validarEmail(nuevoUsuario.email) &&
-    validarRol(nuevoUsuario.rol);
+    isValidName(nuevoUsuario.nombre) &&
+    isValidEmail(nuevoUsuario.email) &&
+    isValidRole(nuevoUsuario.rol);
 
   const handleChange = (e) =>
     setNuevoUsuario({ ...nuevoUsuario, [e.target.name]: e.target.value });
@@ -55,49 +49,39 @@ export const useUsuarios = () => {
     if (!formularioValido) return;
 
     try {
-      const token = localStorage.getItem("token");
       const usuarioData = {
         ...nuevoUsuario,
         rol: nuevoUsuario.rol.toLowerCase(),
       };
-      const { usuario } = await registerUserByAdmin(usuarioData, token);
+      const { usuario } = await registerUserByAdmin(usuarioData);
 
       setUsuarios([...usuarios, usuario]);
       setNuevoUsuario({ nombre: "", email: "", rol: "doctor" });
-      setModalMessage("Usuario registrado correctamente 🎉");
-      setModalType("success");
-      setShowModal(true);
+      mostrarModal("Usuario registrado correctamente 🎉");
     } catch (error) {
       console.error(error);
       const message = error.response?.data?.message || "Error al crear usuario";
-      setModalMessage(message);
-      setModalType("error");
-      setShowModal(true);
+      mostrarModal(message, "error");
     }
   };
 
   const suspenderUsuario = async (id) => {
     if (loading) return;
     setLoading(true);
-    const token = localStorage.getItem("token");
 
     try {
-      const { usuario } = await suspenderUsuarioAPI(id, token);
+      const { usuario } = await suspenderUsuarioAPI(id);
       setUsuarios((prev) =>
         prev.map((u) => (u._id === id ? { ...u, activo: usuario.activo } : u))
       );
-      setModalMessage(
+      mostrarModal(
         `Usuario ${usuario.activo ? "activado" : "suspendido"} correctamente`
       );
-      setModalType("success");
-      setShowModal(true);
     } catch (error) {
       const message =
         error.response?.data?.message ||
         "Error al cambiar el estado del usuario";
-      setModalMessage(message);
-      setModalType("error");
-      setShowModal(true);
+      mostrarModal(message, "error");
     } finally {
       setLoading(false);
     }
@@ -115,21 +99,16 @@ export const useUsuarios = () => {
     if (!usuarioToDelete || loading) return;
     const usuarioId = usuarioToDelete._id;
     setLoading(true);
-    const token = localStorage.getItem("token");
 
     try {
-      await eliminarUsuarioAPI(usuarioId, token);
+      await eliminarUsuarioAPI(usuarioId);
       setUsuarios((prev) => prev.filter((u) => u._id !== usuarioId));
       setShowDeleteModal(false);
-      setModalMessage("Usuario eliminado correctamente");
-      setModalType("success");
-      setShowModal(true);
+      mostrarModal("Usuario eliminado correctamente");
     } catch (error) {
       const message =
         error.response?.data?.message || "Error al eliminar el usuario";
-      setModalMessage(message);
-      setModalType("error");
-      setShowModal(true);
+      mostrarModal(message, "error");
     } finally {
       setLoading(false);
       setUsuarioToDelete(null);
@@ -154,10 +133,10 @@ export const useUsuarios = () => {
     cancelarEliminacion,
     usuarioToDelete,
     showDeleteModal,
-    showModal,
-    modalMessage,
-    modalType,
-    setShowModal,
+    showModal: confirmModal.show,
+    modalMessage: confirmModal.message,
+    modalType: confirmModal.type,
+    setShowModal: cerrarModal,
     busqueda,
     setBusqueda,
     loading,

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useCitas } from "../../context/CitasContext";
+import { buscarPaciente } from "../../api/tratamientos.api";
 import { FaArrowLeft } from "react-icons/fa";
 
 import BuscadorClientes from "../../components/ReportesServiciosIngresos/BuscadorClientes";
@@ -22,8 +22,6 @@ export default function ReportesServiciosIngresos() {
   const hoyStr = new Date().toLocaleDateString("en-CA");
   const [fechaFiltro, setFechaFiltro] = useState(hoyStr);
   const [loading, setLoading] = useState(true);
-
-  const token = localStorage.getItem("token");
 
   const obtenerDatosActualizados = (tratamientosCliente) => {
     if (!tratamientosCliente || tratamientosCliente.length === 0) {
@@ -85,12 +83,7 @@ export default function ReportesServiciosIngresos() {
 
   const buscarCliente = async (nombre) => {
     try {
-      const res = await axios.get(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/tratamientos/buscar/${encodeURIComponent(nombre)}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const data = await buscarPaciente(nombre);
 
       const historial = tratamientos.filter(
         (t) => t.nombre.toLowerCase() === nombre.toLowerCase(),
@@ -99,7 +92,7 @@ export default function ReportesServiciosIngresos() {
       const datosActualizados = obtenerDatosActualizados(historial);
 
       setClienteSeleccionado({
-        ...res.data,
+        ...data,
         ...datosActualizados,
       });
 

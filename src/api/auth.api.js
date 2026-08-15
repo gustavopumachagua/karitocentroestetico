@@ -1,5 +1,4 @@
 import API from "./axiosConfig";
-import axios from "axios";
 
 export const login = async (email, password) => {
   const { data } = await API.post("/auth/login", { email, password });
@@ -12,12 +11,14 @@ export const register = async (userData) => {
 };
 
 export const changePassword = async (resetToken, password) => {
-  const res = await axios.post(
-    `${import.meta.env.VITE_API_URL}/api/auth/change-password`,
-    {
-      resetToken,
-      newPassword: password,
-    }
-  );
-  return res.data;
+  const { data } = await API.post("/auth/change-password", {
+    resetToken,
+    newPassword: password,
+  });
+  return data;
+};
+
+export const resetPassword = async (email) => {
+  const { data } = await API.post("/auth/reset-password", { email });
+  return data;
 };

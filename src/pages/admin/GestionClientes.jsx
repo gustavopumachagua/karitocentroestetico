@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { useCitas } from "../../context/CitasContext";
+import { buscarCitas } from "../../api/citas.api";
+import { getTratamientos } from "../../api/tratamientos.api";
+import { getPagos } from "../../api/pagos.api";
 import BuscadorClientes from "../../components/GestionClientes/BuscadorClientes";
 import ClienteCard from "../../components/GestionClientes/ClienteCard";
 import ClienteDetalle from "../../components/GestionClientes/ClienteDetalle";
@@ -16,9 +19,6 @@ export default function GestionClientes() {
   const [loading, setLoading] = useState(true);
 
   const clientesPorPagina = 9;
-  const API_TRATAMIENTOS = `${import.meta.env.VITE_API_URL}/api/tratamientos`;
-  const API_PAGOS = `${import.meta.env.VITE_API_URL}/api/pagos`;
-  const API_BUSCAR = `${import.meta.env.VITE_API_URL}/api/citas/buscar`;
 
   useEffect(() => {
     obtenerClientes();
@@ -27,16 +27,13 @@ export default function GestionClientes() {
   const obtenerClientes = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      const [resTrat, resPagos] = await Promise.all([
-        axios.get(API_TRATAMIENTOS, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(API_PAGOS, { headers: { Authorization: `Bearer ${token}` } }),
+      const [tratData, pagosData] = await Promise.all([
+        getTratamientos(),
+        getPagos(),
       ]);
 
       const mapa = {};
-      resTrat.data.forEach((t) => {
+      tratData.forEach((t) => {
         if (!mapa[t.nombre]) {
           mapa[t.nombre] = {
             nombre: t.nombre,
@@ -50,7 +47,7 @@ export default function GestionClientes() {
         mapa[t.nombre].tratamientos.push(t);
       });
 
-      resPagos.data.forEach((p) => {
+      pagosData.forEach((p) => {
         if (mapa[p.cliente]) {
           mapa[p.cliente].totalInvertido += p.total;
         }
@@ -69,11 +66,8 @@ export default function GestionClientes() {
     setBusqueda(valor);
     if (valor.length >= 2) {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${API_BUSCAR}?nombre=${valor}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setSugerencias(res.data);
+        const data = await buscarCitas(valor);
+        setSugerencias(data);
       } catch (err) {
         console.error("Error al autocompletar:", err);
       }

@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { io } from "socket.io-client";
 import { useCitas } from "../../context/CitasContext";
-import axios from "axios";
+import { getPagos, registrarPago as registrarPagoAPI } from "../../api/pagos.api";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import BuscadorPagos from "../../components/GestionPagos/BuscadorPagos";
 import TablaPagos from "../../components/GestionPagos/TablaPagos";
@@ -75,11 +75,8 @@ export default function PagosCitas() {
 
   const fetchPagos = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/pagos`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setPagos(Array.isArray(res.data) ? res.data : []);
+      const data = await getPagos();
+      setPagos(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error obteniendo pagos:", err);
     }
@@ -137,11 +134,7 @@ export default function PagosCitas() {
     };
 
     try {
-      const token = localStorage.getItem("token");
-
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/pagos`, nuevoPago, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await registrarPagoAPI(nuevoPago);
 
       setModalInfo({
         show: true,

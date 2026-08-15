@@ -1,11 +1,12 @@
 import { FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Contrasena() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleResetPassword = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
     if (!user || !user.email) {
       alert("No se encontró el usuario. Por favor inicia sesión primero.");
       return navigate("/login");

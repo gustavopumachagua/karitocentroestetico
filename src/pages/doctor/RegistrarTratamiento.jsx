@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useCitas } from "../../context/CitasContext";
+import { useAuth } from "../../hooks/useAuth";
+import { useModal } from "../../hooks/useModal";
 import InputField from "../../components/RegistaTratamiento/InputField";
 import TextAreaField from "../../components/RegistaTratamiento/TextAreaField";
 import RadioGroup from "../../components/RegistaTratamiento/RadioGroup";
@@ -8,44 +10,36 @@ import FechaField from "../../components/RegistaTratamiento/FechaField";
 import ActionButtons from "../../components/RegistaTratamiento/ActionButtons";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import { getInventario, descontarInsumos } from "../../api/inventario.api";
+import { buscarPaciente } from "../../api/tratamientos.api";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import CustomChoice from "../../components/common/CustomChoice";
 
 import { FaListUl, FaNotesMedical, FaSearch } from "react-icons/fa";
 
+const INITIAL_FORM = {
+  nombre: "",
+  sexo: "",
+  celular: "",
+  servicio: "",
+  fecha: "",
+  observacion: "",
+  insumos: "",
+};
+
 export default function RegistrarTratamiento() {
   const { citas, citaSeleccionada, setCitaSeleccionada } = useCitas();
+  const { nombre: nombreDoctor, rol } = useAuth();
+  const { modal, setModal, cerrarModal } = useModal();
+
   const [formBloqueado, setFormBloqueado] = useState(false);
   const [loading, setLoading] = useState(false);
   const [insumosDisponibles, setInsumosDisponibles] = useState([]);
   const [imagenes, setImagenes] = useState([]);
   const [pacienteExistente, setPacienteExistente] = useState(false);
-  const [formData, setFormData] = useState({
-    nombre: "",
-    sexo: "",
-    celular: "",
-    servicio: "",
-    fecha: "",
-    observacion: "",
-    insumos: "",
-  });
-
-  const [modal, setModal] = useState({
-    show: false,
-    message: "",
-    type: "info",
-  });
-
-  const user = JSON.parse(localStorage.getItem("user"));
-  const nombreDoctor = user?.nombre || "";
-  const rol = user?.rol?.toLowerCase() || "";
+  const [formData, setFormData] = useState(INITIAL_FORM);
 
   const citasFiltradas = citas.filter((cita) => {
     const estadoPendiente = cita.estado?.toLowerCase() === "pendiente";
-    const user = JSON.parse(localStorage.getItem("user"));
-    const rol = user?.rol?.toLowerCase();
-    const nombre = user?.nombre?.toLowerCase();
-
     if (!estadoPendiente) return false;
 
     switch (rol) {
@@ -54,13 +48,13 @@ export default function RegistrarTratamiento() {
         return (
           cita.profesional &&
           typeof cita.profesional === "object" &&
-          cita.profesional.nombre?.toLowerCase() === nombre
+          cita.profesional.nombre?.toLowerCase() === nombreDoctor.toLowerCase()
         );
 
       case "asistente":
         return (
           typeof cita.asistente === "string" &&
-          cita.asistente.toLowerCase() === nombre
+          cita.asistente.toLowerCase() === nombreDoctor.toLowerCase()
         );
 
       case "recepcionista":
@@ -94,38 +88,23 @@ export default function RegistrarTratamiento() {
   }, [citasFiltradas]);
 
   useEffect(() => {
-    const buscarPaciente = async () => {
+    const buscarPacienteExistente = async () => {
       if (!formData.nombre) return;
 
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(
-          `${
-            import.meta.env.VITE_API_URL
-          }/api/tratamientos/buscar/${encodeURIComponent(formData.nombre)}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-
-        if (res.ok) {
-          const data = await res.json();
-          setFormData((prev) => ({
-            ...prev,
-            sexo: data.sexo || "",
-            celular: data.celular || "",
-          }));
-          setPacienteExistente(true);
-        } else {
-          setPacienteExistente(false);
-        }
-      } catch (error) {
-        console.error("Error al buscar paciente:", error);
+        const data = await buscarPaciente(formData.nombre);
+        setFormData((prev) => ({
+          ...prev,
+          sexo: data.sexo || "",
+          celular: data.celular || "",
+        }));
+        setPacienteExistente(true);
+      } catch {
         setPacienteExistente(false);
       }
     };
 
-    buscarPaciente();
+    buscarPacienteExistente();
   }, [formData.nombre]);
 
   useEffect(() => {
@@ -139,18 +118,14 @@ export default function RegistrarTratamiento() {
   useEffect(() => {
     const obtenerInsumos = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const user = JSON.parse(localStorage.getItem("user"));
-        const rol = user?.rol?.toLowerCase() || "doctor";
-
-        const data = await getInventario(rol, token);
+        const data = await getInventario(rol || "doctor");
         if (Array.isArray(data)) setInsumosDisponibles(data);
       } catch (error) {
         console.error("Error al obtener insumos:", error);
       }
     };
     obtenerInsumos();
-  }, []);
+  }, [rol]);
 
   useEffect(() => {
     if (!citaSeleccionada) return;
@@ -273,7 +248,7 @@ export default function RegistrarTratamiento() {
         });
 
         try {
-          await descontarInsumos(rol, formData.insumos, token);
+          await descontarInsumos(rol, formData.insumos);
 
           if (socket) {
             socket.emit("inventarioActualizado", {
@@ -302,7 +277,7 @@ export default function RegistrarTratamiento() {
   };
 
   const handleModalClose = () => {
-    setModal((prev) => ({ ...prev, show: false }));
+    cerrarModal();
 
     if (modal.type === "success") {
       setTimeout(() => {
