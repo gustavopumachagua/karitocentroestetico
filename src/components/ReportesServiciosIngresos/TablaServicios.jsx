@@ -1,6 +1,7 @@
 import { FaCalendarAlt, FaMoneyBillWave } from "react-icons/fa";
 import { calcularMonto, obtenerPagoRelacionado } from "./calcularMonto";
 import DatePickerField from "../common/DatePickerField";
+import { formatearFechaCita } from "../../utils/citasFecha";
 
 export default function TablaServicios({
   fechaFiltro,
@@ -64,7 +65,7 @@ export default function TablaServicios({
                     className="bg-slate-950/20 hover:bg-cyan-400/5 cursor-pointer transition-all duration-200"
                   >
                     <td className="p-4 border-b border-slate-700/70 whitespace-nowrap text-slate-300">
-                      {new Date(t.fecha).toLocaleDateString("es-PE")}
+                      {formatearFechaCita(t.fecha)}
                     </td>
                     <td className="p-4 border-b border-slate-700/70 font-medium text-white">
                       {t.nombre}
@@ -122,7 +123,7 @@ export default function TablaServicios({
               >
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-slate-400">
-                    {new Date(t.fecha).toLocaleDateString("es-PE")}
+                    {formatearFechaCita(t.fecha)}
                   </span>
                   <span className="text-emerald-300 font-semibold">
                     S/. {monto}

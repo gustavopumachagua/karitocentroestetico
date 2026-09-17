@@ -1,4 +1,5 @@
 import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
+import { formatearFechaCita } from "../../utils/citasFecha";
 
 export default function TablaPagos({
   citas,
@@ -61,7 +62,7 @@ export default function TablaPagos({
                     S/ {pago ? pago.total.toFixed(2) : "0.00"}
                   </td>
                   <td className="p-3 text-slate-400 whitespace-nowrap">
-                    {new Date(cita.fecha).toLocaleDateString("es-PE")}
+                    {formatearFechaCita(cita.fecha)}
                   </td>
                   <td className="p-3">
                     {pago?.estadoPago === "pagado" ? (
@@ -108,7 +109,7 @@ export default function TablaPagos({
                   {cita.cliente}
                 </h3>
                 <span className="text-slate-400 text-xs">
-                  {new Date(cita.fecha).toLocaleDateString("es-PE")}
+                  {formatearFechaCita(cita.fecha)}
                 </span>
               </div>
 

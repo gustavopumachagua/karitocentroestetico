@@ -14,6 +14,13 @@ const citaVacia = {
   fecha: "",
 };
 
+function crearClaveIdempotencia() {
+  return (
+    globalThis.crypto?.randomUUID?.() ||
+    `${Date.now()}-${Math.random().toString(36).slice(2)}`
+  );
+}
+
 function obtenerNombreCliente(cita) {
   return typeof cita?.cliente === "object"
     ? cita.cliente?.nombre
@@ -43,6 +50,7 @@ export default function CitaForm({
   const [valorSeleccionado, setValorSeleccionado] = useState("");
   const [enviando, setEnviando] = useState(false);
   const envioEnCursoRef = useRef(false);
+  const claveIdempotenciaRef = useRef(crearClaveIdempotencia());
 
   const estaEditando = Boolean(citaEditando);
 
@@ -176,6 +184,7 @@ export default function CitaForm({
     setNuevaCita(citaVacia);
     setSugerencias([]);
     setValorSeleccionado("");
+    claveIdempotenciaRef.current = crearClaveIdempotencia();
   };
 
   const isFormValid =
@@ -197,7 +206,10 @@ export default function CitaForm({
     try {
       const operacionExitosa = estaEditando
         ? await onActualizarCita(nuevaCita)
-        : await onRegistrarCita(nuevaCita);
+        : await onRegistrarCita({
+            ...nuevaCita,
+            idempotencyKey: claveIdempotenciaRef.current,
+          });
 
       if (operacionExitosa === false) return;
 

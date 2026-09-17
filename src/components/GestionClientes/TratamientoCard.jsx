@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { FaCalendarAlt, FaCamera, FaImages, FaUserMd } from "react-icons/fa";
+import { formatearFechaCita } from "../../utils/citasFecha";
 
 export default function TratamientoCard({ tratamiento, onAbrirGaleria }) {
-  const fechaFormateada = new Date(tratamiento.fecha).toLocaleDateString();
+  const fechaFormateada = formatearFechaCita(tratamiento.fecha);
   const imagenes = useMemo(
     () => (tratamiento.imagenes || []).filter((img) => img?.url),
     [tratamiento.imagenes],

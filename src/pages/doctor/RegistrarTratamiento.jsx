@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCitas } from "../../context/CitasContext";
 import { useAuth } from "../../hooks/useAuth";
 import { useModal } from "../../hooks/useModal";
@@ -37,6 +37,8 @@ export default function RegistrarTratamiento() {
   const [imagenes, setImagenes] = useState([]);
   const [pacienteExistente, setPacienteExistente] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
+  const [enviando, setEnviando] = useState(false);
+  const envioEnCursoRef = useRef(false);
 
   const citasFiltradas = citas.filter((cita) => {
     const estadoPendiente = cita.estado?.toLowerCase() === "pendiente";
@@ -178,6 +180,10 @@ export default function RegistrarTratamiento() {
   const handleGuardar = async (e) => {
     e.preventDefault();
 
+    // El ref se actualiza de forma síncrona para bloquear clics/Enter repetidos
+    // antes de que React alcance a renderizar el botón deshabilitado.
+    if (envioEnCursoRef.current || formBloqueado) return;
+
     if (!formData.insumos || formData.insumos.length === 0) {
       setModal({
         show: true,
@@ -197,6 +203,10 @@ export default function RegistrarTratamiento() {
       return;
     }
 
+    envioEnCursoRef.current = true;
+    setEnviando(true);
+    let tratamientoRegistrado = false;
+
     try {
       const token = localStorage.getItem("token");
       const formDataToSend = new FormData();
@@ -212,6 +222,11 @@ export default function RegistrarTratamiento() {
       formDataToSend.append("profesional", nombreDoctor);
       formDataToSend.append("rol", rol);
 
+      const citaId = citaSeleccionada?._id || citaSeleccionada?.id;
+      if (citaId) {
+        formDataToSend.append("citaId", citaId);
+      }
+
       imagenes.forEach((img) => {
         formDataToSend.append("imagenes", img.file);
       });
@@ -226,6 +241,10 @@ export default function RegistrarTratamiento() {
       );
 
       if (res.ok) {
+        // Una vez aceptado por el servidor el formulario permanece bloqueado.
+        // Así no se puede reenviar mientras se muestra la confirmación.
+        tratamientoRegistrado = true;
+
         setFormData({
           nombre: "",
           sexo: "",
@@ -273,6 +292,12 @@ export default function RegistrarTratamiento() {
         message: "❌ Error al conectar con el servidor",
         type: "error",
       });
+    } finally {
+      // Solo se habilita un nuevo intento si el registro no llegó a guardarse.
+      if (!tratamientoRegistrado) {
+        envioEnCursoRef.current = false;
+        setEnviando(false);
+      }
     }
   };
 
@@ -454,6 +479,7 @@ export default function RegistrarTratamiento() {
                 setPacienteExistente(false);
               }}
               disabled={formBloqueado}
+              isSubmitting={enviando}
             />
           </form>
         </div>

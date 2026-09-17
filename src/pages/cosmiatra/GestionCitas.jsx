@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import CitaForm from "../../components/AgendaCitas/CitaForm";
 import CitaTable from "../../components/AgendaCitas/CitaTable";
@@ -34,6 +34,7 @@ export default function GestionCitas() {
   const [isLoading, setIsLoading] = useState(false);
   const [citaEditando, setCitaEditando] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const registroCitaEnCursoRef = useRef(false);
   const { modal, mostrarModal, cerrarModal } = useModal();
 
   useEffect(() => {
@@ -105,7 +106,11 @@ export default function GestionCitas() {
     fetchCitas();
   }, [fetchCitas]);
 
-  const registrarCita = async (nuevaCita) => {
+  const registrarCita = useCallback(async (nuevaCita) => {
+    if (registroCitaEnCursoRef.current) return false;
+
+    registroCitaEnCursoRef.current = true;
+
     try {
       const citaPayload = {
         ...nuevaCita,
@@ -124,8 +129,10 @@ export default function GestionCitas() {
     } catch {
       mostrarModal("❌ Error al registrar la cita", "error");
       return false;
+    } finally {
+      registroCitaEnCursoRef.current = false;
     }
-  };
+  }, [mostrarModal]);
 
   const actualizarEstado = async (id, nuevoEstado) => {
     try {

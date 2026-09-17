@@ -1,5 +1,6 @@
 import { FaClipboardList, FaMoneyBillWave } from "react-icons/fa";
 import { calcularMonto } from "./calcularMonto";
+import { formatearFechaCita } from "../../utils/citasFecha";
 
 export default function HistorialCliente({ tratamientos, total, pagos = [] }) {
   return (
@@ -22,7 +23,7 @@ export default function HistorialCliente({ tratamientos, total, pagos = [] }) {
             >
               <div className="flex-1">
                 <p className="text-slate-400 text-xs sm:text-sm">
-                  {new Date(t.fecha).toLocaleDateString("es-PE")}
+                  {formatearFechaCita(t.fecha)}
                 </p>
                 <p className="text-cyan-100 font-medium text-sm sm:text-base mt-1 leading-relaxed break-words">
                   {Array.isArray(t.servicio)
