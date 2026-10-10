@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
 import CitaForm from "../../components/AgendaCitas/CitaForm";
 import CitaTable from "../../components/AgendaCitas/CitaTable";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
@@ -12,11 +11,12 @@ import {
   actualizarCita as actualizarCitaAPI,
   actualizarEstadoCita,
   eliminarCita as eliminarCitaAPI,
-  getProfesionales,
 } from "../../api/citas.api";
 import { convertirFechaCitaAISOString } from "../../utils/citasFecha";
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+import { CLINICAL_HISTORY_UPDATED_EVENT } from "../../utils/clinicalHistoryStorage";
+import { useCitas } from "../../hooks/useCitas";
+import { useProfessionalDirectory } from "../../hooks/useProfessionalDirectory";
+import { usePatientUpdates } from "../../hooks/usePatientUpdates";
 
 function obtenerIdCita(cita) {
   return cita?._id || cita?.id;
@@ -29,8 +29,9 @@ function obtenerNombreCliente(cita) {
 }
 
 export default function GestionCitas() {
+  const { socket } = useCitas();
+  const { professionals: usuarios = [] } = useProfessionalDirectory();
   const [citas, setCitas] = useState([]);
-  const [usuarios, setUsuarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [citaEditando, setCitaEditando] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -38,19 +39,17 @@ export default function GestionCitas() {
   const { modal, mostrarModal, cerrarModal } = useModal();
 
   useEffect(() => {
-    const socket = io(SOCKET_URL);
+    if (!socket) return undefined;
 
-    socket.on("connect", () => {});
-
-    socket.on("nuevaCita", (cita) => {
+    const handleNuevaCita = (cita) => {
       setCitas((prev) =>
         prev.some((c) => obtenerIdCita(c) === obtenerIdCita(cita))
           ? prev
           : [...prev, cita]
       );
-    });
+    };
 
-    socket.on("estadoCitaActualizado", (citaActualizada) => {
+    const handleEstadoActualizado = (citaActualizada) => {
       setCitas((prev) =>
         prev.map((c) =>
           obtenerIdCita(c) === obtenerIdCita(citaActualizada)
@@ -58,9 +57,9 @@ export default function GestionCitas() {
             : c
         )
       );
-    });
+    };
 
-    socket.on("citaActualizada", (citaActualizada) => {
+    const handleCitaActualizada = (citaActualizada) => {
       setCitas((prev) =>
         prev.map((c) =>
           obtenerIdCita(c) === obtenerIdCita(citaActualizada)
@@ -68,39 +67,55 @@ export default function GestionCitas() {
             : c
         )
       );
-    });
+    };
 
-    socket.on("citaEliminada", ({ _id }) => {
+    const handleCitaEliminada = ({ _id }) => {
       setCitas((prev) => prev.filter((c) => obtenerIdCita(c) !== _id));
-    });
+    };
 
-    socket.on("disconnect", () => {});
+    const handleHistoriaFinalizada = () => {
+      // The Topbar popup reacts to this event and refreshes immediately.
+      window.dispatchEvent(new CustomEvent(CLINICAL_HISTORY_UPDATED_EVENT));
+    };
+
+    socket.on("nuevaCita", handleNuevaCita);
+    socket.on("estadoCitaActualizado", handleEstadoActualizado);
+    socket.on("citaActualizada", handleCitaActualizada);
+    socket.on("citaEliminada", handleCitaEliminada);
+    socket.on("historiaClinicaFinalizada", handleHistoriaFinalizada);
 
     return () => {
-      socket.disconnect();
+      socket.off("nuevaCita", handleNuevaCita);
+      socket.off("estadoCitaActualizado", handleEstadoActualizado);
+      socket.off("citaActualizada", handleCitaActualizada);
+      socket.off("citaEliminada", handleCitaEliminada);
+      socket.off("historiaClinicaFinalizada", handleHistoriaFinalizada);
     };
-  }, []);
-
-  useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const data = await getProfesionales();
-        setUsuarios(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error("Error al obtener usuarios:", err);
-      }
-    };
-    fetchUsuarios();
-  }, []);
+  }, [socket]);
 
   const fetchCitas = useCallback(async () => {
     try {
       const data = await getCitas();
-      setCitas(Array.isArray(data) ? data : []);
+      const actualizadas = Array.isArray(data) ? data : [];
+      setCitas(actualizadas);
+      return actualizadas;
     } catch (err) {
       console.error("Error al obtener citas:", err);
+      return [];
     }
   }, []);
+
+  usePatientUpdates(() => {
+    void fetchCitas().then((actualizadas) => {
+      setCitaEditando((current) => {
+        if (!current) return null;
+        const actualizada = actualizadas.find((cita) => obtenerIdCita(cita) === obtenerIdCita(current));
+        return actualizada
+          ? { ...current, cliente: actualizada.cliente, pacienteId: actualizada.pacienteId }
+          : current;
+      });
+    });
+  }, socket);
 
   useEffect(() => {
     fetchCitas();
@@ -228,7 +243,7 @@ export default function GestionCitas() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack">
         <CitaForm
           usuarios={usuarios}
@@ -238,7 +253,6 @@ export default function GestionCitas() {
           onEliminarCita={() => setShowDeleteModal(true)}
           onCancelarEdicion={cancelarEdicion}
         />
-
         <CitaTable
           citas={citas}
           actualizarEstado={actualizarEstado}

@@ -26,7 +26,7 @@ const PasswordInput = ({
         onChange={onChange}
         placeholder={placeholder}
         autoComplete="new-password"
-        className={`w-full rounded-lg border bg-slate-950/50 py-3 pl-4 pr-11 text-slate-100 outline-none transition placeholder:text-slate-500 focus:ring-2 ${
+        className={`ui-control py-3 pl-4 pr-11 ${
           error
             ? "border-rose-400/70 focus:border-rose-300 focus:ring-rose-400/30"
             : "border-white/10 focus:border-cyan-300/70 focus:ring-cyan-300/20"
@@ -36,7 +36,7 @@ const PasswordInput = ({
       {value.length > 0 && (
         <button
           type="button"
-          className={`absolute right-3 top-10 transition ${
+          className={`ui-icon-button absolute right-2 top-8 ${
             error
               ? "text-rose-300 hover:text-rose-200"
               : "text-slate-500 hover:text-cyan-200"

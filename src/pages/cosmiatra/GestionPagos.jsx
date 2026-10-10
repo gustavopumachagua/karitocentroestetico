@@ -1,6 +1,5 @@
-import { useEffect, useState, useMemo } from "react";
-import { io } from "socket.io-client";
-import { useCitas } from "../../context/CitasContext";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCitas } from "../../hooks/useCitas";
 import { getPagos, registrarPago as registrarPagoAPI } from "../../api/pagos.api";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import BuscadorPagos from "../../components/GestionPagos/BuscadorPagos";
@@ -8,9 +7,13 @@ import TablaPagos from "../../components/GestionPagos/TablaPagos";
 import Paginacion from "../../components/HistorialPacientes/Paginacion";
 import ModalRegistrarPago from "../../components/GestionPagos/ModalRegistrarPago";
 import ModalTicket from "../../components/GestionPagos/ModalTicket";
+import { useProfessionalDirectory } from "../../hooks/useProfessionalDirectory";
+import { usePatientUpdates } from "../../hooks/usePatientUpdates";
 
 export default function PagosCitas() {
-  const { citas, obtenerCitas, modalInfo, setModalInfo } = useCitas();
+  const { citas, obtenerCitas, modalInfo, setModalInfo, socket } = useCitas();
+  const { professionalNamesById } = useProfessionalDirectory();
+  const obtenerCitasRef = useRef(obtenerCitas);
   const [pagos, setPagos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -23,6 +26,53 @@ export default function PagosCitas() {
   const [ticketSeleccionado, setTicketSeleccionado] = useState(null);
   const [mostrarTicket, setMostrarTicket] = useState(false);
 
+  const manejarBusqueda = useCallback((valor) => {
+    setBusqueda(valor);
+    // La búsqueda se aplica sobre todas las citas atendidas antes de paginar.
+    // Volver a la primera página evita que una coincidencia única quede fuera
+    // del segmento de resultados que se estaba viendo anteriormente.
+    setPaginaActual(1);
+  }, []);
+
+  const fetchPagos = useCallback(async () => {
+    try {
+      const data = await getPagos();
+      setPagos(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error obteniendo pagos:", err);
+    }
+  }, []);
+
+  usePatientUpdates((patient) => {
+    if (patient?.nombreAnterior && patient?.nombre) {
+      setBusqueda((current) =>
+        current.trim().toLocaleLowerCase("es-PE") === patient.nombreAnterior.trim().toLocaleLowerCase("es-PE")
+          ? patient.nombre
+          : current,
+      );
+    }
+    void fetchPagos();
+  }, socket);
+
+  useEffect(() => {
+    setCitaSeleccionada((current) =>
+      current ? citas.find((cita) => String(cita._id) === String(current._id)) || current : null,
+    );
+    setTicketSeleccionado((current) => {
+      if (!current) return null;
+      return {
+        cita: citas.find((cita) => String(cita._id) === String(current.cita?._id)) || current.cita,
+        pago: pagos.find((pago) => String(pago._id) === String(current.pago?._id)) || current.pago,
+      };
+    });
+  }, [citas, pagos]);
+
+  const pagoPorCita = useCallback(
+    (citaId) =>
+      pagos.find((p) => String(p.cita?._id || p.cita) === String(citaId)),
+    [pagos],
+  );
+
   const handleVerTicket = (cita) => {
     const pago = pagoPorCita(cita._id);
     if (!pago) return;
@@ -31,28 +81,30 @@ export default function PagosCitas() {
   };
 
   useEffect(() => {
-    obtenerCitas();
+    obtenerCitasRef.current = obtenerCitas;
+  }, [obtenerCitas]);
+
+  useEffect(() => {
+    obtenerCitasRef.current();
     fetchPagos();
 
-    const socket = io(import.meta.env.VITE_SOCKET_URL);
+    if (!socket) return undefined;
 
-    socket.on("connect", () => {});
-
-    socket.on("nuevoPago", (pago) => {
+    const handleNuevoPago = (pago) => {
       setPagos((prev) => [...prev, pago]);
       setModalInfo({
         show: true,
         message: `💸 Nuevo pago registrado para ${pago.cliente}`,
         type: "success",
       });
-    });
+    };
 
-    socket.on("disconnect", () => {});
+    socket.on("nuevoPago", handleNuevoPago);
 
     return () => {
-      socket.disconnect();
+      socket.off("nuevoPago", handleNuevoPago);
     };
-  }, []);
+  }, [fetchPagos, setModalInfo, socket]);
 
   useEffect(() => {
     const suma = serviciosConPrecio.reduce(
@@ -73,32 +125,22 @@ export default function PagosCitas() {
     setServiciosConPrecio(nuevos);
   };
 
-  const fetchPagos = async () => {
-    try {
-      const data = await getPagos();
-      setPagos(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Error obteniendo pagos:", err);
-    }
-  };
-
-  const pagoPorCita = (citaId) =>
-    pagos.find((p) => String(p.cita?._id || p.cita) === String(citaId));
-
   const citasAtendidas = useMemo(
     () => citas.filter((c) => c.estado === "atendido"),
     [citas],
   );
 
   const citasFiltradas = useMemo(() => {
+    const termino = busqueda.trim().toLocaleLowerCase("es-PE");
     let filtradas = citasAtendidas;
-    if (busqueda) {
+
+    if (termino) {
       filtradas = filtradas.filter((c) =>
-        c.cliente.toLowerCase().includes(busqueda.toLowerCase()),
+        String(c.cliente || "").toLocaleLowerCase("es-PE").includes(termino),
       );
     }
 
-    return filtradas.sort((a, b) => {
+    return [...filtradas].sort((a, b) => {
       const estadoA = pagoPorCita(a._id)?.estadoPago || "pendiente";
       const estadoB = pagoPorCita(b._id)?.estadoPago || "pendiente";
 
@@ -109,7 +151,7 @@ export default function PagosCitas() {
       const fechaB = new Date(b.fechaCita || b.fecha || 0);
       return fechaB - fechaA;
     });
-  }, [busqueda, citasAtendidas, pagos]);
+  }, [busqueda, citasAtendidas, pagoPorCita]);
 
   const indiceInicio = (paginaActual - 1) * registrosPorPagina;
   const citasPaginadas = citasFiltradas.slice(
@@ -117,6 +159,13 @@ export default function PagosCitas() {
     indiceInicio + registrosPorPagina,
   );
   const totalPaginas = Math.ceil(citasFiltradas.length / registrosPorPagina);
+
+  useEffect(() => {
+    const ultimaPagina = Math.max(totalPaginas, 1);
+    if (paginaActual > ultimaPagina) {
+      setPaginaActual(ultimaPagina);
+    }
+  }, [paginaActual, totalPaginas]);
 
   const registrarPago = async () => {
     if (!citaSeleccionada || !todosPreciosValidos() || !metodoPago) return;
@@ -157,11 +206,11 @@ export default function PagosCitas() {
   };
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack">
         <BuscadorPagos
           busqueda={busqueda}
-          setBusqueda={setBusqueda}
+          setBusqueda={manejarBusqueda}
           citas={citasAtendidas}
         />
 
@@ -179,6 +228,7 @@ export default function PagosCitas() {
             setMostrarFormulario(true);
           }}
           onVerTicket={handleVerTicket}
+          professionalNamesById={professionalNamesById}
         />
         {totalPaginas > 1 && (
           <div className="flex justify-center">

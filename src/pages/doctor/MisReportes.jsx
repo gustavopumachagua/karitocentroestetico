@@ -1,17 +1,27 @@
-import { useState, useEffect } from "react";
-import { useCitas } from "../../context/CitasContext";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useCitas } from "../../hooks/useCitas";
 import { useAuth } from "../../hooks/useAuth";
 import FiltrosReportes from "../../components/DashboardDoctor/FiltrosReportes";
 import GraficoCitasEvolucion from "../../components/DashboardDoctor/GraficoCitasEvolucion";
 import GraficoTratamientos from "../../components/DashboardDoctor/GraficoTratamientos";
 import GraficoCitasPorEstado from "../../components/DashboardDoctor/GraficoCitasPorEstado";
 import GraficoInsumos from "../../components/DashboardDoctor/GraficoInsumos";
+import { belongsToProfessionalRole } from "../../utils/professionalOwnership";
+
+const toTextList = (value) => {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (typeof value !== "string") return [];
+
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+};
 
 export default function MisReportes() {
   const { citas, tratamientos, obtenerCitas, obtenerTratamientos, socket } =
     useCitas();
-  const { rol, nombre } = useAuth();
-  const nombreLower = nombre.toLowerCase();
+  const { rol, user } = useAuth();
 
   const [filtroAnio, setFiltroAnio] = useState(new Date().getFullYear());
   const [filtroMes, setFiltroMes] = useState("");
@@ -19,72 +29,106 @@ export default function MisReportes() {
   const [tratamientosDistribucion, setTratamientosDistribucion] = useState([]);
   const [citasPorEstado, setCitasPorEstado] = useState([]);
   const [insumosMasUsados, setInsumosMasUsados] = useState([]);
+  const obtenerCitasRef = useRef(obtenerCitas);
+  const obtenerTratamientosRef = useRef(obtenerTratamientos);
+
+  useEffect(() => {
+    obtenerCitasRef.current = obtenerCitas;
+  }, [obtenerCitas]);
+
+  useEffect(() => {
+    obtenerTratamientosRef.current = obtenerTratamientos;
+  }, [obtenerTratamientos]);
+
+  const recargarCitas = useCallback(() => obtenerCitasRef.current(), []);
+  const recargarTratamientos = useCallback(
+    () => obtenerTratamientosRef.current(),
+    [],
+  );
 
   const COLORS = ["#34D399", "#FBBF24", "#EF4444", "#60A5FA", "#8B5CF6"];
 
   useEffect(() => {
-    obtenerCitas();
-    obtenerTratamientos();
-  }, []);
+    void recargarCitas();
+    void recargarTratamientos();
+  }, [recargarCitas, recargarTratamientos]);
 
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("nuevaCita", () => {
-      obtenerCitas();
-    });
+    const handleNuevaCita = () => {
+      void recargarCitas();
+    };
 
-    socket.on("estadoCitaActualizado", () => {
-      obtenerCitas();
-    });
+    const handleEstadoCitaActualizado = () => {
+      void recargarCitas();
+    };
 
-    socket.on("tratamientoActualizado", () => {
-      obtenerTratamientos();
-    });
+    const handleTratamientoActualizado = () => {
+      void recargarTratamientos();
+    };
+
+    socket.on("nuevaCita", handleNuevaCita);
+    socket.on("estadoCitaActualizado", handleEstadoCitaActualizado);
+    socket.on("tratamientoActualizado", handleTratamientoActualizado);
 
     return () => {
-      socket.off("nuevaCita");
-      socket.off("estadoCitaActualizado");
-      socket.off("tratamientoActualizado");
+      socket.off("nuevaCita", handleNuevaCita);
+      socket.off("estadoCitaActualizado", handleEstadoCitaActualizado);
+      socket.off("tratamientoActualizado", handleTratamientoActualizado);
     };
-  }, [socket]);
+  }, [socket, recargarCitas, recargarTratamientos]);
 
   useEffect(() => {
-    if (!citas.length || !tratamientos.length) return;
-    if (!rol || !nombreLower) return;
+    if (!rol || !user) {
+      setCitasEvolucion([]);
+      setTratamientosDistribucion([]);
+      setCitasPorEstado([]);
+      setInsumosMasUsados([]);
+      return;
+    }
 
-    const obtenerNombreProfesional = (c) =>
-      typeof c.profesional === "string"
-        ? c.profesional.toLowerCase()
-        : c.profesional?.nombre?.toLowerCase() || "";
+    const anioSeleccionado = Number(filtroAnio);
+    const mesSeleccionado = filtroMes ? Number(filtroMes) : null;
+    const obtenerFecha = (valor) => {
+      const fecha = new Date(
+        typeof valor === "string" ? valor.replace(" ", "T") : valor,
+      );
+      return Number.isNaN(fecha.getTime()) ? null : fecha;
+    };
+    const esMiRegistro = (registro) =>
+      belongsToProfessionalRole(registro, user);
+    const estaEnPeriodo = (registro, incluirAnioAnterior = false) => {
+      const fecha = obtenerFecha(registro?.fecha);
+      if (!fecha) return false;
 
-    const esMiCita = (c) =>
-      c.rol?.toLowerCase() === rol &&
-      obtenerNombreProfesional(c) === nombreLower;
-
-    const citasFiltradas = citas.filter((c) => {
-      const fechaCita = new Date(c.fecha.replace(" ", "T"));
-      const anioCita = fechaCita.getFullYear();
-      const mesCita = fechaCita.getMonth() + 1;
+      const anioValido = incluirAnioAnterior
+        ? [anioSeleccionado, anioSeleccionado - 1].includes(
+            fecha.getFullYear(),
+          )
+        : fecha.getFullYear() === anioSeleccionado;
 
       return (
-        esMiCita(c) &&
-        [Number(filtroAnio), Number(filtroAnio) - 1].includes(anioCita) &&
-        (!filtroMes || mesCita === Number(filtroMes))
+        anioValido &&
+        (!mesSeleccionado || fecha.getMonth() + 1 === mesSeleccionado)
       );
-    });
+    };
+
+    const citasFiltradas = citas.filter(
+      (cita) => esMiRegistro(cita) && estaEnPeriodo(cita, true),
+    );
 
     const citasAtendidas = citasFiltradas.filter(
-      (c) => c.estado?.toLowerCase() === "atendido"
+      (cita) => cita.estado?.toLowerCase() === "atendido",
     );
 
     const acumulado = {};
-    citasAtendidas.forEach((c) => {
-      const f = new Date(c.fecha);
-      const anio = f.getFullYear();
-      const mes = f.toLocaleString("es-ES", { month: "short" });
-      if (![filtroAnio, filtroAnio - 1].includes(anio)) return;
-      if (filtroMes && f.getMonth() + 1 !== filtroMes) return;
+    citasAtendidas.forEach((cita) => {
+      const fecha = obtenerFecha(cita.fecha);
+      if (!fecha) return;
+
+      const anio = fecha.getFullYear();
+      const mes = fecha.toLocaleString("es-ES", { month: "short" });
       if (!acumulado[mes]) acumulado[mes] = {};
       acumulado[mes][anio] = (acumulado[mes][anio] || 0) + 1;
     });
@@ -106,24 +150,21 @@ export default function MisReportes() {
     const dataEvo = Object.entries(acumulado)
       .map(([mes, val]) => ({
         mes,
-        [filtroAnio]: val[filtroAnio] || 0,
-        [filtroAnio - 1]: val[filtroAnio - 1] || 0,
+        [anioSeleccionado]: val[anioSeleccionado] || 0,
+        [anioSeleccionado - 1]: val[anioSeleccionado - 1] || 0,
       }))
       .sort((a, b) => ordenMeses.indexOf(a.mes) - ordenMeses.indexOf(b.mes));
 
     setCitasEvolucion(dataEvo);
 
     const tratamientosFiltrados = tratamientos.filter(
-      (t) =>
-        t.rol?.toLowerCase() === rol &&
-        t.profesional?.toLowerCase() === nombreLower &&
-        new Date(t.fecha).getFullYear() === Number(filtroAnio) &&
-        (!filtroMes || new Date(t.fecha).getMonth() + 1 === Number(filtroMes))
+      (tratamiento) =>
+        esMiRegistro(tratamiento) && estaEnPeriodo(tratamiento),
     );
 
     const porServicio = {};
     tratamientosFiltrados.forEach((t) => {
-      (t.servicio || []).forEach((s) => {
+      toTextList(t.servicio).forEach((s) => {
         porServicio[s] = (porServicio[s] || 0) + 1;
       });
     });
@@ -131,17 +172,9 @@ export default function MisReportes() {
       Object.entries(porServicio).map(([name, value]) => ({ name, value }))
     );
 
-    const citasPorEstadoFiltradas = citas.filter((c) => {
-      const fechaCita = new Date(c.fecha.replace(" ", "T"));
-      const anioCita = fechaCita.getFullYear();
-      const mesCita = fechaCita.getMonth() + 1;
-
-      return (
-        esMiCita(c) &&
-        anioCita === Number(filtroAnio) &&
-        (!filtroMes || mesCita === Number(filtroMes))
-      );
-    });
+    const citasPorEstadoFiltradas = citas.filter(
+      (cita) => esMiRegistro(cita) && estaEnPeriodo(cita),
+    );
 
     const estados = {};
     citasPorEstadoFiltradas.forEach((c) => {
@@ -158,7 +191,7 @@ export default function MisReportes() {
 
     const insumos = {};
     tratamientosFiltrados.forEach((t) => {
-      (t.insumos || []).forEach((i) => {
+      toTextList(t.insumos).forEach((i) => {
         insumos[i] = (insumos[i] || 0) + 1;
       });
     });
@@ -168,19 +201,21 @@ export default function MisReportes() {
         .sort((a, b) => b.value - a.value)
         .slice(0, 10)
     );
-  }, [filtroAnio, filtroMes, citas, tratamientos]);
+  }, [filtroAnio, filtroMes, citas, tratamientos, rol, user]);
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack">
-        <FiltrosReportes
-          filtroAnio={filtroAnio}
-          setFiltroAnio={setFiltroAnio}
-          filtroMes={filtroMes}
-          setFiltroMes={setFiltroMes}
-        />
+        <div className="ui-panel p-2 sm:p-3">
+          <FiltrosReportes
+            filtroAnio={filtroAnio}
+            setFiltroAnio={setFiltroAnio}
+            filtroMes={filtroMes}
+            setFiltroMes={setFiltroMes}
+          />
+        </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
           <GraficoCitasEvolucion data={citasEvolucion} anio={filtroAnio} />
           <GraficoTratamientos
             data={tratamientosDistribucion}

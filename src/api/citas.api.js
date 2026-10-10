@@ -26,7 +26,7 @@ export const eliminarCita = async (id) => {
 };
 
 export const buscarCitas = async (nombre) => {
-  const { data } = await API.get(`/citas/buscar?nombre=${nombre}`);
+  const { data } = await API.get("/citas/buscar", { params: { nombre } });
   return data;
 };
 

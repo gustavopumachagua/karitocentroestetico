@@ -20,8 +20,8 @@ export default function UsuariosSection({
     );
 
   return (
-    <section className="page-panel page-panel-pad">
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <section className="ui-panel">
+      <div className="ui-toolbar mb-5">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-400/15 bg-violet-400/10">
             <FaUser className="text-violet-300" />
@@ -31,7 +31,7 @@ export default function UsuariosSection({
           </h3>
         </div>
 
-        <span className="w-fit rounded-lg border border-slate-700/70 bg-slate-950/30 px-3 py-1 text-sm font-medium text-slate-300">
+        <span className="ui-status">
           {usuariosFiltrados.length} usuarios
         </span>
       </div>

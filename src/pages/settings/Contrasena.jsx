@@ -16,11 +16,15 @@ export default function Contrasena() {
   };
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack page-stack-narrow">
-        <div className="page-panel page-panel-pad space-y-6 text-center">
-          <h1 className="section-title text-3xl">Cambiar contraseña</h1>
-          <p className="section-muted text-sm">
+        <div className="ui-panel relative space-y-6 overflow-hidden text-center">
+          <div className="absolute -right-12 -top-14 h-44 w-44 rounded-full bg-violet-400/10 blur-3xl" />
+          <div className="relative">
+            <p className="ui-eyebrow">Seguridad de la cuenta</p>
+            <h1 className="ui-title mt-2">Cambiar contraseña</h1>
+          </div>
+          <p className="ui-description relative text-sm">
             Cambiar tu contraseña cerrará tu sesión en otros dispositivos.
             Tendrás que introducir en ellos tu nueva contraseña para acceder de
             nuevo a tu cuenta.
@@ -29,13 +33,13 @@ export default function Contrasena() {
           <button
             type="button"
             onClick={handleResetPassword}
-            className="mx-auto flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-400 px-6 py-3 font-semibold text-slate-950 shadow-md shadow-cyan-950/30 transition hover:bg-cyan-300 active:scale-95 sm:w-auto"
+            className="ui-button ui-button-primary relative mx-auto flex w-full items-center justify-center gap-2 sm:w-auto"
           >
             <FaLock />
             Restablecer contraseña
           </button>
 
-          <p className="section-muted pt-4 text-sm">
+          <p className="ui-description relative pt-4 text-sm">
             ¿Tienes problemas? Ponte en contacto con nosotros en{" "}
             <span className="cursor-pointer text-cyan-200 transition hover:text-cyan-100 hover:underline">
               Soporte al cliente

@@ -9,8 +9,8 @@ export default function FormSelect({
   disabled,
 }) {
   return (
-    <div className="flex flex-col">
-      <label className="text-sm text-slate-300 mb-2">{label}</label>
+    <div className="ui-field">
+      <label className="ui-label">{label}</label>
       <CustomSelect
         name={name}
         value={value}

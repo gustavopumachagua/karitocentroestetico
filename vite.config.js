@@ -35,29 +35,43 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,jpeg}"],
         runtimeCaching: [
           {
-            urlPattern: ({ request }) =>
-              ["document", "script", "style", "image", "font"].includes(
-                request.destination,
-              ),
+            // API responses can contain medical, appointment and payment data.
+            // They must always come from the network and must never enter
+            // Cache Storage, even when the API is hosted on another origin.
+            urlPattern: ({ url, request }) =>
+              url.pathname.startsWith("/api/") ||
+              request.headers.has("authorization"),
+            handler: "NetworkOnly",
+          },
+          {
+            // Cache only the immutable assets shipped with this SPA. Do not
+            // cache Cloudinary/user images or any arbitrary external URL.
+            urlPattern: ({ url, request }) => {
+              const isSameOrigin = url.origin === self.location.origin;
+              const isStaticAsset =
+                url.pathname.startsWith("/assets/") ||
+                [
+                  "/favicon.ico",
+                  "/apple-touch-icon.png",
+                  "/mask-icon.svg",
+                  "/Logo.jpg",
+                  "/Logo_SEO.png",
+                ].includes(url.pathname);
+
+              return (
+                isSameOrigin &&
+                isStaticAsset &&
+                ["script", "style", "image", "font"].includes(
+                  request.destination,
+                )
+              );
+            },
             handler: "CacheFirst",
             options: {
               cacheName: "karito-static-cache",
               expiration: {
                 maxEntries: 200,
                 maxAgeSeconds: 60 * 60 * 24 * 30,
-              },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/.*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "karito-api-cache",
-              networkTimeoutSeconds: 10,
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24,
               },
               cacheableResponse: { statuses: [0, 200] },
             },

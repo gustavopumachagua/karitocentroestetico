@@ -3,19 +3,22 @@ import { AccionButtons } from "./AccionButtons";
 import FechaCita from "./FechaCita";
 import DetalleCita from "./DetalleCita";
 import { FaUserMd } from "react-icons/fa";
+import { getProfessionalDisplayName } from "../../utils/professionalDirectory";
 
 export function CitaCard({
   cita,
   actualizarEstado,
-  onSeleccionarCita,
   onEditarCita,
   showAcciones = true,
+  professionalNamesById,
 }) {
+  const nombreProfesional = getProfessionalDisplayName(
+    cita,
+    professionalNamesById,
+  );
+
   return (
-    <div
-      className="glass-card p-5 cursor-pointer"
-      onClick={() => onSeleccionarCita && onSeleccionarCita(cita)}
-    >
+    <div className="ui-card ui-card-interactive">
       <div className="flex justify-between items-start mb-4">
         <div className="space-y-1">
           <h3 className="text-xl font-bold text-white">
@@ -25,7 +28,7 @@ export function CitaCard({
           </h3>
           <p className="flex items-center gap-2 text-sm text-slate-400">
             <FaUserMd className="text-cyan-300" />
-            {cita.profesional?.nombre || "Sin asignar"}
+            {nombreProfesional || "Sin asignar"}
           </p>
         </div>
         <EstadoBadge estado={cita.estado} />

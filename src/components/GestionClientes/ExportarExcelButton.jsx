@@ -1,10 +1,23 @@
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { FiDownload } from "react-icons/fi";
-import axios from "axios";
-import { useCitas } from "../../context/CitasContext";
+import { useCitas } from "../../hooks/useCitas";
+import { getPagos } from "../../api/pagos.api";
+import { useProfessionalDirectory } from "../../hooks/useProfessionalDirectory";
+import {
+  createProfessionalNameIndex,
+  getProfessionalDisplayName,
+} from "../../utils/professionalDirectory";
+import { getPatientKey, getPatientName } from "../../utils/patientIdentity";
 
 const COL_MONTO = "Total de pago";
+
+// Values entered by users must never be interpreted as Excel formulas when a
+// staff member opens an exported workbook.
+function toSafeSpreadsheetText(value) {
+  const text = String(value ?? "");
+  return /^[=+\-@]/.test(text) ? `'${text}` : text;
+}
 
 function pagoPorCita(citaId, pagos) {
   if (!Array.isArray(pagos)) return null;
@@ -62,7 +75,8 @@ function forzarColumnaTexto(ws, nombreColumna, filasDatosOrdenadas) {
 }
 
 export default function ExportarExcelButton() {
-  const { citas, obtenerCitas, obtenerTratamientos, pagos } = useCitas();
+  const { obtenerCitas, obtenerTratamientos } = useCitas();
+  const { professionalNamesById, refreshProfessionals } = useProfessionalDirectory();
   const [exportando, setExportando] = useState(false);
 
   const formatDate = (value) => {
@@ -79,34 +93,39 @@ export default function ExportarExcelButton() {
     try {
       setExportando(true);
 
-      const token = localStorage.getItem("token");
-      const API_PAGOS = `${import.meta.env.VITE_API_URL}/api/pagos`;
-
-      const [citasDesdeBD, pagosDesdeBD, tratamientosDesdeBD] =
+      const [citasDesdeBD, pagosDesdeBD, tratamientosDesdeBD, profesionales] =
         await Promise.all([
-          Array.isArray(citas) && citas.length
-            ? Promise.resolve(citas)
-            : obtenerCitas(),
-          axios.get(API_PAGOS, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          obtenerCitas(),
+          getPagos(),
           obtenerTratamientos(),
+          refreshProfessionals(),
         ]);
 
+      const nombresProfesionales = profesionales.length
+        ? createProfessionalNameIndex(profesionales)
+        : professionalNamesById;
+
       const mapaTratamientos = {};
+      const tratamientosPorCita = new Map();
+      const pacientesPorNombre = new Map();
       if (Array.isArray(tratamientosDesdeBD)) {
         tratamientosDesdeBD.forEach((t) => {
-          const nombreNormalizado = t.nombre?.trim().toLowerCase();
-          if (nombreNormalizado && !mapaTratamientos[nombreNormalizado]) {
-            mapaTratamientos[nombreNormalizado] = {
+          const patientKey = getPatientKey(t);
+          if (!mapaTratamientos[patientKey]) {
+            mapaTratamientos[patientKey] = {
               nombre: t.nombre,
               sexo: t.sexo || "No especificado",
               celular: t.celular || "",
             };
           }
+          const citaId = String(t.cita?._id || t.cita || "");
+          if (citaId) tratamientosPorCita.set(citaId, mapaTratamientos[patientKey]);
+          const nameKey = getPatientName(t).toLocaleLowerCase("es-PE");
+          if (!pacientesPorNombre.has(nameKey)) pacientesPorNombre.set(nameKey, new Set());
+          pacientesPorNombre.get(nameKey).add(patientKey);
         });
       }
-      const pagos = Array.isArray(pagosDesdeBD?.data) ? pagosDesdeBD.data : [];
+      const pagos = Array.isArray(pagosDesdeBD) ? pagosDesdeBD : [];
 
       const registros = (Array.isArray(citasDesdeBD) ? citasDesdeBD : [])
         .map((cita) => {
@@ -115,10 +134,13 @@ export default function ExportarExcelButton() {
               ? cita.cliente
               : { nombre: cita?.cliente };
 
-          const nombreClienteNormalizado = cliente.nombre?.trim().toLowerCase();
-
-          const datosTratamiento =
-            mapaTratamientos[nombreClienteNormalizado] || {};
+          const nameCandidates = pacientesPorNombre.get(getPatientName(cita).toLocaleLowerCase("es-PE"));
+          // Legacy appointments have no contact information. Fill contact
+          // columns only if that display name has a single patient group;
+          // an explicit visit/patient ID always takes precedence.
+          const legacyKey = nameCandidates?.size === 1 ? [...nameCandidates][0] : null;
+          const datosTratamiento = tratamientosPorCita.get(String(cita._id)) ||
+            mapaTratamientos[getPatientKey(cita)] || mapaTratamientos[legacyKey] || {};
 
           const sexoFinal = datosTratamiento.sexo || cita?.sexo || "-";
           const celularFinal = datosTratamiento.celular || cita?.celular || "-";
@@ -127,10 +149,10 @@ export default function ExportarExcelButton() {
             ? cita.servicio.join(", ")
             : cita?.servicio || "";
 
-          const profesionalNombre =
-            cita?.profesional && typeof cita.profesional === "object"
-              ? cita.profesional.nombre || cita.profesional
-              : cita?.profesional || "";
+          const profesionalNombre = getProfessionalDisplayName(
+            cita,
+            nombresProfesionales,
+          );
 
           const pago = pagoPorCita(cita?._id, pagos);
 
@@ -138,22 +160,24 @@ export default function ExportarExcelButton() {
 
           const totalPago = leerNumeroTotal(pago);
           return {
-            "Nombre del cliente": cliente.nombre || "-",
-            Sexo: sexoFinal,
-            Celular: celularFinal,
-            Servicios: nombreservicios || "-",
+            "Nombre del cliente": toSafeSpreadsheetText(cliente.nombre || "-"),
+            Sexo: toSafeSpreadsheetText(sexoFinal),
+            Celular: toSafeSpreadsheetText(celularFinal),
+            Servicios: toSafeSpreadsheetText(nombreservicios || "-"),
             Fecha: formatDate(cita?.fecha),
             FechaOriginal: cita?.fecha,
-            "Profesional que la atendió": profesionalNombre || "-",
+            "Profesional que la atendió": toSafeSpreadsheetText(profesionalNombre || "-"),
             [COL_MONTO]:
               totalPago != null ? `S/ ${totalPago.toFixed(2)}` : "S/ 0.00",
           };
         })
         .filter(Boolean)
         .sort((a, b) => new Date(b.FechaOriginal) - new Date(a.FechaOriginal));
-      const registrosLimpios = registros.map(
-        ({ FechaOriginal, ...rest }) => rest,
-      );
+      const registrosLimpios = registros.map((registro) => {
+        const registroLimpio = { ...registro };
+        delete registroLimpio.FechaOriginal;
+        return registroLimpio;
+      });
 
       const ws = XLSX.utils.json_to_sheet(registrosLimpios);
       forzarColumnaTexto(ws, COL_MONTO, registrosLimpios);
@@ -181,7 +205,7 @@ export default function ExportarExcelButton() {
     <button
       onClick={exportarExcel}
       disabled={exportando}
-      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2 transition-all duration-300 shadow-lg disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+      className="ui-button ui-button-primary w-full sm:w-auto"
       aria-label="Descargar clientes en Excel"
     >
       <FiDownload className="h-4 w-4 sm:h-5 sm:w-5 " />

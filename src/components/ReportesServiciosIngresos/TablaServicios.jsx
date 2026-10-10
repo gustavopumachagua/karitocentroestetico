@@ -2,6 +2,9 @@ import { FaCalendarAlt, FaMoneyBillWave } from "react-icons/fa";
 import { calcularMonto, obtenerPagoRelacionado } from "./calcularMonto";
 import DatePickerField from "../common/DatePickerField";
 import { formatearFechaCita } from "../../utils/citasFecha";
+import { getProfessionalDisplayName } from "../../utils/professionalDirectory";
+import { getAttentionDate } from "../../utils/attentionHistory";
+import AtencionPendienteBadge from "../HistorialPacientes/AtencionPendienteBadge";
 
 export default function TablaServicios({
   fechaFiltro,
@@ -10,10 +13,11 @@ export default function TablaServicios({
   buscarCliente,
   totalIngresos,
   pagos = [],
+  professionalNamesById,
 }) {
   return (
-    <div className="page-panel page-panel-pad">
-      <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+    <div className="ui-panel">
+      <div className="ui-toolbar mb-6">
         <div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10">
             <FaCalendarAlt className="text-cyan-300 text-lg" />
@@ -30,9 +34,9 @@ export default function TablaServicios({
         />
       </div>
 
-      <div className="hidden sm:block overflow-x-auto rounded-xl border border-slate-700/70">
-        <table className="w-full text-sm sm:text-base text-left border-collapse">
-          <thead className="bg-slate-800/80 text-xs uppercase tracking-wide text-slate-300">
+      <div className="ui-table-wrap hidden sm:block">
+        <table className="ui-table text-sm sm:text-base">
+          <thead>
             <tr>
               <th className="p-4 border-b border-slate-700/70">Fecha</th>
               <th className="p-4 border-b border-slate-700/70">Cliente</th>
@@ -57,15 +61,19 @@ export default function TablaServicios({
                 const pagoRelacionado = obtenerPagoRelacionado(t, pagos);
                 const monto = Number(calcularMonto(t, pagos)).toFixed(2);
                 const keyFila = t._id || `${t.nombre}-${t.fecha}-${idx}`;
+                const nombreProfesional = getProfessionalDisplayName(
+                  t,
+                  professionalNamesById,
+                );
 
                 return (
                   <tr
                     key={keyFila}
-                    onClick={() => buscarCliente(t.nombre)}
-                    className="bg-slate-950/20 hover:bg-cyan-400/5 cursor-pointer transition-all duration-200"
+                    onClick={() => buscarCliente(t)}
+                    className="cursor-pointer"
                   >
                     <td className="p-4 border-b border-slate-700/70 whitespace-nowrap text-slate-300">
-                      {formatearFechaCita(t.fecha)}
+                      {formatearFechaCita(getAttentionDate(t))}
                     </td>
                     <td className="p-4 border-b border-slate-700/70 font-medium text-white">
                       {t.nombre}
@@ -74,12 +82,13 @@ export default function TablaServicios({
                       {Array.isArray(t.servicio)
                         ? t.servicio.join(", ")
                         : t.servicio}
+                      <AtencionPendienteBadge record={t} className="mt-1" />
                     </td>
                     <td className="p-4 border-b border-slate-700/70 text-violet-200">
                       {t.rol || "—"}
                     </td>
                     <td className="p-4 border-b border-slate-700/70 text-slate-300">
-                      {t.profesional || "—"}
+                      {nombreProfesional || "—"}
                     </td>
                     <td className="p-4 border-b border-slate-700/70 text-slate-300">
                       {pagoRelacionado?.metodoPago || (
@@ -114,16 +123,20 @@ export default function TablaServicios({
             const pagoRelacionado = obtenerPagoRelacionado(t, pagos);
             const monto = Number(calcularMonto(t, pagos)).toFixed(2);
             const keyFila = t._id || `${t.nombre}-${t.fecha}-${idx}`;
+            const nombreProfesional = getProfessionalDisplayName(
+              t,
+              professionalNamesById,
+            );
 
             return (
               <div
                 key={keyFila}
-                onClick={() => buscarCliente(t.nombre)}
-                className="glass-card p-4 text-slate-200 cursor-pointer"
+                onClick={() => buscarCliente(t)}
+                className="ui-card ui-card-interactive cursor-pointer text-slate-200"
               >
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-slate-400">
-                    {formatearFechaCita(t.fecha)}
+                    {formatearFechaCita(getAttentionDate(t))}
                   </span>
                   <span className="text-emerald-300 font-semibold">
                     S/. {monto}
@@ -135,6 +148,7 @@ export default function TablaServicios({
                     ? t.servicio.join(", ")
                     : t.servicio}
                 </p>
+                <AtencionPendienteBadge record={t} className="mt-1" />
                 <div className="mt-2 text-sm space-y-1">
                   <p>
                     <span className="text-slate-400">Rol: </span>
@@ -142,7 +156,7 @@ export default function TablaServicios({
                   </p>
                   <p>
                     <span className="text-slate-400">Profesional: </span>
-                    {t.profesional || "—"}
+                    {nombreProfesional || "—"}
                   </p>
                   <p>
                     <span className="text-slate-400">Pago: </span>
@@ -157,13 +171,13 @@ export default function TablaServicios({
             );
           })
         ) : (
-          <div className="text-center text-slate-400 italic p-5 bg-slate-950/25 rounded-xl border border-slate-700/70">
+          <div className="ui-empty-state min-h-32 text-sm italic">
             No hay servicios registrados para esta fecha.
           </div>
         )}
       </div>
 
-      <div className="mt-6 p-5 bg-slate-950/30 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 border border-slate-700/70 text-center sm:text-left">
+      <div className="ui-card mt-6 flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
         <span className="text-slate-300 font-medium text-base sm:text-lg">
           Total ingresos del día:
         </span>

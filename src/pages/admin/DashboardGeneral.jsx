@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useCitas } from "../../context/CitasContext";
+import { useEffect, useRef, useState } from "react";
+import { useCitas } from "../../hooks/useCitas";
 import { getCitas } from "../../api/citas.api";
 import ResumenCitas from "../../components/DashboardGeneral/ResumenCitas";
 import IngresosMensuales from "../../components/DashboardGeneral/IngresosMensuales";
@@ -11,6 +11,8 @@ import { DashboardSkeleton } from "../../components/common/SkeletonLayouts";
 
 export default function DashboardGeneral() {
   const { obtenerPagos, obtenerInventario, socket } = useCitas();
+  const obtenerPagosRef = useRef(obtenerPagos);
+  const obtenerInventarioRef = useRef(obtenerInventario);
   const [todasLasCitas, setTodasLasCitas] = useState([]);
   const [todosLosPagos, setTodosLosPagos] = useState([]);
   const [stockInventario, setStockInventario] = useState([]);
@@ -23,16 +25,21 @@ export default function DashboardGeneral() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    obtenerPagosRef.current = obtenerPagos;
+    obtenerInventarioRef.current = obtenerInventario;
+  }, [obtenerInventario, obtenerPagos]);
+
+  useEffect(() => {
     const cargarDatos = async () => {
       try {
         setLoading(true);
         const citasData = await getCitas();
         setTodasLasCitas(Array.isArray(citasData) ? citasData : []);
 
-        const pagosData = await obtenerPagos();
+        const pagosData = await obtenerPagosRef.current();
         setTodosLosPagos(pagosData);
 
-        const inventarioData = await obtenerInventario("cosmiatra");
+        const inventarioData = await obtenerInventarioRef.current("cosmiatra");
         procesarInventario(inventarioData);
       } catch (err) {
         console.error("Error al cargar dashboard:", err);
@@ -46,21 +53,21 @@ export default function DashboardGeneral() {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("nuevaCita", (cita) => {
+    const handleNuevaCita = (cita) => {
       setTodasLasCitas((prev) => [cita, ...prev]);
-    });
+    };
 
-    socket.on("estadoCitaActualizado", (citaActualizada) => {
+    const handleEstadoActualizado = (citaActualizada) => {
       setTodasLasCitas((prev) =>
         prev.map((c) => (c._id === citaActualizada._id ? citaActualizada : c)),
       );
-    });
+    };
 
-    socket.on("nuevoPago", (pago) => {
+    const handleNuevoPago = (pago) => {
       setTodosLosPagos((prev) => [pago, ...prev]);
-    });
+    };
 
-    socket.on("inventarioActualizado", (data) => {
+    const handleInventarioActualizado = (data) => {
       if (data.action === "agregar") {
         setStockInventario((prev) => [...prev, data.item]);
       } else if (data.action === "eliminar") {
@@ -68,13 +75,18 @@ export default function DashboardGeneral() {
           prev.filter((item) => item._id !== data.item._id),
         );
       }
-    });
+    };
+
+    socket.on("nuevaCita", handleNuevaCita);
+    socket.on("estadoCitaActualizado", handleEstadoActualizado);
+    socket.on("nuevoPago", handleNuevoPago);
+    socket.on("inventarioActualizado", handleInventarioActualizado);
 
     return () => {
-      socket.off("nuevaCita");
-      socket.off("estadoCitaActualizado");
-      socket.off("nuevoPago");
-      socket.off("inventarioActualizado");
+      socket.off("nuevaCita", handleNuevaCita);
+      socket.off("estadoCitaActualizado", handleEstadoActualizado);
+      socket.off("nuevoPago", handleNuevoPago);
+      socket.off("inventarioActualizado", handleInventarioActualizado);
     };
   }, [socket]);
 
@@ -160,7 +172,7 @@ export default function DashboardGeneral() {
   }
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack animate-fade-in">
         <FiltrosReportes
           filtroAnio={filtroAnio}

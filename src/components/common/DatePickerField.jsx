@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
@@ -113,7 +113,7 @@ const DateInput = forwardRef(function DateInput(
   );
 });
 
-function TimeInput({ value = "", onChange }) {
+function TimeInput({ value = "", onChange, onTimeSelectionComplete }) {
   const [rawHour = "00", rawMinute = "00"] = value.split(":");
   const hour = rawHour || "00";
   const minute = rawMinute || "00";
@@ -124,6 +124,7 @@ function TimeInput({ value = "", onChange }) {
 
   const handleMinuteChange = (nextMinute) => {
     onChange(`${hour}:${nextMinute}`);
+    onTimeSelectionComplete?.();
   };
 
   return (
@@ -139,6 +140,7 @@ function TimeInput({ value = "", onChange }) {
           buttonClassName="rounded-xl border-slate-700/70 bg-slate-950/55"
           menuClassName="max-h-56"
           ariaLabel="Seleccionar hora"
+          preventParentOutsideClick
         />
       </div>
       <div className="app-time-select-column">
@@ -152,6 +154,7 @@ function TimeInput({ value = "", onChange }) {
           buttonClassName="rounded-xl border-slate-700/70 bg-slate-950/55"
           menuClassName="max-h-56"
           ariaLabel="Seleccionar minuto"
+          preventParentOutsideClick
         />
       </div>
     </div>
@@ -171,9 +174,13 @@ export default function DatePickerField({
   className = "",
 }) {
   const isDateTime = mode === "datetime";
+  const [isDateTimePickerOpen, setIsDateTimePickerOpen] = useState(false);
   const selected = isDateTime
     ? parseLocalDateTime(value)
     : parseLocalDate(value);
+
+  const openDateTimePicker = () => setIsDateTimePickerOpen(true);
+  const closeDateTimePicker = () => setIsDateTimePickerOpen(false);
 
   const handleDateChange = (date) => {
     const nextValue = date
@@ -193,7 +200,11 @@ export default function DatePickerField({
         selected={selected}
         onChange={handleDateChange}
         showTimeInput={isDateTime}
-        customTimeInput={isDateTime ? <TimeInput /> : undefined}
+        customTimeInput={
+          isDateTime ? (
+            <TimeInput onTimeSelectionComplete={closeDateTimePicker} />
+          ) : undefined
+        }
         timeFormat="HH:mm"
         timeInputLabel=""
         dateFormat={isDateTime ? "dd/MM/yyyy HH:mm" : "dd/MM/yyyy"}
@@ -206,6 +217,10 @@ export default function DatePickerField({
         calendarClassName="app-datepicker-calendar"
         showPopperArrow={false}
         shouldCloseOnSelect={!isDateTime}
+        open={isDateTime ? isDateTimePickerOpen : undefined}
+        onInputClick={isDateTime ? openDateTimePicker : undefined}
+        onClickOutside={isDateTime ? closeDateTimePicker : undefined}
+        onCalendarClose={isDateTime ? closeDateTimePicker : undefined}
         customInput={<DateInput placeholder={placeholder} accent={accent} />}
       />
     </div>

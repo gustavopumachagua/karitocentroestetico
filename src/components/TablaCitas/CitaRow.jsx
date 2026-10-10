@@ -1,26 +1,28 @@
 import { EstadoBadge } from "./EstadoBadge";
 import { AccionButtons } from "./AccionButtons";
 import FechaCita from "./FechaCita";
+import { getProfessionalDisplayName } from "../../utils/professionalDirectory";
 
 export function CitaRow({
   cita,
   actualizarEstado,
   showAcciones = true,
-  onSeleccionarCita,
   onEditarCita,
+  professionalNamesById,
 }) {
+  const nombreProfesional = getProfessionalDisplayName(
+    cita,
+    professionalNamesById,
+  );
+
   return (
-    <tr
-      key={cita.id}
-      className="cursor-pointer bg-slate-950/20 transition hover:bg-cyan-400/5"
-      onClick={() => onSeleccionarCita && onSeleccionarCita(cita)}
-    >
+    <tr key={cita.id} className="bg-slate-950/10">
       <td className="p-3 font-medium text-white">
         {typeof cita.cliente === "object" ? cita.cliente?.nombre : cita.cliente}
       </td>
       <td className="p-3 text-slate-300">{cita.rol}</td>
       <td className="p-3 text-slate-300">
-        {cita.profesional?.nombre || "Sin asignar"}
+        {nombreProfesional || "Sin asignar"}
       </td>
       <td className="p-3">
         {Array.isArray(cita.servicio) && cita.servicio.length > 0 ? (

@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { useCitas } from "../../context/CitasContext";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { buscarCitas } from "../../api/citas.api";
-import { getTratamientos } from "../../api/tratamientos.api";
+import { getHistorialAtenciones } from "../../api/tratamientos.api";
 import { getPagos } from "../../api/pagos.api";
 import BuscadorClientes from "../../components/GestionClientes/BuscadorClientes";
 import ClienteCard from "../../components/GestionClientes/ClienteCard";
@@ -9,8 +8,14 @@ import ClienteDetalle from "../../components/GestionClientes/ClienteDetalle";
 import Paginacion from "../../components/HistorialPacientes/Paginacion";
 import ExportarExcelButton from "../../components/GestionClientes/ExportarExcelButton";
 import { CardGridSkeleton } from "../../components/common/SkeletonLayouts";
+import { useProfessionalDirectory } from "../../hooks/useProfessionalDirectory";
+import { useCitas } from "../../hooks/useCitas";
+import { usePatientUpdates } from "../../hooks/usePatientUpdates";
+import { getPatientId, getPatientKey, isSamePatient } from "../../utils/patientIdentity";
 
 export default function GestionClientes() {
+  const { professionalNamesById } = useProfessionalDirectory();
+  const { socket } = useCitas();
   const [clientes, setClientes] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [sugerencias, setSugerencias] = useState([]);
@@ -20,50 +25,90 @@ export default function GestionClientes() {
 
   const clientesPorPagina = 9;
 
-  useEffect(() => {
-    obtenerClientes();
-  }, []);
-
-  const obtenerClientes = async () => {
+  const obtenerClientes = useCallback(async () => {
     try {
       setLoading(true);
       const [tratData, pagosData] = await Promise.all([
-        getTratamientos(),
+        getHistorialAtenciones(),
         getPagos(),
       ]);
 
-      const mapa = {};
+      const mapa = new Map();
       tratData.forEach((t) => {
-        if (!mapa[t.nombre]) {
-          mapa[t.nombre] = {
+        const patientKey = getPatientKey(t);
+        if (!mapa.has(patientKey)) {
+          mapa.set(patientKey, {
+            pacienteId: getPatientId(t) || undefined,
+            patientKey,
             nombre: t.nombre,
             sexo: t.sexo || "No especificado",
             celular: t.celular || "",
             tratamientos: [],
             totalInvertido: 0,
-          };
+          });
         }
 
-        mapa[t.nombre].tratamientos.push(t);
+        const cliente = mapa.get(patientKey);
+        if (t.sexo && cliente.sexo === "No especificado") cliente.sexo = t.sexo;
+        if (t.celular && !cliente.celular) cliente.celular = t.celular;
+        cliente.tratamientos.push(t);
       });
 
       pagosData.forEach((p) => {
-        if (mapa[p.cliente]) {
-          mapa[p.cliente].totalInvertido += p.total;
+        const candidates = mapa.has(getPatientKey(p))
+          ? [mapa.get(getPatientKey(p))]
+          : [...mapa.values()].filter((cliente) =>
+              cliente.tratamientos.some((tratamiento) => isSamePatient(tratamiento, p)),
+            );
+        const cliente = candidates.length === 1 ? candidates[0] : null;
+        if (cliente) {
+          cliente.totalInvertido += Number(p.total || 0);
         }
       });
 
-      setClientes(Object.values(mapa));
+      const clientesActualizados = [...mapa.values()];
+      setClientes(clientesActualizados);
+      setClienteSeleccionado((current) =>
+        current
+          ? clientesActualizados.find((cliente) => isSamePatient(cliente, current)) || current
+          : null,
+      );
     } catch (err) {
       console.error("Error al obtener datos de clientes:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void obtenerClientes();
+  }, [obtenerClientes]);
+
+  useEffect(() => {
+    if (!socket) return undefined;
+    const refresh = () => { void obtenerClientes(); };
+    const events = ["nuevaCita", "estadoCitaActualizado", "citaActualizada", "tratamientoActualizado", "nuevoPago"];
+    events.forEach((event) => socket.on(event, refresh));
+    return () => events.forEach((event) => socket.off(event, refresh));
+  }, [socket, obtenerClientes]);
+
+  usePatientUpdates((patient) => {
+    if (patient?.nombreAnterior && patient?.nombre) {
+      setBusqueda((current) =>
+        current.trim().toLocaleLowerCase("es-PE") === patient.nombreAnterior.trim().toLocaleLowerCase("es-PE")
+          ? patient.nombre
+          : current,
+      );
+    }
+    setSugerencias([]);
+    void obtenerClientes();
+  }, socket);
 
   const manejarCambioBusqueda = async (e) => {
     const valor = e.target.value;
     setBusqueda(valor);
+    setPaginaActual(1);
+
     if (valor.length >= 2) {
       try {
         const data = await buscarCitas(valor);
@@ -79,17 +124,32 @@ export default function GestionClientes() {
   const manejarSeleccion = (nombre) => {
     setBusqueda(nombre);
     setSugerencias([]);
+    setPaginaActual(1);
   };
 
+  const clientesFiltrados = useMemo(() => {
+    const termino = busqueda.trim().toLocaleLowerCase("es-PE");
+
+    if (!termino) {
+      return clientes;
+    }
+
+    return clientes.filter((cliente) =>
+      cliente.nombre.toLocaleLowerCase("es-PE").includes(termino),
+    );
+  }, [busqueda, clientes]);
+
   const indiceInicial = (paginaActual - 1) * clientesPorPagina;
-  const clientesPagina = clientes.slice(
+  const clientesPagina = clientesFiltrados.slice(
     indiceInicial,
     indiceInicial + clientesPorPagina,
   );
-  const totalPaginas = Math.ceil(clientes.length / clientesPorPagina);
+  const totalPaginas = Math.ceil(
+    clientesFiltrados.length / clientesPorPagina,
+  );
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack">
         {!clienteSeleccionado ? (
           <>
@@ -100,11 +160,7 @@ export default function GestionClientes() {
               manejarSeleccion={manejarSeleccion}
             />
 
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2 tracking-tight">
-              Clientes Registrados
-            </h2>
-
-            <div className="mb-6 w-full sm:w-auto">
+            <div className="flex w-full justify-end">
               <ExportarExcelButton />
             </div>
 
@@ -112,17 +168,13 @@ export default function GestionClientes() {
               <CardGridSkeleton count={9} />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-                {clientesPagina
-                  .filter((c) =>
-                    c.nombre.toLowerCase().includes(busqueda.toLowerCase()),
-                  )
-                  .map((cliente, idx) => (
-                    <ClienteCard
-                      key={idx}
-                      cliente={cliente}
-                      onClick={() => setClienteSeleccionado(cliente)}
-                    />
-                  ))}
+                {clientesPagina.map((cliente) => (
+                  <ClienteCard
+                    key={cliente.patientKey}
+                    cliente={cliente}
+                    onClick={() => setClienteSeleccionado(cliente)}
+                  />
+                ))}
               </div>
             )}
 
@@ -140,6 +192,7 @@ export default function GestionClientes() {
           <ClienteDetalle
             cliente={clienteSeleccionado}
             volver={() => setClienteSeleccionado(null)}
+            professionalNamesById={professionalNamesById}
           />
         )}
       </div>

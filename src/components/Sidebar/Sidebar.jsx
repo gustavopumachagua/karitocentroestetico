@@ -74,39 +74,38 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`fixed md:static inset-y-0 left-0 z-30 transform ${
+      className={`fixed md:static inset-y-0 left-0 z-30 flex w-[17.5rem] max-w-[88vw] transform flex-col text-slate-100 shadow-2xl shadow-black/50 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } flex w-72 max-w-[88vw] flex-col text-slate-100 shadow-2xl shadow-black/50
-      transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:translate-x-0`}
+      } transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:translate-x-0`}
       style={{
         background:
-          "linear-gradient(180deg, rgba(8, 14, 32, 0.98) 0%, rgba(5, 10, 24, 0.96) 100%)",
-        borderRight: "1px solid rgba(148, 163, 184, 0.08)",
+          "linear-gradient(180deg, rgba(9, 16, 34, 0.985) 0%, rgba(5, 10, 24, 0.985) 100%)",
+        borderRight: "1px solid rgba(148, 163, 184, 0.11)",
         backdropFilter: "blur(24px)",
       }}
     >
       {/* ─── Branding ─── */}
-      <div className="flex-shrink-0 px-4 pt-5 pb-2">
+      <div className="flex-shrink-0 px-3.5 pb-2 pt-4 sm:px-4 sm:pt-5">
         <div
-          className="rounded-xl p-3.5 relative overflow-hidden"
+          className="relative overflow-hidden rounded-2xl p-3"
           style={{
             background:
-              "linear-gradient(135deg, rgba(34, 211, 238, 0.06), rgba(139, 92, 246, 0.05))",
-            border: "1px solid rgba(34, 211, 238, 0.12)",
+              "linear-gradient(135deg, rgba(34, 211, 238, 0.07), rgba(15, 23, 42, 0.28))",
+            border: "1px solid rgba(34, 211, 238, 0.14)",
           }}
         >
           <div className="flex items-center gap-3 relative z-10">
             <img
               src={logo}
               alt="Karito Centro Estético"
-              className="h-11 w-11 rounded-xl object-cover shadow-lg shadow-cyan-950/30"
+              className="h-10 w-10 rounded-xl object-cover shadow-lg shadow-cyan-950/30"
               style={{ border: "1px solid rgba(34, 211, 238, 0.2)" }}
             />
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-cyan-300/90">
+              <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-cyan-200/85">
                 Karito Centro Estético
               </p>
-              <h2 className="text-sm font-bold text-white">
+              <h2 className="mt-0.5 text-sm font-semibold text-white">
                 {user?.rol || "Usuario"}
               </h2>
             </div>
@@ -115,7 +114,7 @@ export default function Sidebar({
       </div>
 
       {/* ─── Navigation (scrollable) ─── */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-2 sidebar-scroll">
+      <nav className="sidebar-scroll flex-1 overflow-x-hidden overflow-y-auto px-3.5 py-2 sm:px-4">
         <div className="flex flex-col gap-0.5">
           {menuItems.map((item) => {
             const isExpanded = openSubmenu === item.key;
@@ -128,9 +127,10 @@ export default function Sidebar({
                 <button
                   onClick={() => handleClick(item)}
                   aria-expanded={item.subItems ? isExpanded : undefined}
+                  aria-current={isActive ? "page" : undefined}
                   className={`group flex min-w-0 w-full items-center justify-between gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-200 ${
                     isActive
-                      ? "bg-gradient-to-r from-cyan-400/12 to-cyan-400/5 text-white shadow-lg shadow-cyan-950/20"
+                      ? "bg-gradient-to-r from-cyan-400/13 to-cyan-400/[0.035] text-white shadow-lg shadow-cyan-950/20"
                       : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
                   }`}
                   style={
@@ -143,7 +143,7 @@ export default function Sidebar({
                     <span
                       className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-all duration-200 text-xs ${
                         isActive
-                          ? "bg-gradient-to-br from-cyan-400 to-cyan-300 text-slate-950 shadow-md shadow-cyan-500/25"
+                          ? "bg-gradient-to-br from-cyan-300 to-cyan-400 text-slate-950 shadow-md shadow-cyan-500/20"
                           : "bg-white/[0.06] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-slate-200"
                       }`}
                     >
@@ -180,6 +180,7 @@ export default function Sidebar({
                         <li key={sub.key}>
                           <button
                             onClick={() => handleSubClick(sub)}
+                            aria-current={active === sub.key ? "page" : undefined}
                             className={`flex min-w-0 w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[13px] transition-all duration-200 ${
                               active === sub.key
                                 ? "bg-cyan-400/10 text-cyan-200"
@@ -206,8 +207,8 @@ export default function Sidebar({
 
       {/* ─── User Profile ─── */}
       <div
-        className="flex-shrink-0 px-4 py-4"
-        style={{ borderTop: "1px solid rgba(148, 163, 184, 0.06)" }}
+        className="flex-shrink-0 px-3.5 py-3.5 sm:px-4 sm:py-4"
+        style={{ borderTop: "1px solid rgba(148, 163, 184, 0.08)" }}
       >
         <div className="flex items-center gap-3 mb-3">
           <div className="relative">

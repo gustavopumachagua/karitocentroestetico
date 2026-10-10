@@ -9,8 +9,8 @@ export default function TablaInsumos({
   if (insumos.length === 0) return null;
 
   return (
-    <section className="page-panel page-panel-pad">
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <section className="ui-panel">
+      <div className="ui-toolbar mb-5">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10">
             <FaClipboardList className="text-emerald-300" />
@@ -20,14 +20,14 @@ export default function TablaInsumos({
           </h3>
         </div>
 
-        <span className="w-fit rounded-lg border border-slate-700/70 bg-slate-950/30 px-3 py-1 text-sm font-medium text-slate-300">
+        <span className="ui-status">
           {insumos.length} registros
         </span>
       </div>
 
-      <div className="hidden sm:block overflow-x-auto rounded-xl border border-slate-700/70">
-        <table className="min-w-full border-collapse text-center text-sm text-slate-300">
-          <thead className="bg-slate-800/80 text-xs uppercase tracking-wide text-slate-300">
+      <div className="ui-table-wrap hidden sm:block">
+        <table className="ui-table min-w-full text-center">
+          <thead>
             <tr>
               <th className="px-4 py-3 text-left">Nombre</th>
               <th className="px-4 py-3">Stock</th>
@@ -77,11 +77,11 @@ export default function TablaInsumos({
         {insumos.map((item) => (
           <div
             key={item._id}
-            className={`rounded-lg p-3 border ${
+            className={`ui-card flex items-center justify-between gap-3 ${
               item.stock <= item.umbral
                 ? "border-rose-400/40 bg-rose-950/25"
                 : "border-slate-700/70 bg-slate-950/25"
-            } flex justify-between items-center hover:bg-cyan-400/5 transition-all`}
+            }`}
           >
             <div className="min-w-0 flex flex-col gap-1">
               <span className="text-slate-100 font-medium">{item.nombre}</span>

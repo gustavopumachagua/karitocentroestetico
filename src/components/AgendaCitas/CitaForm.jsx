@@ -5,6 +5,9 @@ import ServiceSelector from "../CitaForm/ServiceSelector";
 import SubmitButton from "../CitaForm/SubmitButton";
 import { FaCalendarAlt, FaSearch, FaTimes, FaTrash } from "react-icons/fa";
 import { formatearFechaCitaParaInput } from "../../utils/citasFecha";
+import { getInventario } from "../../api/inventario.api";
+import { buscarCitas } from "../../api/citas.api";
+import { normalizePatientSuggestions } from "../../utils/appointmentPatientSuggestions";
 
 const citaVacia = {
   cliente: "",
@@ -44,6 +47,8 @@ export default function CitaForm({
   const [nuevaCita, setNuevaCita] = useState(citaVacia);
 
   const [servicios, setServicios] = useState([]);
+  const [cargandoServicios, setCargandoServicios] = useState(false);
+  const [errorServicios, setErrorServicios] = useState("");
   const [errorCliente, setErrorCliente] = useState("");
   const [sugerencias, setSugerencias] = useState([]);
   const [cargando, setCargando] = useState(false);
@@ -83,18 +88,43 @@ export default function CitaForm({
   useEffect(() => {
     if (!nuevaCita.rol) {
       setServicios([]);
+      setCargandoServicios(false);
+      setErrorServicios("");
       return;
     }
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/inventario/${nuevaCita.rol}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const serviciosDelRol = data
+    let isCurrent = true;
+
+    const cargarServicios = async () => {
+      setCargandoServicios(true);
+      setErrorServicios("");
+
+      try {
+        const data = await getInventario(nuevaCita.rol, {
+          tipo: "servicio",
+        });
+        if (!isCurrent) return;
+        const serviciosDelRol = (Array.isArray(data) ? data : [])
           .filter((item) => item.tipo === "servicio")
           .map((item) => item.nombre);
         setServicios(serviciosDelRol);
-      })
-      .catch((err) => console.error("Error al obtener servicios:", err));
+      } catch (error) {
+        if (isCurrent) {
+          setServicios([]);
+          setErrorServicios(
+            "No fue posible cargar los servicios de esta especialidad."
+          );
+        }
+        console.error("Error al obtener servicios:", error);
+      } finally {
+        if (isCurrent) setCargandoServicios(false);
+      }
+    };
+
+    cargarServicios();
+    return () => {
+      isCurrent = false;
+    };
   }, [nuevaCita.rol]);
 
   const profesionalesFiltrados = useMemo(
@@ -104,6 +134,7 @@ export default function CitaForm({
 
   useEffect(() => {
     const valor = nuevaCita.cliente.trim();
+    let isCurrent = true;
 
     if (valor.length < 2) {
       setSugerencias([]);
@@ -115,33 +146,21 @@ export default function CitaForm({
     const buscarClientes = async () => {
       try {
         setCargando(true);
-        const token = localStorage.getItem("token");
-        const res = await fetch(
-          `${
-            import.meta.env.VITE_API_URL
-          }/api/citas/buscar?nombre=${encodeURIComponent(valor)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) throw new Error("Error al buscar clientes");
-        const data = await res.json();
-
-        const nombres = [...new Set(data.map((d) => d.nombre))];
-        setSugerencias(nombres);
+        const data = await buscarCitas(valor);
+        if (isCurrent) setSugerencias(normalizePatientSuggestions(data));
       } catch (error) {
         console.error("Error en autocompletado:", error);
-        setSugerencias([]);
+        if (isCurrent) setSugerencias([]);
       } finally {
-        setCargando(false);
+        if (isCurrent) setCargando(false);
       }
     };
 
     const delay = setTimeout(buscarClientes, 300);
-    return () => clearTimeout(delay);
+    return () => {
+      isCurrent = false;
+      clearTimeout(delay);
+    };
   }, [nuevaCita.cliente, valorSeleccionado]);
 
   const handleChange = (e) => {
@@ -155,21 +174,29 @@ export default function CitaForm({
       } else {
         setErrorCliente("");
       }
+      setValorSeleccionado("");
+      setSugerencias([]);
+      setCargando(false);
     }
 
     setNuevaCita((prev) => {
       if (name === "rol") {
         return { ...prev, rol: value, profesional: "", servicio: [] };
       }
+      if (name === "cliente") {
+        const { citaPacienteId: _previousSource, ...remaining } = prev;
+        return { ...remaining, cliente: value };
+      }
 
       return { ...prev, [name]: value };
     });
   };
 
-  const handleSuggestionClick = (nombre) => {
-    setNuevaCita((prev) => ({ ...prev, cliente: nombre }));
-    setValorSeleccionado(nombre);
+  const handleSuggestionClick = (suggestion) => {
+    setNuevaCita((prev) => ({ ...prev, cliente: suggestion.nombre, citaPacienteId: suggestion.citaPacienteId }));
+    setValorSeleccionado(suggestion.nombre);
     setSugerencias([]);
+    setCargando(false);
     setTimeout(() => document.activeElement.blur(), 100);
   };
 
@@ -224,19 +251,28 @@ export default function CitaForm({
     <form
       onSubmit={handleSubmit}
       autoComplete="off"
-      className="page-panel page-panel-pad relative mx-auto grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-2"
+      className="ui-panel relative mx-auto grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-2"
     >
-      <div className="md:col-span-2 flex items-center gap-3 border-b border-slate-700/50 pb-5">
+      <div className="ui-toolbar md:col-span-2 border-b border-slate-700/50 pb-5">
+        <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10">
           <FaCalendarAlt className="text-cyan-300 text-lg" />
         </div>
-        <h2 className="text-xl font-semibold text-white">
-          {estaEditando ? "Editar cita" : "Registrar cita"}
-        </h2>
+          <div>
+            <h2 className="text-xl font-semibold text-white">
+              {estaEditando ? "Editar cita" : "Registrar cita"}
+            </h2>
+            <p className="mt-1 text-xs text-slate-400">
+              {estaEditando
+                ? "Actualiza los datos y conserva la agenda al día."
+                : "Completa los datos para reservar una nueva atención."}
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-col relative">
-        <label className="text-sm text-slate-300 mb-2">Cliente</label>
+      <div className="ui-field relative">
+        <label className="ui-label">Cliente</label>
         <div
           className={`search-field ${
             errorCliente ? "border-rose-400/70" : ""
@@ -257,13 +293,13 @@ export default function CitaForm({
 
         {sugerencias.length > 0 && (
           <ul className="search-suggestion-list">
-            {sugerencias.map((s, i) => (
+            {sugerencias.map((s) => (
               <li
-                key={i}
+                key={s.citaPacienteId || `nombre:${s.nombre}`}
                 onClick={() => handleSuggestionClick(s)}
                 className="search-suggestion-item"
               >
-                {s}
+                {s.nombre}
               </li>
             ))}
           </ul>
@@ -312,6 +348,9 @@ export default function CitaForm({
         serviciosSeleccionados={nuevaCita.servicio}
         onToggle={handleServiceToggle}
         disabled={!nuevaCita.rol}
+        cargando={cargandoServicios}
+        error={errorServicios}
+        rolSeleccionado={nuevaCita.rol}
       />
 
       <SubmitButton disabled={!isFormValid || enviando}>
@@ -329,7 +368,7 @@ export default function CitaForm({
           <button
             type="button"
             onClick={onCancelarEdicion}
-            className="flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-600 bg-slate-800/80 hover:bg-slate-700 text-white font-semibold transition cursor-pointer"
+            className="ui-button ui-button-secondary w-full"
           >
             <FaTimes />
             Cancelar edición
@@ -337,7 +376,7 @@ export default function CitaForm({
           <button
             type="button"
             onClick={onEliminarCita}
-            className="flex items-center justify-center gap-2 py-3 rounded-xl border border-rose-400/20 bg-rose-500/15 hover:bg-rose-500/25 text-rose-100 font-semibold transition cursor-pointer"
+            className="ui-button ui-button-danger w-full"
           >
             <FaTrash />
             Eliminar cita

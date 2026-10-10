@@ -1,47 +1,43 @@
-import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { useCallback, useEffect, useState } from "react";
 import CitaTable from "../../components/AgendaCitas/CitaTable";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { useAuth } from "../../hooks/useAuth";
 import { useModal } from "../../hooks/useModal";
 import { getCitas, actualizarEstadoCita } from "../../api/citas.api";
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+import { useCitas } from "../../hooks/useCitas";
+import { belongsToProfessionalRole } from "../../utils/professionalOwnership";
+import { usePatientUpdates } from "../../hooks/usePatientUpdates";
 
 export default function CitasDoctor() {
+  const { socket } = useCitas();
   const [citas, setCitas] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { nombre, rol } = useAuth();
+  const { user } = useAuth();
   const { modal, mostrarModal, cerrarModal } = useModal();
 
-  const fetchCitas = async () => {
+  const fetchCitas = useCallback(async () => {
     try {
       const data = await getCitas();
       const citasFiltradas = Array.isArray(data)
-        ? data.filter((cita) => {
-            const prof = cita.profesional;
-            if (!prof) return false;
-            const nombreCoincide =
-              prof.nombre?.toLowerCase() === nombre.toLowerCase();
-            const rolCoincide = prof.rol?.toLowerCase() === rol;
-            return nombreCoincide && rolCoincide;
-          })
+        ? data.filter((cita) => belongsToProfessionalRole(cita, user))
         : [];
 
       setCitas(citasFiltradas);
     } catch (error) {
       console.error("Error al obtener citas:", error);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    fetchCitas();
-  }, [nombre, rol]);
+    void fetchCitas();
+  }, [fetchCitas]);
 
-  const mostrarModalYLuegoSpinner = async (mensaje) => {
+  usePatientUpdates(() => void fetchCitas(), socket);
+
+  const mostrarModalYLuegoSpinner = useCallback((mensaje) => {
     mostrarModal(mensaje);
-  };
+  }, [mostrarModal]);
 
   const iniciarRecarga = async () => {
     setIsLoading(true);
@@ -52,28 +48,26 @@ export default function CitasDoctor() {
   };
 
   useEffect(() => {
-    const socket = io(SOCKET_URL);
+    if (!socket) return undefined;
 
-    socket.on("connect", () => {});
-
-    socket.on("nuevaCita", (nuevaCita) => {
-      if (
-        nuevaCita?.profesional?.nombre?.toLowerCase() ===
-          nombre.toLowerCase() &&
-        nuevaCita?.profesional?.rol?.toLowerCase() === rol
-      ) {
+    const handleNuevaCita = (nuevaCita) => {
+      if (belongsToProfessionalRole(nuevaCita, user)) {
         mostrarModalYLuegoSpinner("📅 Nueva cita asignada");
       }
-    });
+    };
 
-    socket.on("estadoCitaActualizado", () => {
+    const handleEstadoActualizado = () => {
       mostrarModalYLuegoSpinner("🔁 Estado de una cita fue actualizado");
-    });
+    };
 
-    socket.on("disconnect", () => {});
+    socket.on("nuevaCita", handleNuevaCita);
+    socket.on("estadoCitaActualizado", handleEstadoActualizado);
 
-    return () => socket.disconnect();
-  }, [nombre, rol]);
+    return () => {
+      socket.off("nuevaCita", handleNuevaCita);
+      socket.off("estadoCitaActualizado", handleEstadoActualizado);
+    };
+  }, [socket, user, mostrarModalYLuegoSpinner]);
 
   const handleModalClose = () => {
     cerrarModal();
@@ -95,22 +89,15 @@ export default function CitasDoctor() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack">
-        <div className="page-panel page-panel-pad">
-          <h2 className="section-title text-2xl">
-            Citas de {nombre} ({rol})
-          </h2>
-          <p className="section-muted mt-1 text-sm">
-            Revisa tus citas asignadas y su estado actual.
-          </p>
+        <div className="relative">
+          <CitaTable
+            citas={citas}
+            actualizarEstado={actualizarEstado}
+            showAcciones={false}
+          />
         </div>
-
-        <CitaTable
-          citas={citas}
-          actualizarEstado={actualizarEstado}
-          showAcciones={false}
-        />
       </div>
 
       <ConfirmationModal

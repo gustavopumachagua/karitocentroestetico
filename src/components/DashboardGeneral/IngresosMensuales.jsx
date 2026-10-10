@@ -27,7 +27,7 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
     .filter((item) => !filtroMes || item.numeroMes === filtroMes);
 
   return (
-    <section className="glass-card p-4 sm:p-6 transition-all duration-300">
+    <section className="ui-panel">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl"

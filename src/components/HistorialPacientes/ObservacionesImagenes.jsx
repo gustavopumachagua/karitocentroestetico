@@ -61,7 +61,7 @@ export default function ObservacionesImagenes({ paciente }) {
   return (
     <div className="space-y-6">
       {paciente.observacion && (
-        <div className="glass-card p-5">
+        <div className="ui-card p-5">
           <div className="flex items-center gap-2 mb-2">
             <FaNotesMedical className="text-rose-300" />
             <h4 className="font-semibold text-white">Observación</h4>
@@ -73,7 +73,7 @@ export default function ObservacionesImagenes({ paciente }) {
       )}
 
       {imagenes.length > 0 && (
-        <div className="glass-card p-5">
+        <div className="ui-card p-5">
           <div className="flex items-center gap-2 mb-3">
             <FaImages className="text-violet-300" />
             <h4 className="text-white font-medium">

@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { FaHistory } from "react-icons/fa";
 import Paginacion from "./Paginacion";
+import AtencionPendienteBadge from "./AtencionPendienteBadge";
+import { formatearFechaCita } from "../../utils/citasFecha";
+import { getAttentionDate } from "../../utils/attentionHistory";
 
 export default function ListaTratamientosAnteriores({
   tratamientos,
   onSeleccionar,
+  mostrarAtenciones = false,
 }) {
   const [paginaActual, setPaginaActual] = useState(1);
   const tratamientosPorPagina = 5;
@@ -16,19 +20,6 @@ export default function ListaTratamientosAnteriores({
     if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
       setPaginaActual(nuevaPagina);
     }
-  };
-
-  const formatearFecha = (fechaISO) => {
-    if (!fechaISO) return "Sin fecha";
-    const fecha = new Date(fechaISO);
-    return fecha.toLocaleString("es-PE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
   };
 
   const formatearServicios = (servicio) => {
@@ -47,7 +38,7 @@ export default function ListaTratamientosAnteriores({
           <FaHistory className="text-violet-300" />
         </div>
         <h4 className="text-lg font-semibold text-white">
-          Tratamientos anteriores
+          {mostrarAtenciones ? "Otras atenciones" : "Tratamientos anteriores"}
         </h4>
       </div>
 
@@ -56,16 +47,19 @@ export default function ListaTratamientosAnteriores({
           <ul className="space-y-3">
             {tratamientosVisibles.map((t, i) => (
               <li
-                key={i}
+                key={t._id || i}
                 onClick={() => onSeleccionar(t)}
                 className="flex cursor-pointer flex-col gap-2 rounded-xl border border-slate-700/60 bg-slate-950/25 p-3 transition hover:border-cyan-400/25 hover:bg-cyan-400/10 sm:flex-row sm:items-center sm:justify-between"
               >
                 <span className="text-sm text-slate-300">
-                  {formatearFecha(t.fecha)}
+                  {getAttentionDate(t) ? formatearFechaCita(getAttentionDate(t)) : "Sin fecha"}
                 </span>
-                <span className="text-sm font-medium leading-relaxed text-cyan-100 break-words sm:text-right">
-                  {formatearServicios(t.servicio)}
-                </span>
+                <div className="space-y-1 sm:text-right">
+                  <span className="text-sm font-medium leading-relaxed text-cyan-100 break-words">
+                    {formatearServicios(t.servicio)}
+                  </span>
+                  <AtencionPendienteBadge record={t} className="block w-fit sm:ml-auto" />
+                </div>
               </li>
             ))}
           </ul>
@@ -78,7 +72,9 @@ export default function ListaTratamientosAnteriores({
           )}
         </>
       ) : (
-        <p className="text-slate-400 italic">No hay tratamientos anteriores.</p>
+        <p className="text-slate-400 italic">
+          {mostrarAtenciones ? "No hay otras atenciones registradas." : "No hay tratamientos anteriores."}
+        </p>
       )}
     </div>
   );

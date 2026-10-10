@@ -1,4 +1,5 @@
 import { FaSearch, FaTimes } from "react-icons/fa";
+import { getPatientKey, getPatientName } from "../../utils/patientIdentity";
 
 export default function BuscadorClientes({
   busqueda,
@@ -7,7 +8,8 @@ export default function BuscadorClientes({
   buscarCliente,
 }) {
   return (
-    <div className="relative">
+    <div className="ui-panel relative">
+      <p className="mb-3 text-sm font-semibold text-slate-200">Buscar historial de cliente</p>
       <div className="search-field">
         <FaSearch className="search-icon" />
         <input
@@ -31,13 +33,13 @@ export default function BuscadorClientes({
 
       {sugerencias.length > 0 && (
         <ul className="search-suggestion-list">
-          {sugerencias.map((nombre, idx) => (
+          {sugerencias.map((patient) => (
             <li
-              key={idx}
+              key={getPatientKey(patient)}
               className="search-suggestion-item"
-              onClick={() => buscarCliente(nombre)}
+              onClick={() => buscarCliente(patient)}
             >
-              {nombre}
+              {getPatientName(patient)}
             </li>
           ))}
         </ul>

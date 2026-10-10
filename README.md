@@ -1,560 +1,146 @@
-# 🏥 Karito Centro Estético — Sistema Web de Gestión Administrativa
+# KARITO BEAUTY ESTHETIC CENTER S.A.C. · Frontend
 
-> **Diseño e Implementación de un Sistema Web de Gestión Administrativa para Citas, Servicios, Facturación e Inventarios en el Centro Estético Karito, utilizando la Arquitectura Cliente-Servidor con las Tecnologías MERN (MongoDB, Express, React y Node.js).**
+Aplicación web interna para la operación clínica y administrativa de KARITO BEAUTY ESTHETIC CENTER S.A.C. Gestiona citas, tratamientos, inventario, pagos, historias clínicas y reportes para los roles de administrador, doctor y cosmiatra.
 
-Sistema ERP desarrollado para la gestión integral de un centro estético. Permite administrar pacientes, citas, tratamientos, inventario, pagos, reportes y usuarios desde una interfaz moderna, responsiva y conectada en tiempo real.
+Este repositorio contiene solo el cliente React/Vite. La API se encuentra en el proyecto hermano `../Backend_Estetico`.
 
----
+## Inicio rápido
 
-## 📸 Vista Previa
-
-![Preview del proyecto](./public/vista_projects.png)
-
----
-
-## ✨ Características Principales
-
-- **Gestión de citas** con estados y actualizaciones en tiempo real vía WebSocket.
-- **Registro de tratamientos** con carga de imágenes (Cloudinary) y descuento automático de insumos.
-- **Historial de pacientes** con galería responsive, navegación por teclado y miniaturas optimizadas.
-- **Gestión de inventario** con alertas de stock bajo y filtrado por rol.
-- **Facturación y pagos** con generación de tickets en PDF y reportes por método de pago.
-- **Dashboard analítico** con gráficos interactivos (Recharts) de ingresos, citas y servicios.
-- **Gestión de usuarios y roles** con activación/suspensión y eliminación segura.
-- **Recuperación de contraseña** mediante enlace seguro con token enviado por correo.
-- **Interfaz SPA** con rutas protegidas y layouts diferenciados por rol.
-- **Soporte PWA** — aplicación instalable con Service Worker.
-- **Modo offline** con alerta visual de desconexión.
-
----
-
-## 🛠️ Stack Tecnológico
-
-### Frontend (este repositorio)
-
-| Categoría | Tecnología | Versión | Propósito |
-|-----------|-----------|---------|-----------|
-| **Core** | React | 18.3 | Biblioteca de UI basada en componentes |
-| **Bundler** | Vite (Rolldown) | 7.1.12 | Build tool ultra-rápido |
-| **Estilos** | TailwindCSS | 4.1 | Sistema de diseño utilitario responsivo |
-| **Ruteo** | React Router DOM | 7.9 | Navegación SPA con rutas protegidas |
-| **HTTP** | Axios | 1.12 | Cliente HTTP con interceptores |
-| **Tiempo real** | Socket.IO Client | 4.8 | Comunicación bidireccional WebSocket |
-| **Gráficos** | Recharts | 3.2 | Visualización de datos y métricas |
-| **UI** | React Icons | 5.5 | Iconografía (FontAwesome, etc.) |
-| **Fechas** | Day.js + React Datepicker | — | Manipulación y selección de fechas |
-| **Exportación** | XLSX + html2pdf.js | — | Generación de Excel y PDF |
-| **PWA** | vite-plugin-pwa | 1.1 | Service Worker y manifiesto |
-| **Calidad** | ESLint | 9.36 | Análisis estático de código |
-
-### Backend (repositorio separado)
-
-| Tecnología | Propósito |
-|-----------|-----------|
-| **Node.js + Express** | API REST |
-| **MongoDB + Mongoose** | Base de datos NoSQL |
-| **JWT** | Autenticación stateless |
-| **Socket.IO** | Eventos en tiempo real |
-| **Cloudinary** | Almacenamiento de imágenes |
-| **Nodemailer** | Envío de correos (reset de contraseña) |
-
----
-
-## 🏗️ Arquitectura del Proyecto
-
-### Arquitectura General — Cliente-Servidor
-
-```
-┌─────────────────────────────────────────────────┐
-│                   CLIENTE (SPA)                  │
-│                                                  │
-│  React + Vite + TailwindCSS                      │
-│  ┌──────────────────────────────────────────┐    │
-│  │  Capa de Presentación (Pages/Components) │    │
-│  ├──────────────────────────────────────────┤    │
-│  │  Capa de Estado (Context + Hooks)        │    │
-│  ├──────────────────────────────────────────┤    │
-│  │  Capa de Servicios (API Modules)         │    │
-│  └────────────┬──────────────┬──────────────┘    │
-│               │              │                   │
-└───────────────┼──────────────┼───────────────────┘
-           HTTP/REST      WebSocket
-                │              │
-┌───────────────┼──────────────┼───────────────────┐
-│               ▼              ▼                   │
-│  ┌──────────────────────────────────────────┐    │
-│  │  Express API + Socket.IO Server          │    │
-│  ├──────────────────────────────────────────┤    │
-│  │  Mongoose ODM                            │    │
-│  ├──────────────────────────────────────────┤    │
-│  │  MongoDB Atlas                           │    │
-│  └──────────────────────────────────────────┘    │
-│                   SERVIDOR                       │
-└──────────────────────────────────────────────────┘
-```
-
-### Estructura de Directorios
-
-```
-src/
-├── api/                    # 🔌 Capa de servicios — módulos API por dominio
-│   ├── axiosConfig.js      #    Instancia Axios con interceptor de autenticación
-│   ├── auth.api.js          #    Login, registro, reset y cambio de contraseña
-│   ├── citas.api.js         #    CRUD de citas + búsqueda + profesionales
-│   ├── inventario.api.js    #    Gestión de insumos y servicios por rol
-│   ├── pagos.api.js         #    Consulta y registro de pagos
-│   ├── tratamientos.api.js  #    Consulta y registro de tratamientos
-│   └── user.api.js          #    Gestión de usuarios (CRUD + suspensión)
-│
-├── context/                # 🌐 Estado global
-│   └── CitasContext.jsx     #    Provider central: citas, tratamientos, pagos, socket
-│
-├── hooks/                  # 🪝 Hooks personalizados reutilizables
-│   ├── useAuth.js           #    Lectura memoizada de usuario/token desde localStorage
-│   ├── useModal.js          #    Gestión de estado de modales (show/message/type)
-│   └── useUsuarios.js       #    Lógica completa de CRUD de usuarios
-│
-├── utils/                  # 🧰 Funciones puras auxiliares
-│   ├── citasFecha.js        #    Conversión y formateo de fechas de citas
-│   └── validators.js        #    Validadores centralizados (email, nombre, rol)
-│
-├── layout/                 # 📐 Layouts y navegación
-│   ├── DashboardLayout.jsx  #    Layout genérico parametrizado (Template Method)
-│   ├── AdminLayout.jsx      #    Configuración del layout para Administrador
-│   ├── CosmiatraLayout.jsx  #    Configuración del layout para Cosmiatra
-│   ├── DoctorLayout.jsx     #    Configuración del layout para Doctor
-│   ├── NavbarFooterLayout.jsx #  Layout público (Home, Login, Reset)
-│   ├── MenuItemsAdmin.jsx   #    Definición de menú del Administrador
-│   ├── MenuItemsCosmiatra.jsx #  Definición de menú de Cosmiatra
-│   └── MenuItemsDoctor.jsx  #    Definición de menú del Doctor
-│
-├── pages/                  # 📄 Pantallas del sistema (por rol)
-│   ├── admin/               #    Dashboard, Usuarios, Clientes, Inventario, Facturación, Reportes
-│   ├── auth/                #    Login, ResetPassword, NewPassword
-│   ├── cosmiatra/           #    Citas, Pagos, Reportes de servicios
-│   ├── doctor/              #    Agenda, Historial, Tratamientos, Reportes
-│   └── settings/            #    Perfil, Contraseña (compartido entre roles)
-│
-├── components/             # 🧩 Componentes UI reutilizables (~65 componentes)
-│   ├── common/              #    AuthPageLayout, ProtectedRoute, LoadingSpinner, Skeleton, etc.
-│   ├── AgendaCitas/         #    CitaForm, CitaTable
-│   ├── CitaForm/            #    FormInput, FormSelect, FormDateTime, ServiceSelector
-│   ├── DashboardDoctor/     #    Gráficos y filtros de reportes
-│   ├── DashboardGeneral/    #    Resumen, ingresos, métodos de pago, inventario
-│   ├── GestionClientes/     #    Buscador, cards, detalle, exportación Excel
-│   ├── GestionInventario/   #    Formularios, tablas, modal de edición
-│   ├── GestionPagos/        #    Buscador, tabla, modal de pago, ticket
-│   ├── GestionUsuariosRoles/#    Formulario, tabla, modales de confirmación
-│   ├── HistorialPacientes/  #    Buscador, lista, detalle, galería de imágenes
-│   ├── Home/                #    Landing page pública
-│   ├── Login/               #    Formulario de login
-│   ├── Perfil/              #    Avatar, formulario, modal de confirmación
-│   ├── RegistaTratamiento/  #    Campos de formulario, uploader de imágenes
-│   ├── ReportesAvanzados/   #    Gráficos comparativos
-│   ├── ReportesServiciosIngresos/ # Historial, tabla de servicios
-│   ├── Sidebar/             #    Navegación lateral responsive
-│   ├── Topbar/              #    Barra superior con breadcrumb
-│   └── ...                  #    Footer, Navbar, Logo, OfflineAlert, etc.
-│
-├── assets/                 # 🖼️ Recursos estáticos (logo, imágenes)
-├── App.jsx                 # 🚀 Definición de rutas de la aplicación
-├── main.jsx                # 📍 Punto de entrada (render + CitasProvider)
-└── index.css               # 🎨 Estilos globales y sistema de diseño
-```
-
----
-
-## 🔄 Flujo de Datos
-
-```
-                    ┌─────────────┐
-                    │  Socket.IO  │ ◄── Eventos en tiempo real
-                    │   Server    │     (nuevaCita, estadoCitaActualizado,
-                    └──────┬──────┘      nuevoPago, inventarioActualizado,
-                           │              tratamientoActualizado)
-                           ▼
-┌──────────────────────────────────────────────┐
-│              CitasContext (Provider)          │
-│  ┌─────────┐ ┌──────────┐ ┌───────┐         │
-│  │  Citas  │ │Tratamient│ │ Pagos │  Socket  │
-│  └────┬────┘ └─────┬────┘ └───┬───┘    ref   │
-│       │            │          │               │
-│  Funciones: obtenerCitas(), registrarCita(),  │
-│  obtenerTratamientos(), obtenerPagos(), etc.  │
-└──────────────┬───────────────────────────────┘
-               │ useCitas()
-               ▼
-┌──────────────────────────────────────────────┐
-│           Pages (Pantallas)                   │
-│                                              │
-│  useAuth()  → { user, token, rol, nombre }   │
-│  useModal() → { modal, mostrarModal }        │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │         Components (UI pura)           │  │
-│  │  Props ↓          Callbacks ↑          │  │
-│  └────────────────────────────────────────┘  │
-└──────────────────────────────────────────────┘
-               │
-               ▼ API Modules (api/*.js)
-┌──────────────────────────────────────────────┐
-│            axiosConfig.js                     │
-│  ┌────────────────────────────────────────┐  │
-│  │  Interceptor: inyecta Authorization    │  │
-│  │  header automáticamente en cada        │  │
-│  │  request usando localStorage token     │  │
-│  └────────────────────────────────────────┘  │
-│         baseURL: VITE_API_URL/api            │
-└──────────────────────────────────────────────┘
-               │
-               ▼ HTTP (REST)
-         Backend Express
-```
-
----
-
-## 🎯 Principios de Código Limpio Aplicados
-
-### DRY (Don't Repeat Yourself)
-
-| Problema original | Solución |
-|-------------------|----------|
-| `localStorage.getItem("token")` repetido 30+ veces en pages y hooks | **Hook `useAuth`** centraliza la lectura del usuario y token con memoización |
-| Patrón `showModal/modalMessage/modalType` duplicado en ~8 archivos | **Hook `useModal`** encapsula todo el estado del modal en una sola llamada |
-| Regex de email duplicada en Login, ResetPassword y useUsuarios | **`validators.js`** centraliza `isValidEmail`, `isValidName`, `isValidRole` |
-| 3 layouts (Admin, Doctor, Cosmiatra) con ~90% código idéntico | **`DashboardLayout`** genérico parametrizado reduce cada layout a configuración |
-| Shell visual de auth repetido en Login, ResetPassword y NewPassword | **`AuthPageLayout`** componente reutilizable con slots para contenido |
-| Llamadas API dispersas con URLs hardcoded | **Módulos API** por dominio (`citas.api.js`, `pagos.api.js`, etc.) |
-
-### SRP (Single Responsibility Principle)
-
-Cada capa tiene una responsabilidad única:
-
-```
-api/           → Solo comunicación HTTP (sin lógica de UI ni estado)
-hooks/         → Solo lógica de estado reutilizable (sin renderizado)
-context/       → Solo estado global compartido (sin lógica de negocio pesada)
-pages/         → Orquestación (conecta hooks, API y componentes)
-components/    → Solo renderizado UI (reciben datos por props)
-utils/         → Solo funciones puras (sin side effects)
-```
-
-### KISS (Keep It Simple, Stupid)
-
-- Los layouts pasaron de ~105 líneas de lógica imperativa a ~40 líneas de configuración declarativa.
-- Los módulos API exponen funciones simples de una línea: `export const getCitas = async () => { const { data } = await API.get("/citas"); return data; }`.
-- Los validadores son funciones puras sin estado: `export const isValidEmail = (email) => EMAIL_REGEX.test(email.trim())`.
-
-### OCP (Open/Closed Principle)
-
-- **`DashboardLayout`** está abierto a extensión (agregar un nuevo rol solo requiere crear un nuevo archivo de configuración) y cerrado a modificación (no necesita tocar el layout base).
-
-### Clean Code
-
-- Eliminación de **código muerto**: 3 archivos `RenderContent*.jsx` que no se importaban desde ningún lado.
-- Eliminación de **estado muerto**: `isAuthenticated` en `App.jsx` que se definía pero nunca se leía.
-- Reconstrucción de `citas.api.js` que contenía un bloque `fetch` suelto sin exportación.
-
----
-
-## 🎨 Patrones de Diseño Implementados
-
-### 1. Template Method — `DashboardLayout`
-
-El layout genérico define la **estructura fija** (sidebar + overlay + topbar + routes), mientras cada layout específico inyecta la **configuración variable** (rutas, menú, base path).
-
-```jsx
-// DashboardLayout.jsx — Template (estructura fija)
-export default function DashboardLayout({ basePath, menuItems, routes, routeMap }) {
-  // Sidebar + Topbar + Routes → estructura compartida
-}
-
-// AdminLayout.jsx — Configuración concreta
-const ROUTES = [
-  { path: "dashboard-general", element: DashboardGeneral },
-  { path: "gestion-de-usuarios-y-roles", element: GestionUsuariosRoles },
-  // ...
-];
-
-export default function AdminLayout() {
-  return <DashboardLayout basePath="/administrador" routes={ROUTES} /* ... */ />;
-}
-```
-
-### 2. Facade — `useModal`
-
-Encapsula la complejidad de gestionar 3 estados interdependientes (`show`, `message`, `type`) detrás de una interfaz simple:
-
-```jsx
-// Antes: 4 variables de estado + función manual en cada archivo
-const [showModal, setShowModal] = useState(false);
-const [modalMessage, setModalMessage] = useState("");
-const [modalType, setModalType] = useState("info");
-
-// Después: una sola línea
-const { modal, mostrarModal, cerrarModal } = useModal();
-mostrarModal("✅ Operación exitosa");       // Abre el modal
-mostrarModal("❌ Error occurred", "error");  // Con tipo
-cerrarModal();                               // Cierra
-```
-
-### 3. Provider Pattern — `CitasContext`
-
-Centraliza el estado global compartido (citas, tratamientos, pagos, socket) y lo distribuye a cualquier componente del árbol vía `useCitas()`:
-
-```jsx
-// main.jsx
-<CitasProvider>
-  <App />
-</CitasProvider>
-
-// Cualquier componente del árbol
-const { citas, obtenerCitas, socket } = useCitas();
-```
-
-### 4. Interceptor Pattern — `axiosConfig`
-
-Un interceptor de request inyecta automáticamente el token JWT en **todas** las peticiones HTTP, eliminando la necesidad de pasar el token manualmente en cada llamada:
-
-```jsx
-// axiosConfig.js
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
-
-// Uso: sin token manual
-export const getCitas = async () => {
-  const { data } = await API.get("/citas");  // Token se inyecta automáticamente
-  return data;
-};
-```
-
-### 5. Composition Pattern — `AuthPageLayout`
-
-Las páginas de autenticación componen su contenido dentro de un shell visual reutilizable usando el patrón de `children`:
-
-```jsx
-<AuthPageLayout
-  title="Control interno..."
-  highlights={HIGHLIGHTS}
-  cardTitle="Ingresar"
->
-  <LoginForm />    {/* ← Contenido específico */}
-</AuthPageLayout>
-```
-
-### 6. Module Pattern — Capa API
-
-Cada dominio de negocio tiene su propio módulo API que exporta funciones independientes:
-
-```
-api/
-├── citas.api.js         → getCitas, registrarCita, actualizarCita, eliminarCita, ...
-├── pagos.api.js         → getPagos, registrarPago
-├── tratamientos.api.js  → getTratamientos, registrarTratamiento, buscarPaciente
-├── inventario.api.js    → getInventario, agregarItem, eliminarItem, ...
-└── user.api.js          → getAllUsers, registerUserByAdmin, suspenderUsuario, ...
-```
-
----
-
-## 🔐 Sistema de Autenticación y Roles
-
-### Flujo de Autenticación
-
-```
-1. Usuario envía email + password → POST /api/auth/login
-2. Backend valida credenciales → Retorna { token (JWT), user }
-3. Frontend almacena en localStorage → token + user
-4. Axios interceptor inyecta token en cada request
-5. ProtectedRoute verifica token antes de renderizar rutas privadas
-6. DashboardLayout renderiza el layout según el rol del usuario
-```
-
-### Roles y Permisos
-
-| Rol | Ruta base | Módulos accesibles |
-|-----|-----------|-------------------|
-| **Administrador** | `/administrador` | Dashboard general, Usuarios, Clientes, Inventario, Facturación, Reportes avanzados |
-| **Doctor** | `/doctor` | Agenda de citas, Historial de pacientes, Registrar tratamiento, Mis reportes |
-| **Cosmiatra** | `/cosmiatra` | Gestión de citas, Registrar tratamiento, Pagos, Historial, Reportes de servicios |
-
-### Protección de Rutas
-
-```jsx
-// ProtectedRoute.jsx — Wrapper de autenticación
-export default function ProtectedRoute() {
-  const token = localStorage.getItem("token");
-  if (!token) return <Navigate to="/login" replace />;
-  return <Outlet />;
-}
-
-// App.jsx — Rutas protegidas anidadas
-<Route element={<ProtectedRoute />}>
-  <Route path="/administrador/*" element={<AdminLayout />} />
-  <Route path="/doctor/*"        element={<DoctorLayout />} />
-  <Route path="/cosmiatra/*"     element={<CosmeatraRecepcionistaLayout />} />
-</Route>
-```
-
----
-
-## ⚡ Comunicación en Tiempo Real
-
-El sistema utiliza **Socket.IO** para mantener sincronizados a todos los usuarios conectados:
-
-| Evento | Emisor | Efecto en el cliente |
-|--------|--------|---------------------|
-| `nuevaCita` | Backend al crear cita | Agrega la cita a la lista + muestra notificación |
-| `estadoCitaActualizado` | Backend al cambiar estado | Actualiza el estado de la cita en la tabla |
-| `citaActualizada` | Backend al editar cita | Reemplaza los datos de la cita editada |
-| `citaEliminada` | Backend al eliminar | Remueve la cita de la lista |
-| `nuevoPago` | Backend al registrar pago | Agrega el pago + notifica al usuario |
-| `tratamientoActualizado` | Backend al registrar tratamiento | Recarga la lista de tratamientos |
-| `inventarioActualizado` | Backend al modificar stock | Actualiza la tabla de inventario |
-
----
-
-## 📊 Métricas del Proyecto
-
-| Métrica | Valor |
-|---------|-------|
-| **Archivos fuente** | ~142 (JSX, JS, CSS) |
-| **Componentes UI** | ~65 componentes reutilizables |
-| **Páginas** | 18 pantallas distribuidas en 4 módulos |
-| **Módulos API** | 7 módulos centralizados |
-| **Hooks personalizados** | 3 (`useAuth`, `useModal`, `useUsuarios`) |
-| **Funciones de utilidad** | 2 módulos (`citasFecha`, `validators`) |
-| **Layouts** | 1 genérico + 3 configuraciones por rol + 1 público |
-
----
-
-## ⚙️ Variables de Entorno
-
-Crea un archivo `.env` en la raíz del frontend:
+Requisitos: Node.js LTS y npm.
 
 ```bash
-VITE_API_URL=http://localhost:5000
-VITE_SOCKET_URL=http://localhost:5000
-```
-
-> `VITE_API_URL` debe apuntar al origen del backend **sin** `/api`, porque la aplicación agrega ese prefijo en las peticiones a través de `axiosConfig.js`.
-
----
-
-## 🚀 Instalación y Ejecución
-
-### Requisitos previos
-
-- **Node.js** ≥ 18
-- **npm** ≥ 9
-- Backend corriendo en el puerto configurado en `.env`
-
-### Instalación
-
-```bash
-git clone <url-del-repositorio>
-cd Web_Estetico
-npm install
-```
-
-### Desarrollo
-
-```bash
+cp .env.example .env
+npm ci
 npm run dev
 ```
 
-La aplicación estará disponible en `http://localhost:5173`.
+La aplicación queda disponible normalmente en `http://localhost:5173`; para probar el flujo configurado con el backend local puede utilizarse `npm run dev -- --host` o el puerto que indique Vite. El backend de desarrollo escucha por defecto en `http://localhost:5000`.
 
-### Producción
+Variables públicas necesarias:
+
+| Variable | Ejemplo | Uso |
+| --- | --- | --- |
+| `VITE_API_URL` | `http://localhost:5000` | Base de la API REST. |
+| `VITE_SOCKET_URL` | `http://localhost:5000` | Servidor Socket.IO autenticado. |
+
+Las variables `VITE_*` se incluyen en el JavaScript entregado al navegador. Nunca se deben colocar secretos, claves de Cloudinary, JWT privados ni credenciales en ellas.
+
+## Scripts
+
+| Comando | Resultado |
+| --- | --- |
+| `npm run dev` | Servidor de desarrollo Vite. |
+| `npm run build` | Compilación de producción y generación de Service Worker. |
+| `npm run preview` | Vista previa local del build. |
+| `npm run lint` | Revisión estática de JavaScript/JSX. |
+
+## Arquitectura
+
+```text
+src/
+├── api/                 # Límite HTTP por dominio; usa una instancia Axios común
+├── components/          # Componentes visuales y formularios reutilizables
+├── context/             # Estado transversal de citas, tratamientos, pagos y socket
+├── hooks/               # Comportamiento reusable de React
+├── layout/              # Shell, navegación y layouts por rol
+├── pages/               # Pantallas enlazadas a rutas
+├── services/            # Adaptadores de sesión y tiempo real
+├── utils/               # Reglas puras, fecha, borradores clínicos y PWA
+└── styles/              # Estilos globales y tokens visuales
+```
+
+La separación mantiene los componentes enfocados en presentación, los módulos `api/` en transporte HTTP y los servicios en dependencias del navegador. Ejemplos relevantes:
+
+- `api/axiosConfig.js` concentra URL base y el encabezado `Authorization`.
+- `services/authStorage.js` es el único adaptador para la sesión (`token` y `user`), maneja JSON corrupto y notifica cambios de sesión entre vistas y pestañas.
+- `services/realtimeSocket.js` abre sockets únicamente cuando existe una sesión y envía el JWT en el handshake.
+- `utils/clinicalHistoryStorage.js` y `utils/clinicalHistoryRemote.js` separan el borrador local de la sincronización duradera con la API.
+- `utils/professionalOwnership.js` vincula citas y tratamientos por ID de cuenta; `utils/professionalDirectory.js` y `hooks/useProfessionalDirectory.js` resuelven el nombre vigente para tablas, reportes y exportaciones.
+
+Este diseño aplica SRP, DRY, Provider Pattern, Adapter Pattern y una capa API como fachada. Los cambios de dominio deben entrar primero por `api/` o `services/`, no por llamadas `fetch` dispersas en componentes.
+
+## Rutas principales
+
+| Área | Rutas |
+| --- | --- |
+| Pública | `/`, `/login`, `/reset-password`, `/new-password` |
+| Doctor | `/doctor/agenda-de-citas`, `/doctor/historial-de-pacientes`, `/doctor/historial-de-pacientes/formulario`, `/doctor/registrar-tratamiento`, `/doctor/mis-reportes`, `/doctor/ajustes/*` |
+| Cosmiatra | `/cosmiatra/gestion-de-citas`, `/cosmiatra/registrar-tratamiento`, `/cosmiatra/gestion-de-pagos`, `/cosmiatra/historial-de-clientes`, `/cosmiatra/reportes-de-servicios-e-ingresos`, `/cosmiatra/ajustes/*` |
+| Administrador | `/administrador/dashboard-general`, `/administrador/gestion-de-usuarios-y-roles`, `/administrador/gestion-de-clientes`, `/administrador/gestion-de-inventario`, `/administrador/gestion-de-facturacion-y-pagos`, `/administrador/reportes-avanzados`, `/administrador/ajustes/*` |
+
+La protección de rutas del cliente mejora la experiencia de navegación; la autorización real se aplica siempre en el backend.
+
+Los nombres de doctor y cosmiatra son datos de presentación, no identificadores. Al editar un perfil, el evento autenticado `profesionalActualizado` y la sincronización de sesión refrescan los nombres y los registros compartidos. Los historiales conservan su propietario por ID y los gráficos mantienen la selección del profesional aunque cambie su nombre. La API recupera registros antiguos mediante su cita vinculada; los registros que solo conservan un nombre requieren una migración interna revisada. Cambiar un nombre de perfil no concede acceso a registros sin propietario y el frontend conserva los filtros por ID.
+
+## Historia clínica y PDF
+
+1. El formulario conserva un borrador local para evitar pérdida de trabajo al cambiar de sección.
+2. Cuando hay conexión, sincroniza el borrador con `/api/historias-clinicas`.
+3. La API decide si el médico tiene acceso al paciente, valida la finalización y guarda una instantánea de la firma.
+4. Al finalizar, el cliente presenta la historia, genera el PDF y actualiza la notificación de próximo control.
+
+Los módulos `FormularioPeptidos`, `ClinicalHistoryPdf` y `HistoriaClinicaFinalizada` conservan el flujo clínico y PDF separado de la navegación general. No se deben mover o dividir sin pruebas de regresión de la exportación.
+
+### Correcciones al nombre del cliente
+
+Guardar y Finalizar sincronizan el nombre completo del **mismo cliente**, conservando los IDs de sus atenciones. `pacienteId` agrupa sus registros independientemente del nombre; no debe confundirse con `patientId`, que es la clave local de una historia concreta. Las pantallas de citas, pagos, clientes, historiales y reportes recargan los datos confirmados mediante `pacienteActualizado` y el evento local `patient:updated`.
+
+La propagación no depende del estado de la cita: pendiente, atendida, aplazada y cancelada conservan la identidad del mismo cliente y reciben sus correcciones de nombre. Una cita heredada sin identidad necesita un vínculo revisado antes de poder seguir estos cambios; cambiar el nombre nunca reactiva, cancela ni reprograma la cita.
+
+Al seleccionar un cliente existente en Registrar cita, el autocompletado conserva `citaPacienteId`, una referencia a una cita ya guardada. La API comprueba el acceso a esa cita y reutiliza su identidad persistida; cambiar de doctor a cosmiatra no crea otro cliente. Escribir un nombre libre no asigna automáticamente la identidad de un homónimo. Al volver a una pestaña visible se recargan los datos del servidor para recuperar actualizaciones perdidas durante una desconexión del socket.
+
+El nombre solo se anuncia como actualizado después de confirmarlo la API. Las peticiones del formulario se serializan y los borradores permanecen disponibles si falla la conexión. Los registros antiguos se vinculan por referencias verificadas o por nombre anterior más contacto/DNI persistidos, sin mezclar homónimos. Si una cita antigua carece de vínculo verificable, el mensaje de guardado informa que no fue modificada.
+
+Pruebas de regresión: `node src/utils/patientIdentity.test.js`, `node src/utils/clinicalHistoryStorage.test.js`, `node src/utils/appointmentPatientSuggestions.test.js` y `node src/hooks/usePatientUpdates.test.js` (identidad del cliente, selección activa, continuidad del borrador y actualización al volver a la pestaña).
+
+### Atenciones sin tratamiento registrado
+
+Una cita marcada como atendida puede tener un cobro antes de registrar su tratamiento. El historial de cosmiatra y Gestión de clientes consultan `/api/tratamientos/historial-atenciones`; el reporte diario compartido por cosmiatra y administración también incluye estas atenciones. Se distinguen con **Atención sin tratamiento registrado** y nunca generan un tratamiento ni respuestas clínicas ficticias. El listado clínico `/api/tratamientos` y los indicadores de tratamientos del doctor conservan su fuente original.
+
+Los registros se enlazan por la cita o por una correspondencia histórica única; cuando se registra el tratamiento real reemplaza la atención pendiente. Las fechas se muestran en Lima y los cobros de filas operativas corresponden exclusivamente al pago confirmado de esa cita. Los totales del reporte no cuentan dos veces un comprobante. El historial se refresca al cambiar citas, tratamientos o pagos y al recuperar el foco/conexión.
+
+Pruebas: `node src/utils/attentionHistory.test.js`, `node src/utils/serviceReport.test.js` y `node src/components/ReportesServiciosIngresos/calcularMonto.test.js`.
+
+## Seguridad y privacidad
+
+Se incorporaron estas medidas en el cliente:
+
+- La PWA nunca almacena respuestas `/api/*`, peticiones con `Authorization` ni imágenes externas en Cache Storage. Solo se cachean assets estáticos del mismo origen.
+- Al iniciar y al cerrar sesión se elimina la caché heredada que pudo contener respuestas autenticadas (`karito-api-cache*`).
+- Todas las conexiones Socket.IO pasan por `createAuthenticatedSocket`, que adjunta el token actual; el backend rechaza sockets anónimos.
+- Existe una sola conexión Socket.IO por sesión mediante `CitasProvider`; las pantallas se suscriben y se desuscriben con handlers concretos, evitando conexiones duplicadas o listeners huérfanos.
+- El acceso a `localStorage` está encapsulado y tolera datos corruptos. El cambio de sesión desconecta el socket y limpia el estado compartido.
+- Los borradores clínicos locales están aislados por ID de usuario y se eliminan al cerrar sesión. La migración descarta las claves globales heredadas para que un navegador compartido no exponga una historia a otra cuenta.
+- Las rutas privadas verifican también el rol en cliente para evitar navegación accidental entre áreas; el backend conserva la autorización definitiva.
+- En Vercel se entregan CSP, `frame-ancestors`, `nosniff`, política de permisos y cabeceras de referrer. La CSP permite únicamente los orígenes necesarios para assets propios, Cloudinary y la API/Socket HTTPS configurada.
+- La exportación Excel neutraliza valores que comienzan con `=`, `+`, `-` o `@` para evitar inyección de fórmulas al abrir el archivo.
+- La interfaz usa el cliente Axios común para que las solicitudes autenticadas no dependan de encabezados duplicados escritos a mano.
+
+### Límites que siguen requiriendo controles operativos
+
+- El token actual se conserva en `localStorage` para mantener compatibilidad con el backend. Una XSS puede exponerlo; una migración a cookies `HttpOnly` requiere un cambio coordinado de API, CORS y protección CSRF.
+- Los borradores clínicos locales contienen datos sensibles mientras el usuario trabaja. Aunque se aíslan por cuenta y se purgan al cerrar sesión, deben usarse equipos y perfiles de navegador individuales, con bloqueo de pantalla y limpieza de datos al retirar un equipo.
+- `xlsx` tiene una alerta upstream sin corrección publicada. En este proyecto solo se usa para **generar** un Excel en el navegador, no para leer archivos de terceros, y sus valores se protegen contra fórmulas. Debe revisarse periódicamente para migrar a una alternativa mantenida cuando exista una validación funcional equivalente.
+
+## Verificación antes de entregar
 
 ```bash
-npm run build       # Compila para producción
-npm run preview     # Sirve el build localmente
+npm run lint
+npm run build
+npm audit --omit=dev
 ```
 
-### Scripts Disponibles
+Pruebe manualmente al menos login, cambio/cierre de sesión, una cita, tratamiento con imagen, pago, el formulario clínico y la descarga de PDF después de actualizar paquetes o la configuración PWA.
 
-| Comando | Descripción |
-|---------|-------------|
-| `npm run dev` | Inicia el servidor de desarrollo con HMR |
-| `npm run build` | Compila el proyecto para producción |
-| `npm run preview` | Sirve el build localmente para pruebas |
-| `npm run lint` | Ejecuta ESLint para análisis estático |
+## Despliegue
 
----
+1. Use HTTPS para frontend, API y Socket.IO.
+2. Configure `VITE_API_URL` y `VITE_SOCKET_URL` con la URL HTTPS real de la API antes de compilar.
+3. Publique el frontend sin `.env`; solo se versiona `.env.example`.
+4. Configure el backend con una allowlist CORS exacta y secretos fuera del repositorio.
+5. Configure una política de retención, respaldos cifrados y acceso mínimo para información clínica y financiera.
+6. Si despliega fuera de Vercel, replique las cabeceras de `vercel.json` en su CDN o proxy inverso.
 
-## 📋 Dependencias
+## Dependencias y actualización
 
-### Producción
-
-```json
-{
-  "react": "^18.3.1",
-  "react-dom": "^18.3.1",
-  "react-router-dom": "^7.9.3",
-  "axios": "^1.12.2",
-  "socket.io-client": "^4.8.1",
-  "recharts": "^3.2.1",
-  "tailwindcss": "^4.1.13",
-  "react-icons": "^5.5.0",
-  "react-datepicker": "^8.8.0",
-  "react-modal": "^3.16.3",
-  "dayjs": "^1.11.19",
-  "xlsx": "^0.18.5",
-  "html2pdf.js": "^0.12.1",
-  "vite-plugin-pwa": "^1.1.0"
-}
-```
-
-### Desarrollo
-
-```json
-{
-  "vite": "npm:rolldown-vite@7.1.12",
-  "eslint": "^9.36.0",
-  "@vitejs/plugin-react-swc": "^4.1.0"
-}
-```
-
----
-
-## 🗂️ Cambios Recientes
-
-### Refactorización de Código (Agosto 2026)
-
-Se realizó una refactorización completa del frontend aplicando principios de ingeniería de software:
-
-- **Capa API unificada** — 7 módulos con interceptor automático de autenticación.
-- **Hooks reutilizables** — `useAuth`, `useModal`, `useUsuarios` eliminan 30+ repeticiones.
-- **Layout genérico** — Patrón Template Method reduce 3 layouts a configuración declarativa.
-- **Auth visual unificado** — `AuthPageLayout` elimina ~240 líneas de JSX duplicado.
-- **Eliminación de código muerto** — 3 archivos `RenderContent*` + estado `isAuthenticated` sin uso.
-- **Validadores centralizados** — `validators.js` unifica regex dispersas.
-
-### Galería de Tratamientos
-
-En la sección de historial de pacientes, las imágenes del tratamiento se abren en un modal de galería con navegación por teclado, bloqueo de scroll, y soporte de miniaturas optimizadas.
-
-### Recuperación de Contraseña
-
-El formulario de nueva contraseña consume un token seguro recibido por URL: `/new-password?token=...`.
-
----
-
-## 🔮 Próximas Mejoras
-
-- [ ] Separar chunks grandes con `dynamic import()` para optimizar carga inicial.
-- [ ] Agregar pruebas automatizadas (Vitest + React Testing Library).
-- [ ] Centralizar gestión de Socket.IO en un Provider/Hook dedicado.
-- [ ] Integración con facturación electrónica.
-- [ ] Despliegue con Docker + CI/CD.
-- [ ] Documentar flujos de usuario por rol.
-
----
-
-## 📄 Licencia
-
-Proyecto bajo licencia MIT.
+El proyecto usa React, Vite, Tailwind, Axios, Socket.IO, jsPDF/html2pdf y las librerías de gráficos/formularios indicadas en `package.json`. Después de cualquier actualización use el lockfile, ejecute el build y vuelva a probar la generación de PDF, pues es el flujo con mayor interacción de navegador.

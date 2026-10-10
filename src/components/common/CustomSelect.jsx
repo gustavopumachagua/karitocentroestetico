@@ -83,6 +83,7 @@ export default function CustomSelect({
   menuClassName = "",
   buttonClassName = "",
   ariaLabel,
+  preventParentOutsideClick = false,
 }) {
   const generatedId = useId();
   const selectId = id || generatedId;
@@ -167,6 +168,26 @@ export default function CustomSelect({
       document.removeEventListener("touchstart", handlePointerDown);
     };
   }, [open, normalizedOptions, value]);
+
+  // Some consumers (such as react-datepicker's custom time input) render this
+  // menu in a portal while listening for outside clicks on `document`. Keep a
+  // selection made in this portal from being mistaken for a click outside the
+  // parent overlay. The option click itself still closes this select normally.
+  useEffect(() => {
+    if (!open || !preventParentOutsideClick) return undefined;
+
+    const menu = menuRef.current;
+    if (!menu) return undefined;
+
+    const stopPropagation = (event) => event.stopPropagation();
+    menu.addEventListener("mousedown", stopPropagation);
+    menu.addEventListener("touchstart", stopPropagation);
+
+    return () => {
+      menu.removeEventListener("mousedown", stopPropagation);
+      menu.removeEventListener("touchstart", stopPropagation);
+    };
+  }, [open, preventParentOutsideClick]);
 
   const handleSelect = (option) => {
     if (disabled || option.disabled) return;

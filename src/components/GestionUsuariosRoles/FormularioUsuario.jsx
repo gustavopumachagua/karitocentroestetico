@@ -10,7 +10,7 @@ export default function FormularioUsuario({
   return (
     <form
       onSubmit={handleSubmit}
-      className="page-panel page-panel-pad"
+      className="ui-panel"
     >
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10">
@@ -21,11 +21,11 @@ export default function FormularioUsuario({
         </h3>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
-        <div className="flex flex-col">
+      <div className="mb-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="ui-field">
           <label
             htmlFor="nombre"
-            className="text-slate-300 text-sm mb-2 flex items-center gap-2"
+            className="ui-label flex items-center gap-2"
           >
             <FaUser className="text-cyan-300" /> Nombre
           </label>
@@ -36,15 +36,15 @@ export default function FormularioUsuario({
             value={nuevoUsuario.nombre}
             onChange={handleChange}
             placeholder="Ej. María López"
-            className="w-full rounded-lg border border-slate-700 bg-slate-950/50 px-4 py-2.5 text-slate-200 outline-none transition placeholder:text-slate-600 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/15"
+            className="ui-control focus:border-cyan-400/60 focus:ring-cyan-400/15"
             required
           />
         </div>
 
-        <div className="flex flex-col">
+        <div className="ui-field">
           <label
             htmlFor="email"
-            className="text-slate-300 text-sm mb-2 flex items-center gap-2"
+            className="ui-label flex items-center gap-2"
           >
             <FaEnvelope className="text-cyan-300" /> Correo
           </label>
@@ -55,15 +55,15 @@ export default function FormularioUsuario({
             value={nuevoUsuario.email}
             onChange={handleChange}
             placeholder="ejemplo@centro.com"
-            className="w-full rounded-lg border border-slate-700 bg-slate-950/50 px-4 py-2.5 text-slate-200 outline-none transition placeholder:text-slate-600 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/15"
+            className="ui-control focus:border-cyan-400/60 focus:ring-cyan-400/15"
             required
           />
         </div>
 
-        <div className="flex flex-col">
+        <div className="ui-field">
           <label
             htmlFor="rol"
-            className="text-slate-300 text-sm mb-2 flex items-center gap-2"
+            className="ui-label flex items-center gap-2"
           >
             <FaUserShield className="text-violet-300" /> Rol
           </label>
@@ -87,10 +87,10 @@ export default function FormularioUsuario({
         <button
           type="submit"
           disabled={!formularioValido}
-          className={`w-full flex items-center justify-center gap-2 rounded-lg py-3 font-semibold text-white transition-all duration-300 ${
+          className={`ui-button w-full min-h-12 ${
             formularioValido
-              ? "bg-gradient-to-r from-cyan-600 to-violet-600 shadow-md shadow-cyan-950/30 hover:from-cyan-500 hover:to-violet-500 hover:scale-[1.01] cursor-pointer"
-              : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-70"
+              ? "ui-button-primary"
+              : "ui-button-secondary cursor-not-allowed"
           }`}
         >
           <FaUserPlus />

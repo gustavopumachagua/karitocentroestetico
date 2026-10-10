@@ -1,7 +1,13 @@
 import { FiMenu, FiX } from "react-icons/fi";
 import { useState, useEffect } from "react";
+import ClinicalControlNotifications from "./ClinicalControlNotifications";
 
-export default function Topbar({ active, sidebarOpen, setSidebarOpen }) {
+export default function Topbar({
+  active,
+  sidebarOpen,
+  setSidebarOpen,
+  notificationTargetPath,
+}) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -22,24 +28,24 @@ export default function Topbar({ active, sidebarOpen, setSidebarOpen }) {
 
   return (
     <div
-      className="mb-6 flex items-center justify-between gap-4 rounded-xl px-5 py-4 animate-fade-in"
+      className="animate-fade-in mb-5 flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4"
       style={{
-        background: 'linear-gradient(135deg, rgba(12, 20, 42, 0.82), rgba(8, 14, 32, 0.72))',
-        border: '1px solid rgba(148, 163, 184, 0.1)',
-        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
+        background: 'linear-gradient(135deg, rgba(13, 23, 46, 0.86), rgba(7, 13, 29, 0.8))',
+        border: '1px solid rgba(148, 163, 184, 0.12)',
+        boxShadow: '0 14px 34px rgba(0, 0, 0, 0.18)',
         backdropFilter: 'blur(20px)',
       }}
     >
-      <div>
-        <p className="text-[11px] font-bold uppercase tracking-widest text-cyan-300/80">
+      <div className="min-w-0">
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-200/80 sm:text-[11px]">
           Panel de gestión
         </p>
-        <h1 className="mt-1 text-lg font-bold text-white sm:text-xl md:text-2xl tracking-tight">
+        <h1 className="mt-1 break-words text-lg font-semibold tracking-tight text-white sm:text-xl md:text-2xl">
           {active}
         </h1>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         {/* Fecha/hora */}
         <div className="hidden lg:flex flex-col items-end text-right mr-2">
           <span className="text-xs text-slate-400 capitalize">{formattedDate}</span>
@@ -59,6 +65,10 @@ export default function Topbar({ active, sidebarOpen, setSidebarOpen }) {
           <span className="pulse-dot" />
           En línea
         </div>
+
+        {notificationTargetPath && (
+          <ClinicalControlNotifications targetPath={notificationTargetPath} />
+        )}
 
         {/* Mobile menu */}
         <button

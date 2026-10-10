@@ -7,7 +7,7 @@ export default function InventarioTable({ data, mostrarSoloBajos, loading }) {
     : data;
 
   return (
-    <section className="glass-card p-6 transition-all duration-300">
+    <section className="ui-panel">
       <h3 className="text-lg font-semibold text-red-400/90 mb-6 text-center tracking-tight">
         Estado de Stock de Insumos
       </h3>

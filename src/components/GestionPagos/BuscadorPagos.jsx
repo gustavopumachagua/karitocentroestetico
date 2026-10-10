@@ -1,11 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 
 export default function BuscadorPagos({ busqueda, setBusqueda, citas }) {
   const [sugerencias, setSugerencias] = useState([]);
+  const sugerenciaSeleccionadaRef = useRef("");
 
   useEffect(() => {
     if (!busqueda) return setSugerencias([]);
+
+    if (sugerenciaSeleccionadaRef.current === busqueda) {
+      return setSugerencias([]);
+    }
+
     const coincidencias = citas
       .map((c) => c.cliente)
       .filter((nombre) =>
@@ -15,13 +21,17 @@ export default function BuscadorPagos({ busqueda, setBusqueda, citas }) {
   }, [busqueda, citas]);
 
   return (
-    <div className="relative mb-6 max-w-md mx-auto">
+    <div className="ui-panel relative mx-auto w-full max-w-xl">
+      <p className="mb-3 text-sm font-semibold text-slate-200">Buscar cita atendida</p>
       <div className="search-field">
         <FaSearch className="search-icon" />
         <input
           type="text"
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={(e) => {
+            sugerenciaSeleccionadaRef.current = "";
+            setBusqueda(e.target.value);
+          }}
           placeholder="Buscar cliente..."
           className="search-input"
         />
@@ -29,6 +39,7 @@ export default function BuscadorPagos({ busqueda, setBusqueda, citas }) {
           <button
             type="button"
             onClick={() => {
+              sugerenciaSeleccionadaRef.current = "";
               setBusqueda("");
               setSugerencias([]);
             }}
@@ -45,6 +56,7 @@ export default function BuscadorPagos({ busqueda, setBusqueda, citas }) {
             <li
               key={idx}
               onClick={() => {
+                sugerenciaSeleccionadaRef.current = nombre;
                 setBusqueda(nombre);
                 setSugerencias([]);
               }}

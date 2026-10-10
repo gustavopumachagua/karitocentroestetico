@@ -1,54 +1,96 @@
-import { useState, useEffect } from "react";
-import { useCitas } from "../../context/CitasContext";
-import { buscarPaciente } from "../../api/tratamientos.api";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useCitas } from "../../hooks/useCitas";
+import { getTratamientosParaReporteServicios } from "../../api/tratamientos.api";
 import { FaArrowLeft } from "react-icons/fa";
 
 import BuscadorClientes from "../../components/ReportesServiciosIngresos/BuscadorClientes";
 import ClienteCard from "../../components/ReportesServiciosIngresos/ClienteCard";
 import HistorialCliente from "../../components/ReportesServiciosIngresos/HistorialCliente";
 import TablaServicios from "../../components/ReportesServiciosIngresos/TablaServicios";
-import { calcularMonto } from "../../components/ReportesServiciosIngresos/calcularMonto";
+import { calcularTotalAtenciones } from "../../components/ReportesServiciosIngresos/calcularMonto";
+import { obtenerFechaCitaEnLima } from "../../utils/citasFecha";
+import { useProfessionalDirectory } from "../../hooks/useProfessionalDirectory";
+import { usePatientUpdates } from "../../hooks/usePatientUpdates";
+import { getPatientKey, getPatientName, isSamePatient } from "../../utils/patientIdentity";
+import { buildServiceReportPatient, getServiceReportDay } from "../../utils/serviceReport";
 
 export default function ReportesServiciosIngresos() {
-  const { tratamientos, pagos, socket, obtenerPagos, obtenerTratamientos } =
-    useCitas();
+  const { pagos, socket, obtenerPagos } = useCitas();
+  const { professionalNamesById } = useProfessionalDirectory();
+  const obtenerPagosRef = useRef(obtenerPagos);
 
   const [busqueda, setBusqueda] = useState("");
   const [sugerencias, setSugerencias] = useState([]);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
-  const [tratamientosCliente, setTratamientosCliente] = useState([]);
-  const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
-
-  const hoyStr = new Date().toLocaleDateString("en-CA");
-  const [fechaFiltro, setFechaFiltro] = useState(hoyStr);
+  const [tratamientosReporte, setTratamientosReporte] = useState([]);
+  const [fechaFiltro, setFechaFiltro] = useState(() =>
+    obtenerFechaCitaEnLima(new Date()),
+  );
   const [loading, setLoading] = useState(true);
+  const tratamientosCliente = useMemo(
+    () => clienteSeleccionado
+      ? tratamientosReporte.filter((tratamiento) => isSamePatient(tratamiento, clienteSeleccionado))
+      : [],
+    [clienteSeleccionado, tratamientosReporte],
+  );
+
+  useEffect(() => {
+    obtenerPagosRef.current = obtenerPagos;
+  }, [obtenerPagos]);
+
+  const obtenerReporteServicios = useCallback(async () => {
+    try {
+      const data = await getTratamientosParaReporteServicios();
+      const normalized = Array.isArray(data) ? data : [];
+      setTratamientosReporte(normalized);
+      return normalized;
+    } catch (error) {
+      // The daily report remains isolated from the clinical-history endpoint:
+      // an authorization failure here must not accidentally render another
+      // professional's cached treatment list.
+      console.error("Error al obtener el reporte de servicios:", error);
+      setTratamientosReporte([]);
+      return [];
+    }
+  }, []);
 
   const obtenerDatosActualizados = (tratamientosCliente) => {
-    if (!tratamientosCliente || tratamientosCliente.length === 0) {
-      return {};
-    }
-
-    const ordenados = [...tratamientosCliente].sort(
-      (a, b) => new Date(b.fecha) - new Date(a.fecha),
-    );
-
-    const masReciente = ordenados[0];
-
-    return {
-      sexo: masReciente.sexo || null,
-      celular: masReciente.celular || null,
-    };
+    return buildServiceReportPatient(tratamientosCliente, tratamientosCliente?.[0]);
   };
+
+  useEffect(() => {
+    setClienteSeleccionado((current) => {
+      if (!current) return null;
+      const historial = tratamientosReporte.filter((t) => isSamePatient(t, current));
+      return historial.length > 0
+        ? { ...current, ...obtenerDatosActualizados(historial) }
+        : current;
+    });
+  }, [tratamientosReporte]);
+
+  usePatientUpdates((patient) => {
+    if (patient?.nombreAnterior && patient?.nombre) {
+      setBusqueda((current) =>
+        current.trim().toLocaleLowerCase("es-PE") === patient.nombreAnterior.trim().toLocaleLowerCase("es-PE")
+          ? patient.nombre
+          : current,
+      );
+    }
+    setSugerencias([]);
+    void obtenerReporteServicios();
+  }, socket);
 
   useEffect(() => {
     const cargarDatos = async () => {
       setLoading(true);
-      await obtenerTratamientos();
-      await obtenerPagos();
+      await Promise.all([
+        obtenerReporteServicios(),
+        obtenerPagosRef.current(),
+      ]);
       setLoading(false);
     };
-    cargarDatos();
-  }, []);
+    void cargarDatos();
+  }, [obtenerReporteServicios]);
 
   useEffect(() => {
     if (busqueda.trim() === "") {
@@ -56,83 +98,45 @@ export default function ReportesServiciosIngresos() {
       return;
     }
 
-    const nombresUnicos = [
-      ...new Set(
-        tratamientos
-          .filter((t) =>
-            t.nombre?.toLowerCase().includes(busqueda.toLowerCase()),
-          )
-          .map((t) => t.nombre),
-      ),
-    ];
-
-    setSugerencias(nombresUnicos);
-  }, [busqueda, tratamientos]);
-
-  useEffect(() => {
-    if (!tratamientos || tratamientos.length === 0) return;
-
-    const filtrados = tratamientos.filter((t) => {
-      const fechaTrat = new Date(t.fecha);
-      const fechaLocal = fechaTrat.toLocaleDateString("en-CA");
-      return fechaLocal === fechaFiltro;
+    const pacientes = new Map();
+    tratamientosReporte.filter((record) =>
+      getPatientName(record).toLocaleLowerCase("es-PE").includes(busqueda.trim().toLocaleLowerCase("es-PE")),
+    ).forEach((record) => {
+      const key = getPatientKey(record);
+      if (!pacientes.has(key)) pacientes.set(key, record);
     });
+    setSugerencias([...pacientes.values()]);
+  }, [busqueda, tratamientosReporte]);
 
-    setServiciosFiltrados(filtrados);
-  }, [fechaFiltro, tratamientos]);
+  const serviciosFiltrados = useMemo(
+    () =>
+      (Array.isArray(tratamientosReporte) ? tratamientosReporte : []).filter(
+        (tratamiento) =>
+          getServiceReportDay(tratamiento) === fechaFiltro,
+      ),
+    [fechaFiltro, tratamientosReporte],
+  );
 
-  const buscarCliente = async (nombre) => {
-    try {
-      const data = await buscarPaciente(nombre);
-
-      const historial = tratamientos.filter(
-        (t) => t.nombre.toLowerCase() === nombre.toLowerCase(),
-      );
-
-      const datosActualizados = obtenerDatosActualizados(historial);
-
-      setClienteSeleccionado({
-        ...data,
-        ...datosActualizados,
-      });
-
-      setTratamientosCliente(historial);
-    } catch {
-      const historial = tratamientos.filter(
-        (t) => t.nombre.toLowerCase() === nombre.toLowerCase(),
-      );
-
-      if (historial.length > 0) {
-        const datosActualizados = obtenerDatosActualizados(historial);
-
-        setClienteSeleccionado({
-          nombre,
-          ...datosActualizados,
-        });
-
-        setTratamientosCliente(historial);
-      } else {
-        setClienteSeleccionado(null);
-        setTratamientosCliente([]);
-      }
-    }
+  const buscarCliente = (patient) => {
+    const nombre = getPatientName(patient);
+    const anchor = typeof patient === "object"
+      ? patient
+      : tratamientosReporte.find((t) =>
+          getPatientName(t).toLocaleLowerCase("es-PE") === nombre.toLocaleLowerCase("es-PE"),
+        ) || { nombre };
+    const historial = tratamientosReporte.filter((record) => isSamePatient(record, anchor));
+    setClienteSeleccionado(historial.length ? buildServiceReportPatient(historial, anchor) : null);
 
     setSugerencias([]);
     setBusqueda("");
   };
 
-  const totalIngresos = serviciosFiltrados.reduce(
-    (acc, t) => acc + calcularMonto(t, pagos),
-    0,
-  );
-  const totalHistorial = tratamientosCliente.reduce(
-    (acc, t) => acc + calcularMonto(t, pagos),
-    0,
-  );
+  const totalIngresos = calcularTotalAtenciones(serviciosFiltrados, pagos);
+  const totalHistorial = calcularTotalAtenciones(tratamientosCliente, pagos);
 
   const irACita = (tratamiento) => {
-    const historial = tratamientos.filter(
-      (t) => t.nombre === tratamiento.nombre,
+    const historial = tratamientosReporte.filter(
+      (t) => isSamePatient(t, tratamiento),
     );
 
     const datosActualizados = obtenerDatosActualizados(historial);
@@ -141,29 +145,36 @@ export default function ReportesServiciosIngresos() {
       nombre: tratamiento.nombre,
       ...datosActualizados,
     });
-
-    setTratamientosCliente(historial);
   };
 
   useEffect(() => {
     if (!socket) return;
 
     const handleNuevoPago = () => {
-      obtenerPagos();
+      obtenerPagosRef.current();
+      void obtenerReporteServicios();
     };
 
     const handleTratamientoActualizado = () => {
-      obtenerTratamientos();
+      void obtenerReporteServicios();
     };
 
     socket.on("nuevoPago", handleNuevoPago);
     socket.on("tratamientoActualizado", handleTratamientoActualizado);
+    socket.on("estadoCitaActualizado", handleTratamientoActualizado);
+    socket.on("citaActualizada", handleTratamientoActualizado);
+    socket.on("citaEliminada", handleTratamientoActualizado);
+    socket.on("profesionalActualizado", handleTratamientoActualizado);
 
     return () => {
       socket.off("nuevoPago", handleNuevoPago);
       socket.off("tratamientoActualizado", handleTratamientoActualizado);
+      socket.off("estadoCitaActualizado", handleTratamientoActualizado);
+      socket.off("citaActualizada", handleTratamientoActualizado);
+      socket.off("citaEliminada", handleTratamientoActualizado);
+      socket.off("profesionalActualizado", handleTratamientoActualizado);
     };
-  }, [socket]);
+  }, [socket, obtenerReporteServicios]);
 
   if (loading) {
     return (
@@ -174,7 +185,7 @@ export default function ReportesServiciosIngresos() {
   }
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack">
         <BuscadorClientes
           busqueda={busqueda}
@@ -208,6 +219,7 @@ export default function ReportesServiciosIngresos() {
             buscarCliente={buscarCliente}
             totalIngresos={totalIngresos}
             pagos={pagos}
+            professionalNamesById={professionalNamesById}
           />
         )}
       </div>

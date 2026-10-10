@@ -1,30 +1,36 @@
 import { FaClipboardList, FaMoneyBillWave } from "react-icons/fa";
 import { calcularMonto } from "./calcularMonto";
 import { formatearFechaCita } from "../../utils/citasFecha";
+import { getAttentionDate } from "../../utils/attentionHistory";
+import AtencionPendienteBadge from "../HistorialPacientes/AtencionPendienteBadge";
 
 export default function HistorialCliente({ tratamientos, total, pagos = [] }) {
   return (
-    <div className="page-panel page-panel-pad">
-      <div className="mb-6 flex items-center gap-3 border-b border-slate-700/50 pb-5">
+    <div className="ui-panel">
+      <div className="ui-toolbar mb-6 border-b border-slate-700/50 pb-5">
+        <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-400/15 bg-violet-400/10">
           <FaClipboardList className="text-violet-300 text-lg" />
         </div>
         <h3 className="text-lg sm:text-xl font-semibold text-white">
-          Historial de Tratamientos
+          Historial de atenciones
         </h3>
+        </div>
+        <span className="ui-status">{tratamientos.length} registros</span>
       </div>
 
       {tratamientos.length > 0 ? (
         <ul className="space-y-3">
           {tratamientos.map((t, idx) => (
             <li
-              key={idx}
-              className="rounded-xl border border-slate-700/70 bg-slate-950/25 p-4 transition hover:border-cyan-400/25 hover:bg-cyan-400/5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
+              key={t._id || idx}
+              className="ui-card ui-card-interactive flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex-1">
                 <p className="text-slate-400 text-xs sm:text-sm">
-                  {formatearFechaCita(t.fecha)}
+                  {formatearFechaCita(getAttentionDate(t))}
                 </p>
+                <AtencionPendienteBadge record={t} className="mt-1" />
                 <p className="text-cyan-100 font-medium text-sm sm:text-base mt-1 leading-relaxed break-words">
                   {Array.isArray(t.servicio)
                     ? t.servicio.join(", ")
@@ -45,7 +51,7 @@ export default function HistorialCliente({ tratamientos, total, pagos = [] }) {
         </p>
       )}
 
-      <div className="mt-6 bg-slate-950/30 border border-slate-700/70 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
+      <div className="ui-card mt-6 flex flex-col items-center justify-between gap-2 text-center sm:flex-row sm:text-left">
         <span className="text-slate-300 font-medium text-sm sm:text-base">
           Total del historial:
         </span>

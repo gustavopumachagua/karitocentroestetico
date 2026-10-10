@@ -30,7 +30,7 @@ export default function AgregarItemForm({
       (nuevo.stock.trim() === "" || nuevo.umbral.trim() === ""));
 
   return (
-    <section className="page-panel page-panel-pad">
+    <section className="ui-panel">
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10">
           <FaPlus className="text-emerald-300" />
@@ -40,9 +40,9 @@ export default function AgregarItemForm({
         </h3>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 relative">
-        <div className="flex flex-col">
-          <label className="text-slate-300 text-sm mb-2">Tipo</label>
+      <div className="relative grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="ui-field">
+          <label className="ui-label">Tipo</label>
           <CustomSelect
             value={nuevo.tipo}
             onValueChange={(value) =>
@@ -61,8 +61,8 @@ export default function AgregarItemForm({
           />
         </div>
 
-        <div className="flex flex-col relative col-span-1 sm:col-span-2">
-          <label className="text-slate-300 text-sm mb-2">Nombre</label>
+        <div className="ui-field relative col-span-1 sm:col-span-2">
+          <label className="ui-label">Nombre</label>
           <input
             type="text"
             placeholder="Ej: Crema hidratante (50ml)"
@@ -70,7 +70,7 @@ export default function AgregarItemForm({
             onChange={handleNombreChange}
             onKeyDown={handleKeyDown}
             autoComplete="off"
-            className={`w-full rounded-lg border bg-slate-950/50 px-4 py-2.5 text-slate-200 outline-none transition placeholder:text-slate-600 ${
+            className={`ui-control ${
               nombreValido ? "border-slate-700" : "border-rose-400"
             } focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/15`}
           />
@@ -96,15 +96,15 @@ export default function AgregarItemForm({
 
         {nuevo.tipo === "insumo" && (
           <>
-            <div className="flex flex-col">
-              <label className="text-slate-300 text-sm mb-2">Stock</label>
+            <div className="ui-field">
+              <label className="ui-label">Stock</label>
               <input
                 type="number"
                 placeholder="0"
                 value={nuevo.stock}
                 onChange={handleStockChange}
                 min="0"
-                className="w-full rounded-lg border border-slate-700 bg-slate-950/50 px-4 py-2.5 text-center text-slate-200 outline-none transition focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/15"
+                className="ui-control text-center focus:border-emerald-400/60 focus:ring-emerald-400/15"
               />
               {nuevo.stock && Number(nuevo.stock) > 0 && (
                 <p className="text-sm text-slate-400 mt-2">
@@ -126,15 +126,15 @@ export default function AgregarItemForm({
               )}
             </div>
 
-            <div className="flex flex-col">
-              <label className="text-slate-300 text-sm mb-2">Umbral</label>
+            <div className="ui-field">
+              <label className="ui-label">Umbral</label>
               <input
                 type="number"
                 placeholder="0"
                 value={nuevo.umbral}
                 onChange={handleUmbralChange}
                 min="0"
-                className="w-full rounded-lg border border-slate-700 bg-slate-950/50 px-4 py-2.5 text-center text-slate-200 outline-none transition focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/15"
+                className="ui-control text-center focus:border-emerald-400/60 focus:ring-emerald-400/15"
               />
             </div>
           </>
@@ -144,10 +144,10 @@ export default function AgregarItemForm({
           <button
             disabled={deshabilitar}
             onClick={handleAgregar}
-            className={`w-full py-2.5 rounded-lg font-semibold transition-transform duration-200 ${
+            className={`ui-button w-full ${
               deshabilitar
-                ? "bg-slate-700 cursor-not-allowed text-slate-400"
-                : "bg-emerald-600 hover:bg-emerald-500 hover:scale-[1.02] text-white cursor-pointer shadow-md shadow-emerald-950/30"
+                ? "ui-button-secondary cursor-not-allowed"
+                : "ui-button-primary"
             }`}
           >
             Agregar

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import LoginForm from "../../components/Login/LoginForm";
 import AuthPageLayout from "../../components/common/AuthPageLayout";
 import { isValidEmail } from "../../utils/validators";
+import { saveAuthSession } from "../../services/authStorage";
 import {
   FaCalendarCheck,
   FaChartLine,
@@ -64,8 +65,7 @@ export default function Login({ onLogin }) {
         return;
       }
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      saveAuthSession({ token: data.token, user: data.user });
 
       onLogin(data.user);
 

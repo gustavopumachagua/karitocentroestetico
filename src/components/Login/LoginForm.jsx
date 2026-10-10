@@ -18,7 +18,7 @@ const LoginForm = ({
   return (
     <>
       {errors.general && (
-        <div className="flex items-center justify-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 p-3 text-center text-sm text-red-200 animate-fade-in">
+        <div className="ui-card flex items-center justify-center gap-2 border-red-400/30 bg-red-500/10 p-3 text-center text-sm text-red-200 animate-fade-in">
           <FaExclamationCircle />
           {errors.general}
         </div>
@@ -43,11 +43,11 @@ const LoginForm = ({
         <button
           type="submit"
           disabled={!isFormValid}
-          className={`group flex w-full items-center justify-center gap-2 rounded-lg py-3 font-bold shadow-lg transition active:scale-[0.99]
+          className={`ui-button w-full min-h-12
             ${
               isFormValid
-                ? "bg-cyan-400 text-slate-950 shadow-cyan-950/30 hover:bg-cyan-300"
-                : "bg-slate-700 text-slate-400 cursor-not-allowed"
+                ? "ui-button-primary"
+                : "ui-button-secondary cursor-not-allowed"
             }`}
         >
           <FaSignInAlt />

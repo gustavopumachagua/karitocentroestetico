@@ -19,7 +19,7 @@ export default function ClienteCard({ cliente, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="cursor-pointer glass-card p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative group"
+      className="ui-card ui-card-interactive group relative flex cursor-pointer flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
     >
       <div className="flex items-center gap-4">
         {/* Icono dinámico */}
@@ -57,7 +57,7 @@ export default function ClienteCard({ cliente, onClick }) {
 
           {/* Tratamientos */}
           <p className="text-slate-500 mt-2 text-xs">
-            {cliente.tratamientos.length} tratamientos realizados
+            {cliente.tratamientos.length} atenciones registradas
           </p>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   registerUserByAdmin,
   getAllUsers,
@@ -7,8 +7,10 @@ import {
 } from "../api/user.api";
 import { useModal } from "./useModal";
 import { isValidName, isValidEmail, isValidRole } from "../utils/validators";
+import { useCitas } from "./useCitas";
 
 export const useUsuarios = () => {
+  const { socket } = useCitas();
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(false);
   const { modal: confirmModal, mostrarModal, cerrarModal } = useModal();
@@ -24,17 +26,27 @@ export const useUsuarios = () => {
 
   const [busqueda, setBusqueda] = useState("");
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data = await getAllUsers();
-        setUsuarios(data);
-      } catch (error) {
-        console.error("Error al cargar usuarios:", error);
-      }
-    };
-    fetchUsers();
+  const fetchUsers = useCallback(async () => {
+    try {
+      const data = await getAllUsers();
+      setUsuarios(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error al cargar usuarios:", error);
+    }
   }, []);
+
+  useEffect(() => {
+    void fetchUsers();
+    window.addEventListener("focus", fetchUsers);
+    socket?.on("profesionalActualizado", fetchUsers);
+    socket?.on("connect", fetchUsers);
+
+    return () => {
+      window.removeEventListener("focus", fetchUsers);
+      socket?.off("profesionalActualizado", fetchUsers);
+      socket?.off("connect", fetchUsers);
+    };
+  }, [fetchUsers, socket]);
 
   const formularioValido =
     isValidName(nuevoUsuario.nombre) &&

@@ -7,9 +7,9 @@ export default function TablaUsuarios({
   loading,
 }) {
   return (
-    <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-700/70">
-      <table className="w-full text-left text-sm text-slate-300">
-        <thead className="bg-slate-800/80 text-xs uppercase tracking-wide text-slate-300">
+    <div className="ui-table-wrap hidden md:block">
+      <table className="ui-table text-left">
+        <thead>
           <tr>
             <th className="px-4 py-3">Nombre</th>
             <th className="px-4 py-3">Correo</th>

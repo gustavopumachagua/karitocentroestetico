@@ -1,17 +1,29 @@
 import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 import { formatearFechaCita } from "../../utils/citasFecha";
+import {
+  getProfessionalDisplayName,
+  getProfessionalRole,
+} from "../../utils/professionalDirectory";
 
 export default function TablaPagos({
   citas,
   pagoPorCita,
   onSeleccionCita,
   onVerTicket,
+  professionalNamesById,
 }) {
   return (
-    <div className="w-full">
-      <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-700/70 shadow-md">
-        <table className="min-w-full border-collapse text-sm lg:text-base">
-          <thead className="bg-slate-800/80 text-slate-300 uppercase text-xs sm:text-sm">
+    <div className="ui-panel w-full">
+      <div className="ui-toolbar mb-5">
+        <div>
+          <h2 className="text-lg font-semibold text-white">Citas por cobrar</h2>
+          <p className="mt-1 text-sm text-slate-400">Selecciona una cita pendiente para registrar el pago o una pagada para ver su comprobante.</p>
+        </div>
+        <span className="ui-status">{citas.length} citas</span>
+      </div>
+      <div className="ui-table-wrap hidden md:block">
+        <table className="ui-table min-w-[900px] text-sm lg:text-base">
+          <thead>
             <tr>
               <th className="p-3 text-left">Cliente</th>
               <th className="p-3 text-left">Profesional</th>
@@ -27,11 +39,16 @@ export default function TablaPagos({
             {citas.map((cita) => {
               const pago = pagoPorCita(cita._id);
               const bloqueado = pago?.estadoPago === "pagado";
+              const nombreProfesional = getProfessionalDisplayName(
+                cita,
+                professionalNamesById,
+              );
+              const rolProfesional = getProfessionalRole(cita);
 
               return (
                 <tr
                   key={cita._id}
-                  className={`border-b border-slate-700/70 ${
+                className={`${
                     bloqueado
                       ? "opacity-60 cursor-pointer"
                       : "hover:bg-cyan-400/5 cursor-pointer"
@@ -45,10 +62,10 @@ export default function TablaPagos({
                     {cita.cliente}
                   </td>
                   <td className="p-3 text-slate-300">
-                    {cita.profesional?.nombre || "—"}
+                    {nombreProfesional || "—"}
                   </td>
                   <td className="p-3 text-slate-300 capitalize">
-                    {cita.profesional?.rol || "—"}
+                    {rolProfesional || "—"}
                   </td>
                   <td className="p-3 text-slate-300 min-w-[220px] max-w-[340px] whitespace-normal break-words leading-relaxed">
                     {pago
@@ -86,15 +103,20 @@ export default function TablaPagos({
         </table>
       </div>
 
-      <div className="md:hidden space-y-4">
+      <div className="md:hidden space-y-3">
         {citas.map((cita) => {
           const pago = pagoPorCita(cita._id);
           const bloqueado = pago?.estadoPago === "pagado";
+          const nombreProfesional = getProfessionalDisplayName(
+            cita,
+            professionalNamesById,
+          );
+          const rolProfesional = getProfessionalRole(cita);
 
           return (
             <div
               key={cita._id}
-              className={`rounded-xl border border-slate-700/70 bg-slate-950/25 p-4 ${
+              className={`ui-card ui-card-interactive ${
                 bloqueado
                   ? "opacity-60 cursor-pointer"
                   : "hover:bg-cyan-400/5 cursor-pointer"
@@ -115,9 +137,9 @@ export default function TablaPagos({
 
               <p className="text-slate-300 text-sm">
                 <span className="font-medium text-cyan-300">
-                  {cita.profesional?.nombre || "—"}
+                  {nombreProfesional || "—"}
                 </span>{" "}
-                ({cita.profesional?.rol || "—"})
+                ({rolProfesional || "—"})
               </p>
 
               <p className="text-slate-400 text-xs mt-2 leading-relaxed whitespace-normal break-words">

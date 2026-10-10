@@ -1,7 +1,16 @@
 import API from "./axiosConfig";
 
-export const getInventario = async (rol) => {
-  const { data } = await API.get(`/inventario/${rol}`);
+/**
+ * Obtiene el inventario de una especialidad.
+ *
+ * `tipo: "servicio"` se usa al agendar: el backend expone únicamente el
+ * catálogo público de servicios de la especialidad elegida, sin revelar sus
+ * insumos ni su stock a otro rol profesional.
+ */
+export const getInventario = async (rol, { tipo } = {}) => {
+  const { data } = await API.get(`/inventario/${rol}`, {
+    params: tipo ? { tipo } : undefined,
+  });
   return data;
 };
 

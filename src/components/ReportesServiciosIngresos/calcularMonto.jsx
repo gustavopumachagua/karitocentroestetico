@@ -1,7 +1,37 @@
+import { isSamePatient } from "../../utils/patientIdentity";
+import { isPendingTreatmentRecord } from "../../utils/attentionHistory";
+
 const normalizarTexto = (valor) =>
   String(valor ?? "")
     .trim()
     .toLowerCase();
+
+const obtenerId = (valor) => {
+  if (valor && typeof valor === "object") {
+    return String(valor._id || valor.id || "").trim();
+  }
+
+  return String(valor || "").trim();
+};
+
+const obtenerIdReferencia = (valor) => {
+  if (valor && typeof valor === "object") return obtenerId(valor);
+
+  const text = String(valor || "").trim();
+  return /^[a-f\d]{24}$/i.test(text) ? text : "";
+};
+
+const obtenerIdCitaTratamiento = (tratamiento) =>
+  obtenerId(tratamiento?.cita || tratamiento?.citaId);
+
+const obtenerIdCitaPago = (pago) =>
+  obtenerId(pago?.cita || pago?.citaId);
+
+const obtenerIdProfesionalTratamiento = (tratamiento) =>
+  obtenerIdReferencia(tratamiento?.profesionalId || tratamiento?.profesional);
+
+const obtenerIdProfesionalPago = (pago) =>
+  obtenerIdReferencia(pago?.cita?.profesional || pago?.profesionalId);
 
 const obtenerFecha = (valor) => {
   if (!valor) return null;
@@ -78,10 +108,23 @@ const leerMonto = (valor) => {
 const puntuarCoincidenciaPago = (tratamiento, pago) => {
   if (!tratamiento || !pago) return -1;
 
-  const nombreTratamiento = normalizarTexto(tratamiento.nombre);
-  const nombrePago = normalizarTexto(pago.cliente);
+  const profesionalTratamientoId = obtenerIdProfesionalTratamiento(tratamiento);
+  const profesionalPagoId = obtenerIdProfesionalPago(pago);
+  if (
+    profesionalTratamientoId &&
+    profesionalPagoId &&
+    profesionalTratamientoId !== profesionalPagoId
+  ) {
+    return -1;
+  }
 
-  if (!nombreTratamiento || nombreTratamiento !== nombrePago) {
+  const rolTratamiento = normalizarTexto(tratamiento.rol);
+  const rolPago = normalizarTexto(
+    pago.cita?.profesional?.rol || pago.cita?.rol || pago.rol,
+  );
+  if (rolTratamiento && rolPago && rolTratamiento !== rolPago) return -1;
+
+  if (!isSamePatient(tratamiento, pago)) {
     return -1;
   }
 
@@ -132,23 +175,31 @@ const puntuarCoincidenciaPago = (tratamiento, pago) => {
     }
   }
 
-  const profesionalTratamiento = normalizarTexto(tratamiento.profesional);
-  const profesionalPago = normalizarTexto(
-    pago.cita?.profesional?.nombre || pago.cita?.profesional,
-  );
-
+  // An immutable account id must win over a display-name snapshot.  This
+  // keeps the payment match stable after a doctor or cosmiatra renames their
+  // profile, while retaining the name comparison for legacy rows.
   if (
-    profesionalTratamiento &&
-    profesionalPago &&
-    profesionalTratamiento === profesionalPago
+    profesionalTratamientoId &&
+    profesionalPagoId &&
+    profesionalTratamientoId === profesionalPagoId
   ) {
     puntaje += 10;
-  }
+  } else if (!profesionalTratamientoId || !profesionalPagoId) {
+    const profesionalTratamiento = normalizarTexto(
+      tratamiento.profesional?.nombre || tratamiento.profesional,
+    );
+    const profesionalPago = normalizarTexto(
+      pago.cita?.profesional?.nombre || pago.cita?.profesional,
+    );
 
-  const rolTratamiento = normalizarTexto(tratamiento.rol);
-  const rolPago = normalizarTexto(
-    pago.cita?.profesional?.rol || pago.cita?.rol || pago.rol,
-  );
+    if (
+      profesionalTratamiento &&
+      profesionalPago &&
+      profesionalTratamiento === profesionalPago
+    ) {
+      puntaje += 10;
+    }
+  }
 
   if (rolTratamiento && rolPago && rolTratamiento === rolPago) {
     puntaje += 5;
@@ -160,6 +211,24 @@ const puntuarCoincidenciaPago = (tratamiento, pago) => {
 export const obtenerPagoRelacionado = (tratamiento, pagos = []) => {
   if (!tratamiento || !Array.isArray(pagos) || pagos.length === 0) {
     return null;
+  }
+
+  // The treatment-to-appointment link is the canonical relation. Resolve it
+  // before the compatibility scorer so names, dates or services cannot make
+  // a renamed professional lose an otherwise exact payment association.
+  const citaId = obtenerIdCitaTratamiento(tratamiento);
+  if (isPendingTreatmentRecord(tratamiento)) {
+    // Operational rows have no clinical treatment from which to infer a bill.
+    // Only an actual paid receipt for this immutable appointment is valid.
+    return citaId ? pagos.find((pago) =>
+      obtenerIdCitaPago(pago) === citaId && pago.estadoPago === "pagado",
+    ) || null : null;
+  }
+  if (citaId) {
+    const pagoPorCita = pagos.find(
+      (pago) => obtenerIdCitaPago(pago) === citaId,
+    );
+    return pagoPorCita || null;
   }
 
   const candidatos = pagos
@@ -183,6 +252,10 @@ export const obtenerPagoRelacionado = (tratamiento, pagos = []) => {
 };
 
 export const calcularMonto = (t, pagos = []) => {
+  if (isPendingTreatmentRecord(t)) {
+    const pago = obtenerPagoRelacionado(t, pagos);
+    return pago ? leerMonto(pago.total) : 0;
+  }
   const totalTratamiento = leerMonto(t?.total);
   if (totalTratamiento > 0) {
     return totalTratamiento;
@@ -198,4 +271,18 @@ export const calcularMonto = (t, pagos = []) => {
 
   const pagoRelacionado = obtenerPagoRelacionado(t, pagos);
   return pagoRelacionado ? leerMonto(pagoRelacionado.total) : 0;
+};
+
+/** A legacy ambiguous visit must not count the same receipt twice in totals. */
+export const calcularTotalAtenciones = (atenciones = [], pagos = []) => {
+  const countedReceipts = new Set();
+  return atenciones.reduce((total, record) => {
+    const payment = obtenerPagoRelacionado(record, pagos);
+    const paymentId = obtenerId(payment);
+    if (paymentId) {
+      if (countedReceipts.has(paymentId)) return total;
+      countedReceipts.add(paymentId);
+    }
+    return total + calcularMonto(record, pagos);
+  }, 0);
 };

@@ -10,7 +10,7 @@ export default function UsuarioCard({
   const estadoTexto = usuario.activo ? "Activo" : "Suspendido";
 
   return (
-    <div className="glass-card p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="ui-card ui-card-interactive flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4 w-full sm:w-auto">
         <div className="hidden h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10 sm:flex">
           <FaUserCircle className="text-2xl text-cyan-300" />

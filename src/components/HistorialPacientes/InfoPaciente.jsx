@@ -5,6 +5,8 @@ import {
   FaStethoscope,
   FaPhoneAlt,
 } from "react-icons/fa";
+import { formatearFechaCita } from "../../utils/citasFecha";
+import { getAttentionDate } from "../../utils/attentionHistory";
 
 export default function InfoPaciente({ paciente }) {
   const formatearServicios = (servicio) => {
@@ -16,21 +18,8 @@ export default function InfoPaciente({ paciente }) {
       .join(", ");
   };
 
-  const formatearFecha = (fechaISO) => {
-    if (!fechaISO) return "Sin fecha";
-    const fecha = new Date(fechaISO);
-    return fecha.toLocaleString("es-PE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
-
   return (
-    <div className="glass-card p-5 sm:p-6 w-full">
+    <div className="ui-card w-full p-5 sm:p-6">
       <div className="mb-5 flex items-center gap-3 border-b border-slate-700/50 pb-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10">
           <FaUser className="text-cyan-300" />
@@ -76,7 +65,7 @@ export default function InfoPaciente({ paciente }) {
           <div className="min-w-0">
             <p className="text-slate-400 text-sm">Fecha</p>
             <p className="text-white font-medium text-base break-words">
-              {formatearFecha(paciente.fecha)}
+              {getAttentionDate(paciente) ? formatearFechaCita(getAttentionDate(paciente)) : "Sin fecha"}
             </p>
           </div>
         </div>

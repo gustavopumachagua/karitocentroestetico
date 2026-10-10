@@ -9,7 +9,7 @@ export default function ClienteCard({ cliente }) {
         : FaUserCircle;
 
   return (
-    <div className="glass-card p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8">
+    <div className="ui-card flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
       <div className="flex justify-center sm:justify-start w-full sm:w-auto">
         <div className="flex h-20 w-20 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10 sm:h-24 sm:w-24">
           <IconoUsuario className="text-cyan-300 text-5xl sm:text-6xl" />

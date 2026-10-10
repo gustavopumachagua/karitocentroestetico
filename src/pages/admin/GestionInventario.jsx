@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
 import {
   getInventario,
   agregarItem,
@@ -16,8 +15,10 @@ import AgregarItemForm from "../../components/GestionInventario/AgregarItemForm"
 import TablaInsumos from "../../components/GestionInventario/TablaInsumos";
 import TablaServicios from "../../components/GestionInventario/TablaServicios";
 import Paginacion from "../../components/HistorialPacientes/Paginacion";
+import { useCitas } from "../../hooks/useCitas";
 
 export default function GestionInventario() {
+  const { socket } = useCitas();
   const roles = ["Cosmiatra", "Doctor"];
   const [rolSeleccionado, setRolSeleccionado] = useState("Cosmiatra");
   const [inventario, setInventario] = useState([]);
@@ -69,21 +70,33 @@ export default function GestionInventario() {
   }, [rolSeleccionado]);
 
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_SOCKET_URL);
+    if (!socket) return undefined;
 
-    socket.on("connect", () => {});
+    const handleInventarioActualizado = (update) => {
+      if (update?.rol !== rolSeleccionado.toLowerCase() || !update.item) {
+        return;
+      }
 
-    socket.on("inventarioActualizado", (nuevoInventario) => {
-      const filtrado = nuevoInventario.filter(
-        (i) => i.rol === rolSeleccionado.toLowerCase()
-      );
-      setInventario(filtrado);
-    });
+      setInventario((previous) => {
+        if (update.action === "eliminar") {
+          return previous.filter((item) => item._id !== update.item._id);
+        }
 
-    socket.on("disconnect", () => {});
+        const exists = previous.some((item) => item._id === update.item._id);
+        if (exists) {
+          return previous.map((item) =>
+            item._id === update.item._id ? update.item : item,
+          );
+        }
 
-    return () => socket.disconnect();
-  }, [rolSeleccionado]);
+        return update.action === "agregar" ? [...previous, update.item] : previous;
+      });
+    };
+
+    socket.on("inventarioActualizado", handleInventarioActualizado);
+
+    return () => socket.off("inventarioActualizado", handleInventarioActualizado);
+  }, [rolSeleccionado, socket]);
 
   const nombreValido = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ().,/-]+$/.test(
     nuevo.nombre.trim()
@@ -202,7 +215,7 @@ export default function GestionInventario() {
   );
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack">
         <InventarioHeader
           roles={roles}

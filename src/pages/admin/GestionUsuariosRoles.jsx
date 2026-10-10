@@ -26,7 +26,7 @@ export default function GestionUsuarios() {
   } = useUsuarios();
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack">
         <FormularioSection
           busqueda={busqueda}

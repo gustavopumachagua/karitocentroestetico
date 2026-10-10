@@ -28,7 +28,7 @@ export default function ResetSuccess({ email: emailProp }) {
         </p>
         <Link
           to="/login"
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.1] sm:w-auto"
+          className="ui-button ui-button-secondary mt-6 w-full sm:w-auto"
         >
           Volver al login
           <FaArrowRight className="text-xs" />

@@ -2,14 +2,18 @@ import { useState } from "react";
 import { FaExclamationTriangle, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
+import { clearAuthSession } from "../../services/authStorage";
+import { clearSensitivePwaCaches } from "../../utils/pwaCache";
+import { clearClinicalHistoryLocalData } from "../../utils/clinicalHistoryStorage";
 
 export default function LogoutButton() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    clearClinicalHistoryLocalData();
+    clearAuthSession();
+    void clearSensitivePwaCaches();
     setIsOpen(false);
     navigate("/login");
   };

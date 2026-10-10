@@ -58,7 +58,7 @@ const ChangePasswordForm = ({
         error={passwordsDoNotMatch}
       />
 
-      <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+      <div className="ui-card p-3">
         <div className="mb-2 flex items-center justify-between gap-3 text-xs">
           <span className="font-semibold text-slate-300">{strengthLabel}</span>
           <span className={hasSpaces ? "text-red-300" : "text-cyan-200"}>
@@ -85,10 +85,10 @@ const ChangePasswordForm = ({
       <button
         type="submit"
         disabled={isDisabled}
-        className={`group flex w-full items-center justify-center gap-2 rounded-lg py-3 font-bold shadow-lg transition active:scale-[0.99] ${
+        className={`ui-button w-full min-h-12 ${
           !isDisabled
-            ? "bg-cyan-400 text-slate-950 shadow-cyan-950/30 hover:bg-cyan-300"
-            : "bg-slate-700 text-slate-400 cursor-not-allowed"
+            ? "ui-button-primary"
+            : "ui-button-secondary cursor-not-allowed"
         }`}
       >
         <FaKey />

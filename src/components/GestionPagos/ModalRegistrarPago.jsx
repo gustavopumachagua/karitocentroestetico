@@ -15,11 +15,11 @@ export default function ModalRegistrarPago({
   if (!citaSeleccionada) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="page-panel w-full max-w-lg rounded-xl shadow-2xl p-6 sm:p-8 relative overflow-y-auto max-h-[90vh] transition-all duration-300">
+    <div className="ui-modal-backdrop z-[1000]">
+      <div className="ui-modal relative max-w-lg p-6 sm:p-8">
         <button
           onClick={onCancelar}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white transition cursor-pointer"
+          className="ui-icon-button absolute right-4 top-4"
           aria-label="Cerrar"
         >
           <FaTimes size={18} />
@@ -86,17 +86,17 @@ export default function ModalRegistrarPago({
         <div className="flex flex-col sm:flex-row justify-end gap-3">
           <button
             onClick={onCancelar}
-            className="w-full sm:w-auto rounded-lg border border-slate-600 bg-slate-800/80 px-4 py-2 hover:bg-slate-700 transition text-white font-medium cursor-pointer"
+            className="ui-button ui-button-secondary w-full sm:w-auto"
           >
             Cancelar
           </button>
           <button
             onClick={onRegistrarPago}
             disabled={!todosPreciosValidos() || !metodoPago}
-            className={`w-full sm:w-auto px-4 py-2 rounded-lg font-medium transition cursor-pointer ${
+            className={`ui-button w-full sm:w-auto ${
               !todosPreciosValidos() || !metodoPago
-                ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                : "bg-emerald-600 hover:bg-emerald-500 text-white"
+                ? "ui-button-secondary cursor-not-allowed"
+                : "ui-button-primary"
             }`}
           >
             Registrar Pago

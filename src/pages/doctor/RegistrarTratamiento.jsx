@@ -1,6 +1,8 @@
-import { useState, useEffect, useRef } from "react";
-import { useCitas } from "../../context/CitasContext";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCitas } from "../../hooks/useCitas";
 import { useAuth } from "../../hooks/useAuth";
+import { getAuthToken } from "../../services/authStorage";
+import { belongsToProfessionalRole } from "../../utils/professionalOwnership";
 import { useModal } from "../../hooks/useModal";
 import InputField from "../../components/RegistaTratamiento/InputField";
 import TextAreaField from "../../components/RegistaTratamiento/TextAreaField";
@@ -23,49 +25,79 @@ const INITIAL_FORM = {
   servicio: "",
   fecha: "",
   observacion: "",
-  insumos: "",
+  insumos: [],
 };
 
 export default function RegistrarTratamiento() {
-  const { citas, citaSeleccionada, setCitaSeleccionada } = useCitas();
-  const { nombre: nombreDoctor, rol } = useAuth();
+  const {
+    citas,
+    citaSeleccionada,
+    setCitaSeleccionada,
+    socket,
+    obtenerTratamientos,
+  } = useCitas();
+  const { nombre: nombreDoctor, rol, user } = useAuth();
   const { modal, setModal, cerrarModal } = useModal();
 
   const [formBloqueado, setFormBloqueado] = useState(false);
   const [loading, setLoading] = useState(false);
   const [insumosDisponibles, setInsumosDisponibles] = useState([]);
+  const [busquedaInsumo, setBusquedaInsumo] = useState("");
   const [imagenes, setImagenes] = useState([]);
   const [pacienteExistente, setPacienteExistente] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [enviando, setEnviando] = useState(false);
   const envioEnCursoRef = useRef(false);
+  const obtenerTratamientosRef = useRef(obtenerTratamientos);
 
-  const citasFiltradas = citas.filter((cita) => {
-    const estadoPendiente = cita.estado?.toLowerCase() === "pendiente";
-    if (!estadoPendiente) return false;
+  useEffect(() => {
+    obtenerTratamientosRef.current = obtenerTratamientos;
+  }, [obtenerTratamientos]);
 
-    switch (rol) {
-      case "doctor":
-      case "cosmiatra":
-        return (
-          cita.profesional &&
-          typeof cita.profesional === "object" &&
-          cita.profesional.nombre?.toLowerCase() === nombreDoctor.toLowerCase()
-        );
+  const recargarTratamientos = useCallback(
+    () => obtenerTratamientosRef.current(),
+    [],
+  );
 
-      case "asistente":
-        return (
-          typeof cita.asistente === "string" &&
-          cita.asistente.toLowerCase() === nombreDoctor.toLowerCase()
-        );
+  const citasFiltradas = useMemo(
+    () =>
+      citas.filter((cita) => {
+        const estadoPendiente = cita.estado?.toLowerCase() === "pendiente";
+        if (!estadoPendiente) return false;
 
-      case "recepcionista":
-        return true;
+        switch (rol) {
+          case "doctor":
+          case "cosmiatra":
+            return belongsToProfessionalRole(cita, user);
 
-      default:
-        return false;
-    }
-  });
+          case "asistente":
+            return (
+              typeof cita.asistente === "string" &&
+              cita.asistente.toLowerCase() === nombreDoctor.toLowerCase()
+            );
+
+          case "recepcionista":
+            return true;
+
+          default:
+            return false;
+        }
+      }),
+    [citas, nombreDoctor, rol, user],
+  );
+
+  const rolProfesional = useMemo(
+    () => (rol === "doctor" || rol === "cosmiatra" ? rol : ""),
+    [rol],
+  );
+
+  const insumosFiltrados = useMemo(() => {
+    const termino = busquedaInsumo.trim().toLocaleLowerCase();
+
+    return insumosDisponibles.filter((insumo) =>
+      String(insumo.nombre || "").toLocaleLowerCase().includes(termino),
+    );
+  }, [busquedaInsumo, insumosDisponibles]);
 
   useEffect(() => {
     if (citasFiltradas.length > 0) {
@@ -87,7 +119,7 @@ export default function RegistrarTratamiento() {
         }));
       }
     }
-  }, [citasFiltradas]);
+  }, [citaSeleccionada, citasFiltradas, setCitaSeleccionada]);
 
   useEffect(() => {
     const buscarPacienteExistente = async () => {
@@ -118,16 +150,45 @@ export default function RegistrarTratamiento() {
   }, [citaSeleccionada]);
 
   useEffect(() => {
+    let activo = true;
+
     const obtenerInsumos = async () => {
+      if (!rolProfesional) {
+        setInsumosDisponibles([]);
+        return;
+      }
+
       try {
-        const data = await getInventario(rol || "doctor");
-        if (Array.isArray(data)) setInsumosDisponibles(data);
+        const data = await getInventario(rolProfesional);
+
+        if (!activo) return;
+
+        // La API ya consulta por rol. El filtro local es una segunda barrera de
+        // presentación para que nunca se muestren servicios ni ítems de otra
+        // especialidad si la respuesta cambia o se actualiza en tiempo real.
+        const insumosDelRol = Array.isArray(data)
+          ? data.filter(
+              (item) =>
+                item?.rol?.toLowerCase() === rolProfesional &&
+                item?.tipo?.toLowerCase() === "insumo",
+            )
+          : [];
+
+        setInsumosDisponibles(insumosDelRol);
       } catch (error) {
-        console.error("Error al obtener insumos:", error);
+        if (activo) {
+          setInsumosDisponibles([]);
+          console.error("Error al obtener insumos:", error);
+        }
       }
     };
+
     obtenerInsumos();
-  }, [rol]);
+
+    return () => {
+      activo = false;
+    };
+  }, [rolProfesional]);
 
   useEffect(() => {
     if (!citaSeleccionada) return;
@@ -156,13 +217,11 @@ export default function RegistrarTratamiento() {
     setImagenes(imagenes.filter((img) => img.id !== id));
   };
 
-  const { socket, obtenerTratamientos } = useCitas();
-
   useEffect(() => {
     if (!socket) return;
 
     const handleUpdate = () => {
-      obtenerTratamientos();
+      void recargarTratamientos();
       setModal({
         show: true,
         message: "🔄 Nuevo tratamiento registrado por otro usuario.",
@@ -175,7 +234,7 @@ export default function RegistrarTratamiento() {
     return () => {
       socket.off("tratamientoActualizado", handleUpdate);
     };
-  }, [socket]);
+  }, [socket, recargarTratamientos, setModal]);
 
   const handleGuardar = async (e) => {
     e.preventDefault();
@@ -208,7 +267,7 @@ export default function RegistrarTratamiento() {
     let tratamientoRegistrado = false;
 
     try {
-      const token = localStorage.getItem("token");
+      const token = getAuthToken();
       const formDataToSend = new FormData();
 
       Object.entries(formData).forEach(([key, value]) => {
@@ -315,17 +374,21 @@ export default function RegistrarTratamiento() {
   };
 
   return (
-    <section className="page-section">
+    <section className="page-section ui-page">
       <div className="page-stack page-stack-narrow">
-        <div className="page-panel page-panel-pad">
+        <div className="ui-panel">
           <div className="mb-6 flex items-center gap-3 border-b border-slate-700/50 pb-5">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10">
               <FaNotesMedical className="text-cyan-300 text-lg" />
             </div>
             <div>
+              <p className="ui-eyebrow mb-1">Registro de atención</p>
               <h2 className="text-xl font-semibold text-white">
                 Registrar tratamiento
               </h2>
+              <p className="mt-1 text-xs text-slate-400">
+                Completa el registro de atención y los insumos utilizados.
+              </p>
             </div>
           </div>
 
@@ -397,54 +460,49 @@ export default function RegistrarTratamiento() {
                   type="text"
                   placeholder="Buscar insumo..."
                   className="search-input"
-                  onChange={(e) => {
-                    const filtro = e.target.value.toLowerCase();
-                    setInsumosDisponibles((prev) =>
-                      prev.map((insumo) => ({
-                        ...insumo,
-                        visible: insumo.nombre.toLowerCase().includes(filtro),
-                      })),
-                    );
-                  }}
+                  value={busquedaInsumo}
+                  onChange={(e) => setBusquedaInsumo(e.target.value)}
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-56 overflow-y-auto custom-scroll">
-                {insumosDisponibles
-                  .filter((insumo) => insumo.visible !== false)
-                  .map((insumo) => {
-                    const seleccionado = formData.insumos.includes(
-                      insumo.nombre,
-                    );
-                    return (
-                      <label
-                        key={insumo._id}
-                        className={`group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition border ${
-                          seleccionado
-                            ? "bg-cyan-400/10 border-cyan-400/35"
-                            : "bg-slate-950/40 border-slate-700 hover:bg-cyan-400/5 hover:border-cyan-400/25"
-                        }`}
-                      >
-                        <CustomChoice
-                          type="checkbox"
-                          checked={seleccionado}
-                          onChange={() => {
-                            const nuevos = seleccionado
-                              ? formData.insumos.filter(
-                                  (i) => i !== insumo.nombre,
-                                )
-                              : [...formData.insumos, insumo.nombre];
-                            setFormData({ ...formData, insumos: nuevos });
-                          }}
-                          disabled={formBloqueado}
-                          ariaLabel={`Seleccionar ${insumo.nombre}`}
-                        />
-                        <span className="text-slate-200 capitalize">
-                          {insumo.nombre}
-                        </span>
-                      </label>
-                    );
-                  })}
+                {insumosFiltrados.map((insumo) => {
+                  const seleccionado = formData.insumos.includes(insumo.nombre);
+                  return (
+                    <label
+                      key={insumo._id}
+                      className={`group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition border ${
+                        seleccionado
+                          ? "bg-cyan-400/10 border-cyan-400/35"
+                          : "bg-slate-950/40 border-slate-700 hover:bg-cyan-400/5 hover:border-cyan-400/25"
+                      }`}
+                    >
+                      <CustomChoice
+                        type="checkbox"
+                        checked={seleccionado}
+                        onChange={() => {
+                          const nuevos = seleccionado
+                            ? formData.insumos.filter(
+                                (i) => i !== insumo.nombre,
+                              )
+                            : [...formData.insumos, insumo.nombre];
+                          setFormData({ ...formData, insumos: nuevos });
+                        }}
+                        disabled={formBloqueado}
+                        ariaLabel={`Seleccionar ${insumo.nombre}`}
+                      />
+                      <span className="text-slate-200 capitalize">
+                        {insumo.nombre}
+                      </span>
+                    </label>
+                  );
+                })}
+                {insumosFiltrados.length === 0 && (
+                  <p className="col-span-full rounded-lg border border-dashed border-slate-700 px-4 py-5 text-center text-sm text-slate-400">
+                    No hay insumos disponibles para {rolProfesional || "este"}{" "}
+                    rol.
+                  </p>
+                )}
               </div>
             </div>
 

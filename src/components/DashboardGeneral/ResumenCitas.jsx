@@ -3,7 +3,7 @@ import Skeleton from "../common/Skeleton";
 
 export default function ResumenCitas({ data, loading }) {
   return (
-    <div className="glass-card p-6 transition-all duration-300">
+    <div className="ui-panel">
       <div className="flex items-center gap-3 mb-5">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl"
           style={{ background: 'rgba(129, 140, 248, 0.10)', border: '1px solid rgba(129, 140, 248, 0.15)' }}

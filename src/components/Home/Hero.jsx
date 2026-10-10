@@ -184,7 +184,7 @@ export default function Hero() {
               return (
                 <div
                   key={item.label}
-                  className="group rounded-xl p-4 transition-all duration-300 cursor-default hover:-translate-y-1"
+                  className="ui-card ui-card-interactive group cursor-default"
                   style={{
                     background: colors.bg,
                     border: `1px solid ${colors.border}`,

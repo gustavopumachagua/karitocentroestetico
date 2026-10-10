@@ -51,7 +51,7 @@ export default function GraficoServiciosRentables({ rol, data }) {
   const chartColors = CHART_COLORS;
 
   return (
-    <div className="glass-card p-4 sm:p-6 transition-all duration-300">
+    <div className="ui-panel">
       <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-3">
         <div className="flex items-center gap-3 justify-center sm:justify-start">
           <div

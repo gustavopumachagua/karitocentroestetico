@@ -5,6 +5,8 @@ import { changePassword } from "../../api/auth.api";
 import ChangePasswordForm from "../../components/NewPassword/ChangePasswordForm";
 import AuthPageLayout from "../../components/common/AuthPageLayout";
 import { useModal } from "../../hooks/useModal";
+import { clearAuthSession } from "../../services/authStorage";
+import { clearClinicalHistoryLocalData } from "../../utils/clinicalHistoryStorage";
 import { FaLock, FaShieldAlt } from "react-icons/fa";
 
 const HIGHLIGHTS = [
@@ -49,8 +51,8 @@ const NewPassword = () => {
       });
 
       setTimeout(() => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        clearClinicalHistoryLocalData();
+        clearAuthSession();
         navigate("/login");
       }, 2500);
     } catch (error) {

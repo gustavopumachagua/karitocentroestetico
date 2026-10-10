@@ -1,9 +1,17 @@
 import { useMemo } from "react";
 import { FaCalendarAlt, FaCamera, FaImages, FaUserMd } from "react-icons/fa";
 import { formatearFechaCita } from "../../utils/citasFecha";
+import { getProfessionalDisplayName } from "../../utils/professionalDirectory";
+import { getAttentionDate, isPendingTreatmentRecord } from "../../utils/attentionHistory";
+import AtencionPendienteBadge from "../HistorialPacientes/AtencionPendienteBadge";
 
-export default function TratamientoCard({ tratamiento, onAbrirGaleria }) {
-  const fechaFormateada = formatearFechaCita(tratamiento.fecha);
+export default function TratamientoCard({
+  tratamiento,
+  onAbrirGaleria,
+  professionalNamesById,
+}) {
+  const esAtencionPendiente = isPendingTreatmentRecord(tratamiento);
+  const fechaFormateada = formatearFechaCita(getAttentionDate(tratamiento));
   const imagenes = useMemo(
     () => (tratamiento.imagenes || []).filter((img) => img?.url),
     [tratamiento.imagenes],
@@ -12,9 +20,13 @@ export default function TratamientoCard({ tratamiento, onAbrirGaleria }) {
   const servicioFormateado = Array.isArray(tratamiento.servicio)
     ? tratamiento.servicio.join(", ")
     : tratamiento.servicio || "No registrado";
+  const nombreProfesional = getProfessionalDisplayName(
+    tratamiento,
+    professionalNamesById,
+  );
 
   return (
-    <div className="glass-card overflow-hidden flex flex-col transition-all duration-300">
+    <div className="ui-card ui-card-interactive flex flex-col overflow-hidden p-0">
       {totalImagenes > 0 ? (
         <button
           type="button"
@@ -55,6 +67,8 @@ export default function TratamientoCard({ tratamiento, onAbrirGaleria }) {
             {fechaFormateada}
           </p>
 
+          <AtencionPendienteBadge record={tratamiento} className="mt-3" />
+
           <p className="text-slate-200 mt-2 text-sm">
             <span className="font-semibold text-cyan-300">Servicio:</span>{" "}
             {servicioFormateado}
@@ -62,7 +76,7 @@ export default function TratamientoCard({ tratamiento, onAbrirGaleria }) {
 
           <p className="text-slate-400 mt-2 flex items-center gap-2 text-sm flex-wrap">
             <FaUserMd className="text-violet-400/70 text-xs" />
-            {tratamiento.profesional || "No registrado"}
+            {nombreProfesional || "No registrado"}
             {tratamiento.rol && (
               <span
                 className="text-[11px] font-medium px-2 py-0.5 rounded-lg ml-1"
@@ -77,10 +91,12 @@ export default function TratamientoCard({ tratamiento, onAbrirGaleria }) {
             )}
           </p>
 
-          <p className="text-slate-500 mt-3 text-sm leading-snug">
-            <span className="text-slate-300 font-medium">Observaciones:</span>{" "}
-            {tratamiento.observacion || "Sin observaciones"}
-          </p>
+          {!esAtencionPendiente && (
+            <p className="text-slate-500 mt-3 text-sm leading-snug">
+              <span className="text-slate-300 font-medium">Observaciones:</span>{" "}
+              {tratamiento.observacion || "Sin observaciones"}
+            </p>
+          )}
         </div>
       </div>
     </div>

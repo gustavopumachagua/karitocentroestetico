@@ -7,7 +7,8 @@ export default function BuscadorClientes({
   manejarSeleccion,
 }) {
   return (
-    <div className="relative mb-8">
+    <div className="ui-panel relative">
+      <p className="mb-3 text-sm font-semibold text-slate-200">Buscar cliente</p>
       <div className="search-field">
         <FaSearch className="search-icon" />
         <input

@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
+import { getAuthToken } from "../../services/authStorage";
 
 export default function AvatarUploader({ avatar, setAvatar }) {
   const fileInputRef = useRef(null);
@@ -26,7 +27,7 @@ export default function AvatarUploader({ avatar, setAvatar }) {
     setUploading(true);
 
     try {
-      const token = localStorage.getItem("token");
+      const token = getAuthToken();
       const formData = new FormData();
       formData.append("file", file);
 

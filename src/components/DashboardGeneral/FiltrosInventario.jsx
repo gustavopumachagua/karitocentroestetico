@@ -9,7 +9,7 @@ export default function FiltrosInventario({
   };
 
   return (
-    <div className="glass-card p-6 max-w-4xl mx-auto transition-all duration-300">
+    <div className="ui-panel mx-auto max-w-4xl">
       <div className="flex flex-col sm:flex-row items-center justify-between mb-5 gap-3">
         <div className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl"

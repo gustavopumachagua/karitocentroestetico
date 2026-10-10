@@ -15,7 +15,11 @@ import {
 import TratamientoCard from "./TratamientoCard";
 import Paginacion from "../HistorialPacientes/Paginacion";
 
-export default function ClienteDetalle({ cliente, volver }) {
+export default function ClienteDetalle({
+  cliente,
+  volver,
+  professionalNamesById,
+}) {
   const tratamientosPorPagina = 9;
   const [paginaActual, setPaginaActual] = useState(1);
   const [imagenActiva, setImagenActiva] = useState(null);
@@ -123,12 +127,12 @@ export default function ClienteDetalle({ cliente, volver }) {
       <div className="animate-fade-in">
         <button
           onClick={volver}
-          className="flex items-center gap-2 mb-8 text-cyan-400 hover:text-cyan-300 transition-colors duration-200 cursor-pointer text-sm font-medium"
+          className="ui-button ui-button-ghost mb-6 w-fit"
         >
           <FaArrowLeft /> Volver a clientes
         </button>
 
-        <div className="glass-card p-6 sm:p-8">
+        <div className="ui-panel">
           {/* Header del cliente */}
           <div
             className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 pb-6"
@@ -183,7 +187,7 @@ export default function ClienteDetalle({ cliente, volver }) {
               <FaClinicMedical className="text-indigo-400 text-lg" />
             </div>
             <h3 className="text-lg font-semibold text-white tracking-tight">
-              Historial de tratamientos
+              Historial de atenciones
             </h3>
             <span
               className="text-xs font-medium px-2.5 py-1 rounded-lg"
@@ -206,6 +210,7 @@ export default function ClienteDetalle({ cliente, volver }) {
                   key={t._id || tratamientoIndex}
                   tratamiento={t}
                   onAbrirGaleria={() => abrirGaleria(tratamientoIndex)}
+                  professionalNamesById={professionalNamesById}
                 />
               );
             })}

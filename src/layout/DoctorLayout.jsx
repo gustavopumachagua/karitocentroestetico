@@ -5,6 +5,7 @@ import CitasDoctor from "../pages/doctor/CitasDoctor";
 import HistorialPacientes from "../pages/doctor/HistorialPacientes";
 import RegistrarTratamiento from "../pages/doctor/RegistrarTratamiento";
 import MisReportes from "../pages/doctor/MisReportes";
+import FormularioPeptidos from "../pages/doctor/FormularioPeptidos";
 import Perfil from "../pages/settings/Perfil";
 import Contrasena from "../pages/settings/Contrasena";
 
@@ -15,11 +16,13 @@ const ROUTE_MAP = {
   "mis-reportes": "Mis reportes",
   perfil: "Perfil",
   contrasena: "Contraseña",
+  formulario: "Historial de pacientes",
 };
 
 const ROUTES = [
   { path: "agenda-de-citas", element: CitasDoctor },
   { path: "historial-de-pacientes", element: HistorialPacientes },
+  { path: "historial-de-pacientes/formulario", element: FormularioPeptidos },
   { path: "registrar-tratamiento", element: RegistrarTratamiento },
   { path: "mis-reportes", element: MisReportes },
   { path: "ajustes/perfil", element: Perfil, props: { needsUser: true } },

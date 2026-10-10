@@ -6,6 +6,7 @@ import ResetSuccess from "../../components/ResetPassword/ResetSuccess";
 import ErrorAlert from "../../components/ResetPassword/ErrorAlert";
 import { resetPassword } from "../../api/auth.api";
 import { isValidEmail } from "../../utils/validators";
+import { getAuthUser } from "../../services/authStorage";
 import { FaLock, FaShieldAlt } from "react-icons/fa";
 
 const HIGHLIGHTS = [
@@ -25,7 +26,7 @@ export default function ResetPassword() {
   const location = useLocation();
   const emailFromState = location.state?.email || "";
 
-  const userFromStorage = JSON.parse(localStorage.getItem("user"));
+  const userFromStorage = getAuthUser();
 
   const [email, setEmail] = useState(
     emailFromState || userFromStorage?.email || ""

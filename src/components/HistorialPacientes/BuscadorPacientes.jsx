@@ -10,7 +10,7 @@ export default function BuscadorPacientes({
   onSeleccionar,
 }) {
   return (
-    <div className="relative mb-8 max-w-lg mx-auto">
+    <div className="relative mx-auto max-w-2xl">
       <div className="search-field">
         <FaSearch className="search-icon" />
         <input

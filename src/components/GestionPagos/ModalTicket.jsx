@@ -42,10 +42,10 @@ export default function ModalTicket({ isOpen, onClose, ticket }) {
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      className="bg-white text-black p-4 sm:p-6 md:p-8 rounded-xl w-[95%] max-w-[800px] mx-auto mt-6 shadow-2xl"
-      overlayClassName="fixed inset-0 bg-black/50 flex justify-center items-center px-2 z-[9999]"
+      className="ui-modal mx-auto mt-4 w-[95%] max-w-[800px] p-3 text-slate-100 sm:mt-6 sm:p-5"
+      overlayClassName="ui-modal-backdrop z-[9999]"
     >
-      <div ref={componentRef} className="text-[11px] font-sans text-black">
+      <div ref={componentRef} className="rounded-lg bg-white p-4 text-[11px] font-sans text-black sm:p-6 md:p-8">
         <div className="flex justify-between border-b pb-3 mb-3">
           <div>
             <h1 className="font-bold text-sm">
@@ -133,13 +133,13 @@ export default function ModalTicket({ isOpen, onClose, ticket }) {
       <div className="flex flex-col sm:flex-row justify-between gap-3 mt-6 print:hidden">
         <button
           onClick={onClose}
-          className="bg-[#9ca3af] hover:bg-[#6b7280] px-4 py-2 rounded-lg text-sm font-medium cursor-pointer text-white"
+          className="ui-button ui-button-secondary"
         >
           Cerrar
         </button>
         <button
           onClick={handleDownloadPDF}
-          className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-4 py-2 rounded-lg text-sm font-medium cursor-pointer"
+          className="ui-button ui-button-primary"
         >
           Guardar PDF
         </button>

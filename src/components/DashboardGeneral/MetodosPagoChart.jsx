@@ -13,7 +13,7 @@ const COLORS = ["#34d399", "#60a5fa", "#fbbf24", "#f472b6", "#a78bfa"];
 
 export default function MetodosPagoChart({ data, loading }) {
   return (
-    <section className="glass-card p-6 transition-all duration-300">
+    <section className="ui-panel">
       <div className="flex flex-col items-center mb-6 text-center space-y-2">
         <div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl"

@@ -85,23 +85,25 @@ define(['./workbox-47da91e0'], (function (workbox) { 'use strict';
 	workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
 	  allowlist: [/^\/$/]
 	}));
+	// API responses and authenticated requests may contain clinical or payment
+	// data. This tracked development worker must follow the production policy:
+	// always go to the network and never persist them in Cache Storage.
 	workbox.registerRoute(({
+	  url,
 	  request
-	}) => ["document", "script", "style", "image", "font"].includes(request.destination), new workbox.CacheFirst({
+	}) => url.pathname.startsWith("/api/") || request.headers.has("authorization"), new workbox.NetworkOnly(), 'GET');
+	workbox.registerRoute(({
+	  url,
+	  request
+	}) => {
+	  const sameOrigin = url.origin === self.location.origin;
+	  const staticAsset = url.pathname.startsWith("/assets/") || ["/favicon.ico", "/apple-touch-icon.png", "/mask-icon.svg", "/Logo.jpg", "/Logo_SEO.png"].includes(url.pathname);
+	  return sameOrigin && staticAsset && ["script", "style", "image", "font"].includes(request.destination);
+	}, new workbox.CacheFirst({
 	  "cacheName": "karito-static-cache",
 	  plugins: [new workbox.ExpirationPlugin({
 	    maxEntries: 200,
 	    maxAgeSeconds: 2592000
-	  }), new workbox.CacheableResponsePlugin({
-	    statuses: [0, 200]
-	  })]
-	}), 'GET');
-	workbox.registerRoute(/^https:\/\/.*/i, new workbox.NetworkFirst({
-	  "cacheName": "karito-api-cache",
-	  "networkTimeoutSeconds": 10,
-	  plugins: [new workbox.ExpirationPlugin({
-	    maxEntries: 50,
-	    maxAgeSeconds: 86400
 	  }), new workbox.CacheableResponsePlugin({
 	    statuses: [0, 200]
 	  })]

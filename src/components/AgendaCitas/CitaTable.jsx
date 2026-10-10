@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CitaRow } from "../TablaCitas/CitaRow";
 import { CitaCard } from "../TablaCitas/CitaCard";
 import Paginacion from "../HistorialPacientes/Paginacion";
 import { obtenerTimestampCita } from "../../utils/citasFecha";
 import { FaCalendarCheck } from "react-icons/fa";
+import { useProfessionalDirectory } from "../../hooks/useProfessionalDirectory";
 
 export default function CitaTable({
   citas,
@@ -12,6 +13,7 @@ export default function CitaTable({
   showAcciones = true,
 }) {
   const [paginaActual, setPaginaActual] = useState(1);
+  const { professionalNamesById } = useProfessionalDirectory();
   const registrosPorPagina = 5;
 
   const citasOrdenadas = useMemo(() => {
@@ -21,6 +23,7 @@ export default function CitaTable({
   }, [citas]);
 
   const totalPaginas = Math.ceil(citasOrdenadas.length / registrosPorPagina);
+
   const indiceInicio = (paginaActual - 1) * registrosPorPagina;
   const citasPaginadas = citasOrdenadas.slice(
     indiceInicio,
@@ -31,8 +34,8 @@ export default function CitaTable({
 
   return (
     <>
-      <div className="page-panel page-panel-pad hidden lg:block">
-        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="ui-panel hidden lg:block">
+        <div className="ui-toolbar mb-5">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-400/15 bg-violet-400/10">
               <FaCalendarCheck className="text-violet-300" />
@@ -41,14 +44,14 @@ export default function CitaTable({
               Citas registradas
             </h3>
           </div>
-          <span className="w-fit rounded-lg border border-slate-700/70 bg-slate-950/30 px-3 py-1 text-sm font-medium text-slate-300">
+          <span className="ui-status">
             {citasOrdenadas.length} citas
           </span>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-slate-700/70">
-          <table className="w-full min-w-[920px] text-left text-sm text-slate-300">
-            <thead className="bg-slate-800/80 text-xs uppercase tracking-wide text-slate-300">
+        <div className="ui-table-wrap">
+          <table className="ui-table min-w-[920px]">
+            <thead>
               <tr>
                 <th className="p-3">Cliente</th>
                 <th className="p-3">Rol</th>
@@ -67,6 +70,7 @@ export default function CitaTable({
                   actualizarEstado={actualizarEstado}
                   onEditarCita={onEditarCita}
                   showAcciones={showAcciones}
+                  professionalNamesById={professionalNamesById}
                 />
               ))}
             </tbody>
@@ -74,7 +78,7 @@ export default function CitaTable({
         </div>
       </div>
 
-      <div className="lg:hidden space-y-4">
+      <div className="lg:hidden space-y-3">
         {citasPaginadas.map((cita) => (
           <CitaCard
             key={cita._id || cita.id}
@@ -82,12 +86,13 @@ export default function CitaTable({
             actualizarEstado={actualizarEstado}
             onEditarCita={onEditarCita}
             showAcciones={showAcciones}
+            professionalNamesById={professionalNamesById}
           />
         ))}
       </div>
 
       {citasOrdenadas.length === 0 && (
-        <div className="page-panel py-12 text-center">
+        <div className="ui-empty-state">
           <p className="text-slate-400 text-lg">No hay citas registradas</p>
         </div>
       )}

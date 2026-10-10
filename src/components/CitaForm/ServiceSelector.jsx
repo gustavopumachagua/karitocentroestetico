@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaSearch, FaSpa } from "react-icons/fa";
 import CustomChoice from "../common/CustomChoice";
 
@@ -7,8 +7,15 @@ export default function ServiceSelector({
   serviciosSeleccionados,
   onToggle,
   disabled,
+  cargando = false,
+  error = "",
+  rolSeleccionado = "",
 }) {
   const [busqueda, setBusqueda] = useState("");
+
+  useEffect(() => {
+    setBusqueda("");
+  }, [rolSeleccionado]);
 
   const serviciosFiltrados = serviciosDisponibles.filter((serv) =>
     serv.toLowerCase().includes(busqueda.toLowerCase())
@@ -16,22 +23,32 @@ export default function ServiceSelector({
 
   return (
     <div className="col-span-1 md:col-span-2">
-      <label className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+      <label className="mb-3 flex items-center gap-2 text-lg font-semibold text-white">
         <FaSpa className="text-violet-300" />
         Servicio(s)
       </label>
 
       <div
-        className={`p-5 rounded-xl bg-slate-950/25 border border-slate-700/70 max-h-72 overflow-y-auto custom-scroll ${
+        className={`max-h-72 overflow-y-auto rounded-xl border border-slate-700/70 bg-slate-950/25 p-4 custom-scroll sm:p-5 ${
           disabled ? "opacity-50 pointer-events-none" : ""
         }`}
       >
         {disabled ? (
           <p className="text-slate-400 text-sm">
-            Primero seleccione un profesional
+            Primero seleccione el rol del profesional
+          </p>
+        ) : cargando ? (
+          <p className="text-slate-400 text-sm" role="status">
+            Cargando servicios de {rolSeleccionado}...
+          </p>
+        ) : error ? (
+          <p className="text-rose-300 text-sm" role="alert">
+            {error}
           </p>
         ) : serviciosDisponibles.length === 0 ? (
-          <p className="text-slate-400 text-sm">No hay servicios disponibles</p>
+          <p className="text-slate-400 text-sm">
+            No hay servicios habilitados para {rolSeleccionado}.
+          </p>
         ) : (
           <>
             <div className="search-field mb-4">
@@ -56,7 +73,7 @@ export default function ServiceSelector({
                   return (
                     <label
                       key={serv}
-                      className={`group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition border ${
+                      className={`group flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition ${
                         seleccionado
                           ? "bg-violet-400/10 border-violet-400/35"
                           : "bg-slate-950/40 border-slate-700 hover:bg-cyan-400/5 hover:border-cyan-400/25"

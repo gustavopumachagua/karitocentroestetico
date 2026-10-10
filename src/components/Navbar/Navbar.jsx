@@ -15,8 +15,8 @@ export default function Navbar() {
     <header
       className="sticky top-0 z-50 shadow-2xl shadow-black/20"
       style={{
-        background: 'rgba(5, 10, 24, 0.80)',
-        borderBottom: '1px solid rgba(148, 163, 184, 0.08)',
+        background: 'rgba(5, 10, 24, 0.9)',
+        borderBottom: '1px solid rgba(148, 163, 184, 0.1)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
       }}
@@ -24,12 +24,12 @@ export default function Navbar() {
       {/* Decorative glow line */}
       <div className="absolute bottom-0 left-0 right-0 h-px"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.2), rgba(139, 92, 246, 0.15), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.14), rgba(139, 92, 246, 0.08), transparent)',
         }}
       />
 
       <div
-        className={`mx-auto flex max-w-7xl px-5 py-3.5 transition-all sm:px-6 lg:px-20
+        className={`mx-auto flex max-w-7xl px-4 py-3 transition-all sm:px-6 sm:py-3.5 lg:px-12 xl:px-20
           ${
             isAuthPage
               ? "justify-center"

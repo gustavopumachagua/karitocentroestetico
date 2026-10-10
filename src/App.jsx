@@ -66,9 +66,13 @@ function App() {
           }
         />
 
-        <Route element={<ProtectedRoute />}>
+        <Route element={<ProtectedRoute allowedRoles={["administrador"]} />}>
           <Route path="/administrador/*" element={<AdminLayout />} />
+        </Route>
+        <Route element={<ProtectedRoute allowedRoles={["doctor"]} />}>
           <Route path="/doctor/*" element={<DoctorLayout />} />
+        </Route>
+        <Route element={<ProtectedRoute allowedRoles={["cosmiatra"]} />}>
           <Route
             path="/cosmiatra/*"
             element={<CosmeatraRecepcionistaLayout />}

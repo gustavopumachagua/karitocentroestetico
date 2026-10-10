@@ -7,24 +7,17 @@ import {
   FaUser,
 } from "react-icons/fa";
 import Paginacion from "./Paginacion";
+import AtencionPendienteBadge from "./AtencionPendienteBadge";
+import { formatearFechaCita } from "../../utils/citasFecha";
+import { getAttentionDate } from "../../utils/attentionHistory";
 
-export default function ListaTratamientos({ tratamientos, onSeleccionar }) {
+export default function ListaTratamientos({ tratamientos, onSeleccionar, mostrarAtenciones = false }) {
   const [paginaActual, setPaginaActual] = useState(1);
   const tratamientosPorPagina = 15;
   const indexFinal = paginaActual * tratamientosPorPagina;
   const indexInicial = indexFinal - tratamientosPorPagina;
   const tratamientosPaginados = tratamientos.slice(indexInicial, indexFinal);
   const totalPaginas = Math.ceil(tratamientos.length / tratamientosPorPagina);
-
-  const formatearFecha = (fechaISO) => {
-    if (!fechaISO) return "Sin fecha";
-    const fecha = new Date(fechaISO);
-    return fecha.toLocaleString("es-PE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   const formatearServicios = (servicio) =>
     Array.isArray(servicio) ? servicio.join(", ") : servicio;
@@ -59,14 +52,14 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar }) {
     return (
       <div className="page-panel page-panel-pad text-center">
         <p className="text-slate-400 text-base italic">
-          No hay tratamientos registrados.
+          {mostrarAtenciones ? "No hay atenciones registradas." : "No hay tratamientos registrados."}
         </p>
       </div>
     );
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:gap-5 2xl:grid-cols-4">
         {tratamientosPaginados.map((t, index) => {
           const { Icono, color, bg, border } = obtenerIconoPaciente(t.sexo);
 
@@ -74,7 +67,7 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar }) {
             <div
               key={t._id || index}
               onClick={() => onSeleccionar(t)}
-              className="glass-card glow-border p-5 sm:p-6 min-h-[210px] cursor-pointer flex flex-col justify-between gap-5 group"
+              className="ui-card ui-card-interactive glow-border flex min-h-[210px] cursor-pointer flex-col justify-between gap-5 p-5 sm:p-6 group"
             >
               <div className="flex items-start gap-4">
                 <div
@@ -90,11 +83,13 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar }) {
                   <div className="mt-2 flex items-center gap-2 text-slate-400 text-sm">
                     <FaCalendarAlt className="text-amber-300 flex-shrink-0" />
                     <span className="whitespace-normal">
-                      {formatearFecha(t.fecha)}
+                      {getAttentionDate(t) ? formatearFechaCita(getAttentionDate(t)) : "Sin fecha"}
                     </span>
                   </div>
                 </div>
               </div>
+
+              <AtencionPendienteBadge record={t} />
 
               <div className="rounded-xl border border-slate-700/60 bg-slate-950/25 p-3">
                 <p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500">
