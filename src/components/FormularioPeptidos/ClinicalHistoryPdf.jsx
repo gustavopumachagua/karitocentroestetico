@@ -1,14 +1,35 @@
 /* eslint-disable react-refresh/only-export-components */
 // This module intentionally exports the renderer and its PDF helpers together:
-// both consumers must share the same DOM representation.
+// both consumers must share the same clinical model and field layout.
 import { forwardRef } from "react";
 import html2pdf from "html2pdf.js";
 import { jsPDF } from "jspdf";
+import { layoutPdfTextFlow } from "./pdfTextFlow";
 import {
   isFemalePatient,
   normalizeDiagnosisValues,
   withLegacyDiagnosisFields,
 } from "./formConfig";
+
+const PDF_LAYOUT = {
+  pageWidth: 210,
+  pageHeight: 297,
+  marginLeft: 15,
+  marginRight: 15,
+  marginTop: 14,
+  marginBottom: 17,
+};
+const PDF_TYPE = { body: 9, label: 9, section: 10.5, table: 8.5, small: 7.5 };
+const PDF_LINE_HEIGHT = 4.25;
+const PDF_COLUMN_GAP = 6;
+const PDF_FIELD_ROW_GAP = 1.5;
+const PDF_SECTION_HEADING_HEIGHT = 7;
+const getContentWidth = () => PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginLeft - PDF_LAYOUT.marginRight;
+let fieldMetricsDocument;
+const getFieldMetricsDocument = () => {
+  fieldMetricsDocument ||= new jsPDF({ unit: "mm", format: "a4" });
+  return fieldMetricsDocument;
+};
 
 const toRoman = (value) => {
   const numerals = [
@@ -385,12 +406,8 @@ const getClinicalHistoryPdfModel = (record) => {
 const getFieldContent = (value, type) =>
   type === "treatments" ? treatmentRows(value) : formatValue(value, type);
 
-// A clinical form contains two very different kinds of answers. Compact
-// selections (Sí/No, dates and measurements) are much easier to scan when
-// their result stays next to the label. Narrative responses need their own
-// line, otherwise a long answer makes the section look uneven or overflows.
-// Keeping that decision here lets the in-app preview and the vector PDF share
-// the same reading order.
+// Written answers get the full reading width, but still begin after the colon.
+// The same field policy and font measurements govern both rendering paths.
 const NARRATIVE_FIELD_KEYS = new Set([
   "nombreCompleto",
   "ocupacion",
@@ -437,114 +454,26 @@ const NARRATIVE_FIELD_KEYS = new Set([
   "observacionesAdicionales",
 ]);
 
-const COMPACT_SELECTION_FIELD_KEYS = new Set([
-  "sexo",
-  "motivoPrincipal",
-  "intentosPrevios",
-  "enfermedadesAntecedentes",
-  "cirugiasPrevias",
-  "cirugiaComplicaciones",
-  "hospitalizacionesPrevias",
-  "alergiaMedicamentos",
-  "alergiasAlimentarias",
-  "alergiaLatex",
-  "reaccionesAdversas",
-  "transfusionesSanguineas",
-  "antecedentesFamiliares",
-  "embarazoActual",
-  "posibilidadEmbarazo",
-  "lactancia",
-  "agonistasGlp1",
-  "alimentacionHabitual",
-  "sensacionHambre",
-  "antojosPicoteo",
-  "actividadFisica",
-  "calidadSueno",
-  "consumoAlcohol",
-  "sintomasActuales",
-  "carcinomaMedularPersonal",
-  "carcinomaMedularFamiliar",
-  "men2PersonalFamiliar",
-  "enfermedadTiroideaConocida",
-  "pancreatitisPrevia",
-  "dolorAbdominalRecurrente",
-  "litiasisVesicular",
-  "colecistitis",
-  "cirugiaVesicula",
-  "enfermedadHepatica",
-  "ictericiaPrevia",
-  "gastroparesia",
-  "enfermedadGiImportante",
-  "enfermedadRenal",
-  "deshidratacionReciente",
-  "hipoglucemiasPrevias",
-  "insulina",
-  "sulfonilureas",
-  "otrosMedDiabetes",
-  "otrosMedPeso",
-  "conductaPlan",
-  "consentimientoInformado",
-]);
-
-const COMPACT_MEASUREMENT_FIELD_KEYS = new Set([
-  "dni",
-  "edad",
-  "telefono",
-  "g",
-  "p",
-  "c",
-  "a",
-  "pesoMaximo",
-  "pesoHabitual",
-  "pesoActual",
-  "talla",
-  "imc",
-  "perimetroAbdominal",
-  "comidasDia",
-  "horasSueno",
-  "presionSistolica",
-  "presionDiastolica",
-  "frecuenciaCardiaca",
-  "pesoClinico",
-  "tallaClinica",
-  "imcClinico",
-  "perimetroAbdominalClinico",
-]);
-
 const getFieldPresentation = (field, data) => {
   const [label, key, type] = field;
-  const content = getFieldContent(data[key], type);
-  const compactValue =
-    type === "date" ||
-    COMPACT_SELECTION_FIELD_KEYS.has(key) ||
-    COMPACT_MEASUREMENT_FIELD_KEYS.has(key);
-
-  return {
-    label,
-    key,
-    type,
-    content,
-    // Keep choices on the label line only while they remain genuinely brief.
-    // Multiple selected answers can be long, so they become a normal written
-    // response rather than squeezing into the following column.
-    inlineCandidate:
-      compactValue &&
-      !NARRATIVE_FIELD_KEYS.has(key) &&
-      !DIAGNOSIS_FIELD_PATTERN.test(key) &&
-      !String(content).includes("\n") &&
-      String(content).length <= 48,
-  };
+  return { label, key, type, content: getFieldContent(data[key], type) };
 };
 
-const shouldUseFullWidth = (field, data) => {
-  const { label, type, content, inlineCandidate } = getFieldPresentation(field, data);
+const shouldUseFullWidth = (field, data, doc) => {
+  const { label, key, type, content } = getFieldPresentation(field, data);
+  const metrics = doc || getFieldMetricsDocument();
+  metrics.setFont("helvetica", "bold");
+  metrics.setFontSize(PDF_TYPE.label);
+  const labelWidth = metrics.getTextWidth(`${label}: `);
+  metrics.setFont("helvetica", "normal");
+  metrics.setFontSize(PDF_TYPE.body);
+  const textWidth = labelWidth + metrics.getTextWidth(content);
   return (
     type === "treatments" ||
-    !inlineCandidate ||
-    content.length > 54 ||
-    /evolución|objetivo|observaciones|examen físico|indicaciones|factores|diagnóstico|motivo/i.test(
-      label,
-    )
+    NARRATIVE_FIELD_KEYS.has(key) ||
+    DIAGNOSIS_FIELD_PATTERN.test(key) ||
+    content.includes("\n") ||
+    textWidth > (getContentWidth() - PDF_COLUMN_GAP) / 2
   );
 };
 
@@ -552,15 +481,15 @@ const shouldUseFullWidth = (field, data) => {
 // row. In particular, a short field immediately before a long field occupies
 // its own row, instead of being packed beside a field that will span both
 // columns. This keeps the clinical reading order stable in every output.
-const getPdfFieldRows = (fields, data) => {
+const getPdfFieldRows = (fields, data, doc) => {
   const rows = [];
   let fieldIndex = 0;
 
   while (fieldIndex < fields.length) {
     const first = fields[fieldIndex];
     const second = fields[fieldIndex + 1];
-    const firstIsWide = shouldUseFullWidth(first, data);
-    const secondIsWide = second && shouldUseFullWidth(second, data);
+    const firstIsWide = shouldUseFullWidth(first, data, doc);
+    const secondIsWide = second && shouldUseFullWidth(second, data, doc);
 
     if (!second || firstIsWide || secondIsWide) {
       rows.push([first]);
@@ -593,21 +522,14 @@ const getSectionPrintableParts = (section) => {
 };
 
 const PdfField = ({ field, data }) => {
-  const { label, content, inlineCandidate } = getFieldPresentation(field, data);
+  const { label, content } = getFieldPresentation(field, data);
 
   return (
-    <div className="min-w-0 py-1.5 text-[9px] leading-4 text-black">
-      {inlineCandidate ? (
-        <p className="min-w-0 break-words">
-          <span className="font-bold text-black">{label}: </span>
-          <span className="whitespace-pre-wrap text-black">{content}</span>
-        </p>
-      ) : (
-        <>
-          <p className="font-bold text-black">{label}:</p>
-          <p className="mt-0.5 whitespace-pre-wrap break-words pl-1.5 text-black">{content}</p>
-        </>
-      )}
+    <div className="min-w-0" style={{ paddingBottom: `${PDF_FIELD_ROW_GAP}mm` }}>
+      <p style={{ fontSize: `${PDF_TYPE.body}pt`, lineHeight: `${PDF_LINE_HEIGHT}mm`, overflowWrap: "anywhere" }}>
+        <span className="font-semibold text-slate-700">{label}: </span>
+        <span className="whitespace-pre-wrap text-slate-950">{content}</span>
+      </p>
     </div>
   );
 };
@@ -617,11 +539,11 @@ const TreatmentTable = ({ rows }) => {
   if (!filledRows.length) return null;
 
   return (
-    <div className="mt-2 break-inside-avoid">
-      <p className="mb-1 text-[9px] font-bold text-black">
+    <div className="break-inside-avoid" style={{ marginTop: "3mm" }}>
+      <p className="font-semibold text-slate-800" style={{ marginBottom: "2mm", fontSize: `${PDF_TYPE.body}pt` }}>
         Tratamientos previos para control de peso
       </p>
-      <table className="w-full table-fixed border-collapse text-left text-[8px] leading-3 text-black">
+      <table className="w-full table-fixed border-collapse text-left text-slate-950" style={{ fontSize: `${PDF_TYPE.table}pt`, lineHeight: "4mm" }}>
         <colgroup>
           <col className="w-[27%]" />
           <col className="w-[19%]" />
@@ -634,7 +556,7 @@ const TreatmentTable = ({ rows }) => {
               (heading) => (
                 <th
                   key={heading}
-                  className="border border-black/70 px-1.5 py-1.5 align-bottom font-bold break-words"
+                  className="border-y border-slate-400 px-2 py-2 align-bottom font-semibold break-words"
                 >
                   {heading}
                 </th>
@@ -647,8 +569,8 @@ const TreatmentTable = ({ rows }) => {
             <tr key={`${row.medicamento || "tratamiento"}-${index}`}>
               {[row.medicamento, row.dosis, row.tiempoUso, row.resultado].map(
                 (value, cellIndex) => (
-                  <td key={cellIndex} className="border border-black/65 px-1.5 py-1.5 align-top break-words">
-                    {value || "—"}
+                  <td key={cellIndex} className="border-b border-slate-200 px-2 py-2 align-top" style={{ overflowWrap: "anywhere" }}>
+                    {hasValue(value) ? String(value) : "—"}
                   </td>
                 ),
               )}
@@ -669,7 +591,7 @@ const AuxiliaryExamsTable = ({ fields, data }) => {
   if (!rows.length) return null;
 
   return (
-    <table className="mt-2 w-full table-fixed border-collapse text-left text-[8px] leading-3 text-black">
+    <table className="w-full table-fixed border-collapse text-left text-slate-950" style={{ marginTop: "3mm", fontSize: `${PDF_TYPE.table}pt`, lineHeight: "4mm" }}>
       <colgroup>
         <col className="w-[24%]" />
         <col className="w-[26%]" />
@@ -681,7 +603,7 @@ const AuxiliaryExamsTable = ({ fields, data }) => {
           {["Examen", "Resultado", "Examen", "Resultado"].map((heading, index) => (
             <th
               key={`${heading}-${index}`}
-              className="border border-black/70 px-1.5 py-1.5 align-bottom font-bold break-words"
+              className="border-y border-slate-400 px-2 py-2 align-bottom font-semibold break-words"
             >
               {heading}
             </th>
@@ -691,10 +613,10 @@ const AuxiliaryExamsTable = ({ fields, data }) => {
       <tbody>
         {rows.map(([left, right]) => (
           <tr key={`${left?.[1] || "left"}-${right?.[1] || "right"}`}>
-            <td className="border border-black/65 px-1.5 py-1.5 font-semibold break-words">{left?.[0] || ""}</td>
-            <td className="border border-black/65 px-1.5 py-1.5 break-words">{left ? getFieldContent(data[left[1]], left[2]) : ""}</td>
-            <td className="border border-black/65 px-1.5 py-1.5 font-semibold break-words">{right?.[0] || ""}</td>
-            <td className="border border-black/65 px-1.5 py-1.5 break-words">{right ? getFieldContent(data[right[1]], right[2]) : ""}</td>
+            <td className="border-b border-slate-200 px-2 py-2 font-semibold" style={{ overflowWrap: "anywhere" }}>{left?.[0] || ""}</td>
+            <td className="border-b border-slate-200 px-2 py-2" style={{ overflowWrap: "anywhere" }}>{left ? getFieldContent(data[left[1]], left[2]) : ""}</td>
+            <td className="border-b border-slate-200 px-2 py-2 font-semibold" style={{ overflowWrap: "anywhere" }}>{right?.[0] || ""}</td>
+            <td className="border-b border-slate-200 px-2 py-2" style={{ overflowWrap: "anywhere" }}>{right ? getFieldContent(data[right[1]], right[2]) : ""}</td>
           </tr>
         ))}
       </tbody>
@@ -709,20 +631,20 @@ const SectionPreview = ({ section, index, data }) => {
 
   return (
     <section
-      className={`break-inside-avoid ${hasAuxiliaryExams ? "mb-6" : ""}`}
-      style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
+      style={{ marginBottom: hasAuxiliaryExams ? "9mm" : "6mm" }}
     >
-      <div className="mb-1.5 border-b border-black pb-1">
-        <h2 className="text-[11px] font-bold uppercase tracking-tight text-black">
+      <div className="border-b border-slate-300" style={{ paddingBottom: "2mm", marginBottom: "3mm", breakAfter: "avoid", pageBreakAfter: "avoid" }}>
+        <h2 className="font-semibold uppercase text-slate-950" style={{ fontSize: `${PDF_TYPE.section}pt`, letterSpacing: "0.02em" }}>
           {toRoman(index + 1)}. {section.title}
         </h2>
       </div>
       {fieldRows.length > 0 && (
-        <div className="space-y-1 px-1">
+        <div>
           {fieldRows.map((row) => (
             <div
               key={row.map(([, key]) => key).join("-")}
-              className={row.length === 2 ? "grid grid-cols-2 gap-x-5" : ""}
+              className={row.length === 2 ? "grid grid-cols-2" : ""}
+              style={{ columnGap: `${PDF_COLUMN_GAP}mm`, breakInside: "avoid" }}
             >
               {row.map((field) => (
                 <PdfField key={field[1]} field={field} data={data} />
@@ -738,22 +660,23 @@ const SectionPreview = ({ section, index, data }) => {
 };
 
 const ClinicalSignatureFooter = ({ signatureUrl, doctor, cmp }) => (
-  <footer className="mt-8 border-t border-black pt-4">
-    <div className="mx-auto max-w-[260px] text-center text-[9px] text-black">
+  <footer style={{ paddingTop: "3mm", breakInside: "avoid" }}>
+    <div className="mx-auto text-center text-slate-950" style={{ maxWidth: "78mm", fontSize: `${PDF_TYPE.body}pt`, lineHeight: `${PDF_LINE_HEIGHT}mm` }}>
       {signatureUrl ? (
         <img
           src={signatureUrl}
           alt="Firma digital del médico"
-          className="mx-auto h-12 max-w-[180px] object-contain"
+          className="mx-auto object-contain"
+          style={{ height: "16mm", maxWidth: "68mm", marginBottom: "4mm" }}
           data-pdf-image="signature"
         />
       ) : (
-        <div className="h-11" />
+        <div style={{ height: "20mm" }} />
       )}
-      <div className="border-t border-black pt-1 font-semibold">{doctor}</div>
+      <div className="border-t border-slate-400 pt-1 font-semibold" style={{ overflowWrap: "anywhere" }}>{doctor}</div>
       {hasValue(cmp) && <div>CMP: {cmp}</div>}
     </div>
-    <p className="mt-5 text-center text-[7px] leading-3 text-slate-700">
+    <p className="text-slate-600" style={{ marginTop: "6mm", fontSize: `${PDF_TYPE.small}pt`, lineHeight: "3.6mm" }}>
       Nota: Este documento corresponde a la historia clínica inicial. La evolución y los controles
       posteriores se registran en una ficha de control separada.
     </p>
@@ -777,21 +700,21 @@ export const ClinicalHistoryPdfDocument = forwardRef(function ClinicalHistoryPdf
       style={{
         width: "210mm",
         minHeight: "297mm",
-        padding: "14mm 15mm 15mm",
-        fontFamily: "Arial, Helvetica, sans-serif",
+        padding: "14mm 15mm 17mm",
+        fontFamily: "Helvetica, Arial, sans-serif",
       }}
     >
-      <header className="mb-5 border-y border-black py-2.5 text-center">
-        <h1 className="text-[20px] font-bold tracking-tight text-black">HISTORIA CLÍNICA</h1>
-        <p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-black">
-          Evaluación para manejo de peso con tirzepatida
-        </p>
-        <p className="mt-1 text-[7px] font-semibold uppercase tracking-[0.16em] text-slate-600">
+      <header className="border-b border-slate-400" style={{ paddingBottom: "6mm", marginBottom: "7mm" }}>
+        <p className="font-semibold text-slate-700" style={{ fontSize: "8.5pt", letterSpacing: "0.04em" }}>
           KARITO BEAUTY ESTHETIC CENTER S.A.C.
+        </p>
+        <h1 className="font-bold tracking-tight text-slate-950" style={{ marginTop: "3mm", fontSize: "21pt" }}>Historia clínica</h1>
+        <p className="text-slate-700" style={{ marginTop: "2mm", fontSize: "9.5pt" }}>
+          Evaluación para manejo de peso con tirzepatida
         </p>
       </header>
 
-      <div className="space-y-5">
+      <div>
         {sections.map((section, index) => {
           const isMedicalCertificate = section.id === "constancia-medica";
           const preview = <SectionPreview section={section} index={index} data={data} />;
@@ -955,17 +878,6 @@ export function getClinicalHistoryPdfErrorMessage(error) {
   return "No se pudo terminar la exportación del PDF. El formulario sigue disponible y ya puedes intentarlo nuevamente sin recargar la página.";
 }
 
-const PDF_LAYOUT = {
-  pageWidth: 210,
-  pageHeight: 297,
-  marginLeft: 15,
-  marginRight: 15,
-  marginTop: 14,
-  marginBottom: 15,
-};
-
-const getContentWidth = () => PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginLeft - PDF_LAYOUT.marginRight;
-
 const loadImage = (source) =>
   new Promise((resolve, reject) => {
     const image = new Image();
@@ -1030,29 +942,29 @@ const addPdfPageFooter = (context) => {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(6.5);
   doc.setTextColor(80, 80, 80);
-  doc.text("KARITO BEAUTY ESTHETIC CENTER S.A.C. · Documento clínico confidencial", PDF_LAYOUT.marginLeft, 289);
+  doc.text("Documento clínico confidencial", PDF_LAYOUT.marginLeft, 289);
   doc.text(`Página ${page}`, PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginRight, 289, { align: "right" });
   doc.setTextColor(0, 0, 0);
 };
 
 const drawPdfHeader = (context) => {
   const { doc } = context;
-  const center = PDF_LAYOUT.pageWidth / 2;
-
-  doc.setTextColor(0, 0, 0);
+  const left = PDF_LAYOUT.marginLeft;
+  doc.setTextColor(70, 70, 70);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(18);
-  doc.text("HISTORIA CLÍNICA", center, 17, { align: "center" });
-  doc.setFontSize(10.5);
-  doc.text("EVALUACIÓN PARA MANEJO DE PESO CON TIRZEPATIDA", center, 24, { align: "center" });
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(6.5);
-  doc.setTextColor(90, 90, 90);
-  doc.text("KARITO BEAUTY ESTHETIC CENTER S.A.C.", center, 29, { align: "center" });
-  doc.setDrawColor(0, 0, 0);
-  doc.line(PDF_LAYOUT.marginLeft, 32, PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginRight, 32);
+  doc.setFontSize(8.5);
+  doc.text("KARITO BEAUTY ESTHETIC CENTER S.A.C.", left, 17);
   doc.setTextColor(0, 0, 0);
-  context.y = 39;
+  doc.setFontSize(21);
+  doc.text("Historia clínica", left, 27);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9.5);
+  doc.setTextColor(55, 55, 55);
+  doc.text("Evaluación para manejo de peso con tirzepatida", left, 34);
+  doc.setDrawColor(155, 155, 155);
+  doc.setLineWidth(0.2);
+  doc.line(left, 39, PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginRight, 39);
+  context.y = 47;
 };
 
 const startNextPdfPage = (context) => {
@@ -1072,53 +984,27 @@ const ensurePdfSpace = (context, height) => {
 
 const getPdfFieldLayout = (doc, field, data, width) => {
   const presentation = getFieldPresentation(field, data);
-  const labelText = `${presentation.label}:`;
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.4);
-  const labelWidth = doc.getTextWidth(labelText);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.2);
-  const valueWidth = doc.getTextWidth(presentation.content);
-
-  // The DOM preview uses the same compact-value policy. The generated PDF can
-  // additionally measure its real column width, so a long selected option
-  // never spills into the neighbouring field.
-  if (presentation.inlineCandidate && labelWidth + 1.35 + valueWidth <= width) {
-    return {
-      ...presentation,
-      inline: true,
-      labelText,
-      labelWidth,
-      height: 5,
-    };
-  }
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.4);
-  const labelLines = doc.splitTextToSize(labelText, width);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.2);
-  const valueLines = doc.splitTextToSize(presentation.content, width);
-
+  const flow = layoutPdfTextFlow({
+    label: presentation.label,
+    content: presentation.content,
+    width,
+    lineHeight: PDF_LINE_HEIGHT,
+    measure: (value, kind) => {
+      doc.setFont("helvetica", kind === "label" ? "bold" : "normal");
+      doc.setFontSize(kind === "label" ? PDF_TYPE.label : PDF_TYPE.body);
+      return doc.getTextWidth(value);
+    },
+  });
   return {
     ...presentation,
-    inline: false,
-    labelText,
-    labelLines,
-    valueLines,
-    height: labelLines.length * 2.9 + valueLines.length * 3.5 + 2.3,
+    ...flow,
   };
 };
 
-const PDF_FIELD_ROW_GAP = 1.8;
-const PDF_SECTION_HEADING_HEIGHT = 5.8;
-
 const getPdfFieldGridHeight = (context, fields) => {
   const contentWidth = getContentWidth();
-  const columnGap = 6;
-  const columnWidth = (contentWidth - columnGap) / 2;
-  const rows = getPdfFieldRows(fields, context.data);
+  const columnWidth = (contentWidth - PDF_COLUMN_GAP) / 2;
+  const rows = getPdfFieldRows(fields, context.data, context.doc);
 
   return rows.reduce((height, row) => {
     const [first, second] = row;
@@ -1132,74 +1018,66 @@ const getPdfFieldGridHeight = (context, fields) => {
   }, 0);
 };
 
-const drawPdfField = (context, x, y, layout) => {
+const drawPdfField = (context, x, y, layout, offset = 0, count = layout.lines.length) => {
   const { doc } = context;
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.4);
-  doc.setTextColor(55, 55, 55);
-  if (layout.inline) {
-    doc.text(layout.labelText, x, y);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8.2);
-    doc.setTextColor(0, 0, 0);
-    doc.text(layout.content, x + layout.labelWidth + 1.35, y);
-    return;
-  }
-
-  doc.text(layout.labelLines, x, y);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.2);
-  doc.setTextColor(0, 0, 0);
-  doc.text(layout.valueLines, x, y + layout.labelLines.length * 2.9);
+  layout.lines.slice(offset, offset + count).forEach((line, index) => {
+    line.runs.forEach((run) => {
+      const isLabel = run.kind === "label";
+      doc.setFont("helvetica", isLabel ? "bold" : "normal");
+      doc.setFontSize(isLabel ? PDF_TYPE.label : PDF_TYPE.body);
+      doc.setTextColor(isLabel ? 55 : 15, isLabel ? 55 : 15, isLabel ? 55 : 15);
+      doc.text(run.text, x + run.x, y + index * layout.lineHeight);
+    });
+  });
 };
 
 const drawPdfFieldGrid = (context, fields) => {
   const contentWidth = getContentWidth();
-  const columnGap = 6;
-  const columnWidth = (contentWidth - columnGap) / 2;
-  const rows = getPdfFieldRows(fields, context.data);
+  const columnWidth = (contentWidth - PDF_COLUMN_GAP) / 2;
+  const rows = getPdfFieldRows(fields, context.data, context.doc);
+  const pageContentHeight = PDF_LAYOUT.pageHeight - PDF_LAYOUT.marginTop - PDF_LAYOUT.marginBottom;
 
-  rows.forEach((row) => {
+  rows.forEach((row, rowIndex) => {
     const [first, second] = row;
     const firstWidth = second ? columnWidth : contentWidth;
     const firstLayout = getPdfFieldLayout(context.doc, first, context.data, firstWidth);
-    const firstHeight = firstLayout.height;
+    const secondLayout = second ? getPdfFieldLayout(context.doc, second, context.data, columnWidth) : null;
+    const lineCount = Math.max(firstLayout.lines.length, secondLayout?.lines.length || 0);
+    const rowHeight = lineCount * PDF_LINE_HEIGHT + PDF_FIELD_ROW_GAP;
+    const isFirstRowUnderHeading = rowIndex === 0 &&
+      context.y <= PDF_LAYOUT.marginTop + PDF_SECTION_HEADING_HEIGHT + 0.1;
+    if (rowHeight <= pageContentHeight && !isFirstRowUnderHeading) ensurePdfSpace(context, rowHeight);
 
-    if (!second) {
-      ensurePdfSpace(context, firstHeight + PDF_FIELD_ROW_GAP);
-      drawPdfField(context, PDF_LAYOUT.marginLeft, context.y, firstLayout);
-      context.y += firstHeight + PDF_FIELD_ROW_GAP;
-      return;
+    // Split exceptionally long answers by complete text lines, never by
+    // clipping a canvas or drawing an entire paragraph beyond the page.
+    let offset = 0;
+    while (offset < lineCount) {
+      ensurePdfSpace(context, PDF_LINE_HEIGHT + PDF_FIELD_ROW_GAP);
+      const availableHeight = PDF_LAYOUT.pageHeight - PDF_LAYOUT.marginBottom - context.y - PDF_FIELD_ROW_GAP;
+      const count = Math.min(lineCount - offset, Math.max(1, Math.floor(availableHeight / PDF_LINE_HEIGHT)));
+      drawPdfField(context, PDF_LAYOUT.marginLeft, context.y, firstLayout, offset, count);
+      if (secondLayout) drawPdfField(context, PDF_LAYOUT.marginLeft + columnWidth + PDF_COLUMN_GAP,
+        context.y, secondLayout, offset, count);
+      context.y += count * PDF_LINE_HEIGHT;
+      offset += count;
+      if (offset < lineCount) startNextPdfPage(context);
     }
-
-    const secondLayout = getPdfFieldLayout(context.doc, second, context.data, columnWidth);
-    const secondHeight = secondLayout.height;
-    const rowHeight = Math.max(firstHeight, secondHeight);
-    ensurePdfSpace(context, rowHeight + PDF_FIELD_ROW_GAP);
-    drawPdfField(context, PDF_LAYOUT.marginLeft, context.y, firstLayout);
-    drawPdfField(
-      context,
-      PDF_LAYOUT.marginLeft + columnWidth + columnGap,
-      context.y,
-      secondLayout,
-    );
-    context.y += rowHeight + PDF_FIELD_ROW_GAP;
+    context.y += PDF_FIELD_ROW_GAP;
   });
 };
 
 const getPdfTableHeaderLayout = (doc, headers, widths) => {
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.2);
+  doc.setFontSize(PDF_TYPE.table);
 
   const lines = headers.map((header, index) =>
-    doc.splitTextToSize(header, Math.max(1, widths[index] - 2.8)),
+    doc.splitTextToSize(header, Math.max(1, widths[index] - 4)),
   );
   const longestHeader = Math.max(...lines.map((headerLines) => headerLines.length), 1);
 
   return {
     lines,
-    height: Math.max(5.8, longestHeader * 3 + 2.8),
+    height: Math.max(7, longestHeader * 4 + 3),
   };
 };
 
@@ -1210,14 +1088,15 @@ const drawPdfTableHeader = (context, headers, widths, layout) => {
   const { lines, height } = layout || getPdfTableHeaderLayout(doc, headers, widths);
   let position = x;
 
-  doc.setDrawColor(45, 45, 45);
+  doc.setDrawColor(130, 130, 130);
   doc.setLineWidth(0.2);
-  headers.forEach((header, index) => {
-    doc.rect(position, y, widths[index], height, "S");
+  doc.line(x, y, x + getContentWidth(), y);
+  doc.line(x, y + height, x + getContentWidth(), y + height);
+  headers.forEach((_, index) => {
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(7.2);
-    doc.setTextColor(0, 0, 0);
-    doc.text(lines[index], position + 1.4, y + 3.2);
+    doc.setFontSize(PDF_TYPE.table);
+    doc.setTextColor(30, 30, 30);
+    doc.text(lines[index], position + 2, y + 4.3, { lineHeightFactor: 4 / (PDF_TYPE.table * 25.4 / 72) });
     position += widths[index];
   });
   context.y += height;
@@ -1227,33 +1106,54 @@ const drawPdfTableHeader = (context, headers, widths, layout) => {
 const drawPdfTable = (context, headers, widths, rows) => {
   if (!rows.length) return;
   const headerLayout = getPdfTableHeaderLayout(context.doc, headers, widths);
-  ensurePdfSpace(context, headerLayout.height + 7);
+  const lineHeight = 4;
+  const cellPadding = 3;
+  const bottom = PDF_LAYOUT.pageHeight - PDF_LAYOUT.marginBottom;
+  ensurePdfSpace(context, headerLayout.height + lineHeight + cellPadding);
   drawPdfTableHeader(context, headers, widths, headerLayout);
 
   rows.forEach((row) => {
     const cellLines = row.map((value, index) => {
       context.doc.setFont("helvetica", "normal");
-      context.doc.setFontSize(7.5);
-      return context.doc.splitTextToSize(String(value || "—"), widths[index] - 2.8);
+      context.doc.setFontSize(PDF_TYPE.table);
+      return context.doc.splitTextToSize(hasValue(value) ? String(value) : "—", widths[index] - 4);
     });
-    const height = Math.max(...cellLines.map((lines) => lines.length * 3.1 + 2.3));
-
-    if (context.y + height > PDF_LAYOUT.pageHeight - PDF_LAYOUT.marginBottom) {
+    const lineCount = Math.max(...cellLines.map((lines) => lines.length), 1);
+    const height = lineCount * lineHeight + cellPadding;
+    const fullPageRowHeight = bottom - PDF_LAYOUT.marginTop - headerLayout.height;
+    if (context.y + height > bottom && height <= fullPageRowHeight) {
       startNextPdfPage(context);
       drawPdfTableHeader(context, headers, widths, headerLayout);
     }
-
-    let position = PDF_LAYOUT.marginLeft;
-    cellLines.forEach((lines, index) => {
-      context.doc.setDrawColor(75, 75, 75);
-      context.doc.setLineWidth(0.16);
-      context.doc.rect(position, context.y, widths[index], height);
-      context.doc.setFont("helvetica", "normal");
-      context.doc.setFontSize(7.5);
-      context.doc.text(lines, position + 1.4, context.y + 3.5);
-      position += widths[index];
-    });
-    context.y += height;
+    let offset = 0;
+    while (offset < lineCount) {
+      if (context.y + lineHeight + cellPadding > bottom) {
+        startNextPdfPage(context);
+        drawPdfTableHeader(context, headers, widths, headerLayout);
+      }
+      const count = Math.min(lineCount - offset, Math.max(1, Math.floor((bottom - context.y - cellPadding) / lineHeight)));
+      const fragmentHeight = count * lineHeight + cellPadding;
+      let position = PDF_LAYOUT.marginLeft;
+      cellLines.forEach((lines, index) => {
+        context.doc.setFont("helvetica", "normal");
+        context.doc.setFontSize(PDF_TYPE.table);
+        context.doc.setTextColor(15, 15, 15);
+        const fragment = lines.slice(offset, offset + count);
+        if (fragment.length) context.doc.text(fragment, position + 2, context.y + 4.3,
+          { lineHeightFactor: lineHeight / (PDF_TYPE.table * 25.4 / 72) });
+        position += widths[index];
+      });
+      context.doc.setDrawColor(195, 195, 195);
+      context.doc.setLineWidth(0.15);
+      context.doc.line(PDF_LAYOUT.marginLeft, context.y + fragmentHeight,
+        PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginRight, context.y + fragmentHeight);
+      context.y += fragmentHeight;
+      offset += count;
+      if (offset < lineCount) {
+        startNextPdfPage(context);
+        drawPdfTableHeader(context, headers, widths, headerLayout);
+      }
+    }
   });
   context.y += 2.5;
 };
@@ -1261,18 +1161,18 @@ const drawPdfTable = (context, headers, widths, rows) => {
 const getPdfSignatureLayout = (doc, doctor, cmp) => {
   const signatureLineWidth = 78;
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.5);
+  doc.setFontSize(PDF_TYPE.body);
   const doctorLines = doc.splitTextToSize(
     String(doctor || "Médico tratante"),
     signatureLineWidth,
   );
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(6.8);
+  doc.setFontSize(PDF_TYPE.small);
   const noteLines = doc.splitTextToSize(
     "Nota: Este documento corresponde a la historia clínica inicial. La evolución y los controles posteriores se registran en una ficha de control separada.",
     getContentWidth(),
   );
-  const signatureBlockHeight = 27 + doctorLines.length * 3.1 + (hasValue(cmp) ? 3.5 : 0);
+  const signatureBlockHeight = 27 + doctorLines.length * PDF_LINE_HEIGHT + (hasValue(cmp) ? 4 : 0);
 
   return {
     doctorLines,
@@ -1281,8 +1181,35 @@ const getPdfSignatureLayout = (doc, doctor, cmp) => {
     signatureBlockHeight,
     // This includes the note so the signature block is never separated from
     // the certificate just because the page has only a few millimetres left.
-    totalHeight: signatureBlockHeight + 4.5 + noteLines.length * 2.7,
+    totalHeight: signatureBlockHeight + 4.5 + noteLines.length * 3.6,
   };
+};
+
+const getPdfTableHeight = (doc, headers, widths, rows) => {
+  if (!rows.length) return 0;
+  const headerHeight = getPdfTableHeaderLayout(doc, headers, widths).height;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(PDF_TYPE.table);
+  return headerHeight + rows.reduce((total, row) => {
+    const lineCount = Math.max(...row.map((value, index) =>
+      doc.splitTextToSize(hasValue(value) ? String(value) : "—", widths[index] - 4).length), 1);
+    return total + lineCount * 4 + 3;
+  }, 0) + 2.5;
+};
+
+const getAuxiliaryExamsPdfRows = (fields, data) => {
+  const rows = [];
+  for (let index = 0; index < fields.length; index += 2) {
+    const left = fields[index];
+    const right = fields[index + 1];
+    rows.push([
+      left?.[0] || "",
+      left ? getFieldContent(data[left[1]], left[2]) : "",
+      right?.[0] || "",
+      right ? getFieldContent(data[right[1]], right[2]) : "",
+    ]);
+  }
+  return rows;
 };
 
 const getPdfSectionStartReservation = (context, section, standardFields) => {
@@ -1301,7 +1228,7 @@ const getPdfSectionStartReservation = (context, section, standardFields) => {
       // for the signature renderer's final note-space guard. That keeps the
       // whole certificate, signature and note on the same page whenever the
       // certificate itself fits on one page.
-      PDF_SECTION_HEADING_HEIGHT + fieldGridHeight + 4.8 + signatureLayout.totalHeight;
+      PDF_SECTION_HEADING_HEIGHT + fieldGridHeight + 6.2 + signatureLayout.totalHeight;
 
     // A very long written observation may exceed one page. In that exceptional
     // case we still begin it on a fresh page; normal certificates remain fully
@@ -1309,21 +1236,51 @@ const getPdfSectionStartReservation = (context, section, standardFields) => {
     return Math.min(certificateHeight, pageContentHeight);
   }
 
+  const { treatmentField, laboratoryFields } = getSectionPrintableParts(section);
+  const treatments = treatmentField
+    ? getFilledTreatmentRows(context.data[treatmentField[1]]).map((row) =>
+        [row.medicamento, row.dosis, row.tiempoUso, row.resultado])
+    : [];
+  const treatmentHeight = treatments.length ? 5 + getPdfTableHeight(context.doc,
+    ["Medicamento", "Dosis", "Tiempo de uso", "Resultado / efectos adversos"],
+    [48, 35, 42, 55], treatments) : 0;
+  const laboratoryHeight = getPdfTableHeight(context.doc,
+    ["Examen", "Resultado", "Examen", "Resultado"], [43, 47, 43, 47],
+    getAuxiliaryExamsPdfRows(laboratoryFields, context.data));
+  const blockHeight = PDF_SECTION_HEADING_HEIGHT + fieldGridHeight + treatmentHeight + laboratoryHeight + 1;
+  // Ordinary sections remain together, especially a laboratory title/date
+  // and its result table. Large sections still flow between pages instead of
+  // leaving excessive blank space or forcing an oversized block off-page.
+  if (blockHeight <= pageContentHeight * 0.55) return blockHeight;
+
   // Do not leave a section heading alone at the bottom of a page. Reserving
   // its first compact row keeps the document easy to scan without wasting a
   // whole page for large narrative sections.
-  return PDF_SECTION_HEADING_HEIGHT + Math.min(fieldGridHeight, 15) + 2.2;
+  const firstRow = getPdfFieldRows(standardFields, context.data, context.doc)[0];
+  const columnWidth = (getContentWidth() - PDF_COLUMN_GAP) / 2;
+  const firstRowHeight = firstRow
+    ? Math.max(...firstRow.map((field) => getPdfFieldLayout(context.doc, field, context.data,
+        firstRow.length === 2 ? columnWidth : getContentWidth()).height)) + PDF_FIELD_ROW_GAP
+    : 0;
+  const tableStartHeight = treatments.length
+    ? 5 + getPdfTableHeaderLayout(context.doc,
+        ["Medicamento", "Dosis", "Tiempo de uso", "Resultado / efectos adversos"], [48, 35, 42, 55]).height + 7
+    : laboratoryFields.length
+      ? getPdfTableHeaderLayout(context.doc, ["Examen", "Resultado", "Examen", "Resultado"], [43, 47, 43, 47]).height + 7
+      : 0;
+  return Math.min(PDF_SECTION_HEADING_HEIGHT + firstRowHeight + tableStartHeight + 2.2, pageContentHeight);
 };
 
 const drawPdfSection = (context, section, index) => {
   const { treatmentField, laboratoryFields, standardFields } = getSectionPrintableParts(section);
   ensurePdfSpace(context, getPdfSectionStartReservation(context, section, standardFields));
   context.doc.setFont("helvetica", "bold");
-  context.doc.setFontSize(10.5);
+  context.doc.setFontSize(PDF_TYPE.section);
+  context.doc.setTextColor(15, 15, 15);
   context.doc.text(`${toRoman(index + 1)}. ${section.title}`, PDF_LAYOUT.marginLeft, context.y);
-  context.doc.setDrawColor(35, 35, 35);
-  context.doc.setLineWidth(0.2);
-  context.doc.line(PDF_LAYOUT.marginLeft, context.y + 1.6, PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginRight, context.y + 1.6);
+  context.doc.setDrawColor(185, 185, 185);
+  context.doc.setLineWidth(0.15);
+  context.doc.line(PDF_LAYOUT.marginLeft, context.y + 2, PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginRight, context.y + 2);
   context.y += PDF_SECTION_HEADING_HEIGHT;
 
   drawPdfFieldGrid(context, standardFields);
@@ -1336,11 +1293,11 @@ const drawPdfSection = (context, section, index) => {
       row.resultado || "",
     ]);
     if (rows.length) {
-      ensurePdfSpace(context, 7);
+      ensurePdfSpace(context, 23);
       context.doc.setFont("helvetica", "bold");
-      context.doc.setFontSize(8);
+      context.doc.setFontSize(PDF_TYPE.body);
       context.doc.text("Tratamientos previos para control de peso", PDF_LAYOUT.marginLeft, context.y);
-      context.y += 3.5;
+      context.y += 5;
       drawPdfTable(
         context,
         ["Medicamento", "Dosis", "Tiempo de uso", "Resultado / efectos adversos"],
@@ -1351,29 +1308,18 @@ const drawPdfSection = (context, section, index) => {
   }
 
   if (laboratoryFields.length) {
-    const rows = [];
-    for (let fieldIndex = 0; fieldIndex < laboratoryFields.length; fieldIndex += 2) {
-      const left = laboratoryFields[fieldIndex];
-      const right = laboratoryFields[fieldIndex + 1];
-      rows.push([
-        left?.[0] || "",
-        left ? getFieldContent(context.data[left[1]], left[2]) : "",
-        right?.[0] || "",
-        right ? getFieldContent(context.data[right[1]], right[2]) : "",
-      ]);
-    }
     drawPdfTable(
       context,
       ["Examen", "Resultado", "Examen", "Resultado"],
       [43, 47, 43, 47],
-      rows,
+      getAuxiliaryExamsPdfRows(laboratoryFields, context.data),
     );
   }
 
   // Laboratory tables are visually dense. Give the following clinical
   // evaluation heading a deliberate white-space break rather than letting it
   // appear attached to the final table border.
-  context.y += laboratoryFields.length ? 7.5 : 3.8;
+  context.y += laboratoryFields.length ? 9 : 5;
 };
 
 const getImageFormat = (dataUrl) => {
@@ -1422,20 +1368,23 @@ const drawPdfSignature = (context, signatureDataUrl, doctor, cmp) => {
   doc.setLineWidth(0.2);
   doc.line(signatureLineStart, lineY, signatureLineEnd, lineY);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.5);
-  doc.text(layout.doctorLines, PDF_LAYOUT.pageWidth / 2, lineY + 3.5, { align: "center" });
+  doc.setFontSize(PDF_TYPE.body);
+  doc.text(layout.doctorLines, PDF_LAYOUT.pageWidth / 2, lineY + 4.5,
+    { align: "center", lineHeightFactor: PDF_LINE_HEIGHT / (PDF_TYPE.body * 25.4 / 72) });
   if (hasValue(cmp)) {
     doc.setFont("helvetica", "normal");
-    doc.text(`CMP: ${cmp}`, PDF_LAYOUT.pageWidth / 2, lineY + 3.5 + layout.doctorLines.length * 3.1, {
+    doc.setFontSize(PDF_TYPE.table);
+    doc.text(`CMP: ${cmp}`, PDF_LAYOUT.pageWidth / 2, lineY + 4.5 + layout.doctorLines.length * PDF_LINE_HEIGHT, {
       align: "center",
     });
   }
-  context.y = lineY + 6 + layout.doctorLines.length * 3.1 + (hasValue(cmp) ? 3.5 : 0);
+  context.y = lineY + 6 + layout.doctorLines.length * PDF_LINE_HEIGHT + (hasValue(cmp) ? 4 : 0);
   context.y += 4.5;
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(6.8);
-  doc.text(layout.noteLines, PDF_LAYOUT.marginLeft, context.y);
-  context.y += layout.noteLines.length * 2.7;
+  doc.setFontSize(PDF_TYPE.small);
+  doc.text(layout.noteLines, PDF_LAYOUT.marginLeft, context.y,
+    { lineHeightFactor: 3.6 / (PDF_TYPE.small * 25.4 / 72) });
+  context.y += layout.noteLines.length * 3.6;
 };
 
 const createClinicalHistoryPdf = async (record) => {
@@ -1515,7 +1464,7 @@ const renderHtmlFallbackPdf = async (element, record) => {
 };
 
 /**
- * Returns the exact file shown by the preview and downloaded by the user.
+ * Generates the downloadable file from the app preview's clinical model.
  * A DOM-based renderer remains available only as a browser compatibility
  * fallback; the normal path is vector based and has deterministic pagination.
  */
