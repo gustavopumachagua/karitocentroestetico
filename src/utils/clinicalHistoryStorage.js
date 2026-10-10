@@ -6,6 +6,7 @@
  * clinical data must never be visible to a later session on a shared browser.
  */
 import { getAuthUser } from "../services/authStorage.js";
+import { sanitizeClinicalHistoryMedia } from "./protectedMediaReference.js";
 
 export const CLINICAL_HISTORY_STORAGE_PREFIX = "clinical-history:peptides:v2";
 const LEGACY_STORAGE_PREFIX = "clinical-history:peptides:v1";
@@ -249,7 +250,9 @@ export function loadClinicalHistory(patient) {
     return null;
   }
 
-  return record;
+  const sanitized = sanitizeClinicalHistoryMedia(record, record.ownerId);
+  if (JSON.stringify(sanitized) !== JSON.stringify(record)) writeJson(key, sanitized);
+  return sanitized;
 }
 
 /** Returns the active draft/record used to recover after navigation or reload. */
@@ -268,7 +271,9 @@ export function loadActiveClinicalHistory() {
     return null;
   }
 
-  return record;
+  const sanitized = sanitizeClinicalHistoryMedia(record, ownerId);
+  if (JSON.stringify(sanitized) !== JSON.stringify(record)) writeJson(pointer.key, sanitized);
+  return sanitized;
 }
 
 /**
@@ -294,7 +299,7 @@ export function saveClinicalHistory({
   const existing = readJson(key);
   const now = new Date().toISOString();
   const finalStatus = status === "completed" ? "completed" : "draft";
-  const record = {
+  const record = sanitizeClinicalHistoryMedia({
     version: 1,
     ownerId,
     remoteId: remoteId || existing?.remoteId || null,
@@ -310,7 +315,7 @@ export function saveClinicalHistory({
       finalStatus === "completed"
         ? completedAt || existing?.completedAt || now
         : null,
-  };
+  }, ownerId);
 
   if (!writeJson(key, record)) return null;
 

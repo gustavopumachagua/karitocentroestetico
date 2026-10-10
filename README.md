@@ -14,6 +14,7 @@ Este repositorio contiene el cliente **React**. La API, las reglas de autorizaci
 - [Historia clínica y PDF](#historia-clínica-y-pdf)
 - [Código limpio, patrones y SOLID](#código-limpio-patrones-y-solid)
 - [Seguridad y privacidad](#seguridad-y-privacidad)
+- [Imágenes protegidas](#imágenes-protegidas)
 - [Pruebas y control de calidad](#pruebas-y-control-de-calidad)
 - [Despliegue](#despliegue)
 - [Mantenimiento y contribución](#mantenimiento-y-contribución)
@@ -251,7 +252,7 @@ La exportación principal utiliza jsPDF para producir texto vectorial, tablas y 
 
 El nombre, CMP y firma vigentes del doctor se aplican a una copia de presentación/descarga; no se reescriben respuestas del paciente por un cambio de perfil. Un PDF ya descargado es un archivo independiente: para obtener los datos actualizados se debe generar y descargar nuevamente.
 
-html2pdf.js permanece como alternativa de compatibilidad si falla la exportación vectorial. La preparación y limpieza del DOM temporal evita dejar superposiciones bloqueando la pantalla al producirse un error. La firma depende además de la disponibilidad del archivo y de las condiciones CORS del proveedor de imágenes; pruebe este caso explícitamente tras cambiar infraestructura o librerías.
+html2pdf.js permanece como alternativa de compatibilidad si falla la exportación vectorial. La preparación y limpieza del DOM temporal evita dejar superposiciones bloqueando la pantalla al producirse un error. Ambos renderizadores obtienen la firma mediante el cliente autenticado de imágenes; no deben recurrir a una URL pública cuando falla la autorización. Pruebe disponibilidad de la API, sesión y permisos explícitamente tras cambiar infraestructura o librerías.
 
 ### Próximos controles
 
@@ -320,6 +321,31 @@ La CSP actual permite conexiones `https:`/`wss:` en general y excepciones locale
 La dependencia `xlsx` merece seguimiento periódico de mantenimiento/avisos de seguridad. El uso actual es generación de archivos, no lectura de documentos externos; no interprete esa limitación como ausencia de riesgo. Revise todo el árbol con auditorías y evalúe actualizaciones sin sustituir librerías críticas a ciegas.
 
 Los datos clínicos, imágenes y comprobantes requieren controles de acceso, retención, respaldo y registros operativos coordinados con el backend. Este README no garantiza inmunidad frente a ataques ni cumplimiento normativo automático.
+
+## Imágenes protegidas
+
+Las firmas, fotos de perfil y fotografías/miniaturas de tratamientos se solicitan al backend mediante `/api/media/*`. El frontend no genera firmas Cloudinary, conoce secretos ni recibe enlaces temporales de acceso. La autorización definitiva pertenece a la API: el personal activo puede consultar fotos de perfil; las firmas del perfil/historias requieren su doctor propietario; las fotos de tratamientos requieren su profesional propietario o administrador. Nombres y alias no conceden acceso.
+
+| Módulo | Responsabilidad |
+| --- | --- |
+| [`src/api/media.api.js`](src/api/media.api.js) | Valida rutas de medios admitidas y descarga un `Blob` con JWT, sin caché, cookies ni redirecciones externas; valida tipo/tamaño y que la sesión no cambió durante la descarga. |
+| [`src/hooks/useProtectedImage.js`](src/hooks/useProtectedImage.js) | Gestiona solicitudes, estados y URLs `blob:` en memoria; aborta y libera recursos al cambiar imagen, sesión o desmontar el componente. |
+| [`src/components/common/ProtectedImage.jsx`](src/components/common/ProtectedImage.jsx) | Presentación compartida de las imágenes autorizadas en perfiles, sidebar y galerías. Los estados de error no intentan una entrega pública alternativa. |
+| [`src/utils/protectedMediaReference.js`](src/utils/protectedMediaReference.js) | Valida referencias canónicas y adapta sesiones/historias locales antiguas a rutas de la API, sin modificar respuestas clínicas ni conservar enlaces temporales o metadatos internos del proveedor. |
+| [`src/components/FormularioPeptidos/ClinicalHistoryPdf.jsx`](src/components/FormularioPeptidos/ClinicalHistoryPdf.jsx) | Obtiene la firma por el mismo transporte autorizado para vista previa y generación del PDF; prepara los bytes necesarios antes de exportar. |
+
+Los objetos `Blob`, URLs `blob:` y bytes de firmas no se guardan en `localStorage`, IndexedDB ni caché PWA. Solo se conservan referencias de API donde el flujo existente necesita recordar la imagen. El Service Worker mantiene `NetworkOnly` para la API y solicitudes con `Authorization`. Los logos/fondos y avatares genéricos locales continúan siendo recursos públicos de diseño; una foto personal denegada nunca se reemplaza con su antigua URL Cloudinary.
+
+**Las imágenes públicas anteriores necesitan una migración separada.** El cliente protegido no revoca una URL ya compartida ni una copia descargada. La herramienta preparada en el backend requiere inventario, respaldo, aprobación específica de un piloto y revisión por lotes; no se ejecuta desde este frontend. Consulte el [procedimiento de migración](../Backend_Estetico/README.md#imágenes-protegidas-y-migración). Los PDF descargados son archivos locales independientes y no pueden modificarse o revocarse remotamente.
+
+Tras desplegar ambos proyectos, compruebe con cada rol: perfil/avatar, firma del doctor, reapertura de historia, PDF principal/alternativo, galerías/miniaturas, cierre y cambio de sesión. Una solicitud sin JWT debe devolver `401` y un recurso ajeno sin permisos, `403`; revise los mensajes sin copiar tokens, imágenes o información clínica a la consola/tickets.
+
+```bash
+node src/api/media.api.test.js
+node src/hooks/useProtectedImage.test.js
+```
+
+Estas pruebas usan datos sintéticos y dobles de red/navegador. La revocación de URLs antiguas y el funcionamiento con la cuenta real de Cloudinary solo pueden verificarse tras un piloto expresamente autorizado. La protección de acceso no sustituye controles XSS, retención, respaldo ni seguridad del dispositivo del usuario.
 
 ## Pruebas y control de calidad
 
@@ -403,7 +429,7 @@ No versionar credenciales, exportaciones con pacientes, imágenes clínicas de p
 | Socket desconectado | Compruebe `VITE_SOCKET_URL`, sesión vigente, CORS/socket del servidor y soporte WebSocket/polling del proxy. |
 | Historial vacío después de cambiar un nombre | Verifique respuesta API, IDs de cuenta/cliente y referencias persistidas; no desactive filtros de propiedad para ocultar el fallo. |
 | Reporte de un día sin registros | Distinga fecha de calendario de instante UTC; compruebe la proyección de reporte y el día de Lima. |
-| No aparece la firma en el documento | Revise perfil del doctor, URL accesible, autorización/proxy de firma y CORS de imágenes; genere nuevamente el documento. |
+| No aparece la firma en el documento | Revise sesión vigente, respuestas del endpoint `/api/media`, propiedad de la historia, metadatos de firma y conectividad backend/Cloudinary; genere nuevamente el documento. No sustituya el endpoint con una URL pública. |
 | Guardado local pero no remoto | Revise el aviso de sincronización y conectividad; vuelva a Guardar. No dé por finalizada una historia sin confirmación de la API. |
 | Descarga PDF falla | Revise errores de consola/red sin exponer datos clínicos; compruebe renderizador, firma y fallback, y que la interfaz quede desbloqueada. |
 

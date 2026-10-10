@@ -4,6 +4,9 @@
 import { forwardRef } from "react";
 import html2pdf from "html2pdf.js";
 import { jsPDF } from "jspdf";
+import ProtectedImage from "../common/ProtectedImage";
+import { getProtectedImageBlob, isProtectedMediaSource } from "../../api/media.api";
+import { getAuthToken } from "../../services/authStorage.js";
 import { layoutPdfTextFlow } from "./pdfTextFlow";
 import {
   isFemalePatient,
@@ -663,13 +666,15 @@ const ClinicalSignatureFooter = ({ signatureUrl, doctor, cmp }) => (
   <footer style={{ paddingTop: "3mm", breakInside: "avoid" }}>
     <div className="mx-auto text-center text-slate-950" style={{ maxWidth: "78mm", fontSize: `${PDF_TYPE.body}pt`, lineHeight: `${PDF_LINE_HEIGHT}mm` }}>
       {signatureUrl ? (
-        <img
-          src={signatureUrl}
-          alt="Firma digital del médico"
-          className="mx-auto object-contain"
-          style={{ height: "16mm", maxWidth: "68mm", marginBottom: "4mm" }}
-          data-pdf-image="signature"
-        />
+        <div data-pdf-signature="true" style={{ minHeight: "16mm", marginBottom: "4mm" }}>
+          <ProtectedImage
+            src={signatureUrl}
+            alt="Firma digital del médico"
+            className="mx-auto object-contain"
+            style={{ height: "16mm", maxWidth: "68mm" }}
+            data-pdf-image="signature"
+          />
+        </div>
       ) : (
         <div style={{ height: "20mm" }} />
       )}
@@ -813,7 +818,7 @@ const waitForImage = (image, timeout = 5000) =>
     image.addEventListener("error", finish, { once: true });
   });
 
-const preparePdfNode = async (element) => {
+const preparePdfNode = async (element, signatureDataUrl) => {
   const printableNode = element.cloneNode(true);
   const stagingHost = document.createElement("div");
   // Images in a detached tree are inconsistently loaded by browsers. Stage the
@@ -829,38 +834,33 @@ const preparePdfNode = async (element) => {
   stagingHost.setAttribute("aria-hidden", "true");
   stagingHost.appendChild(printableNode);
   document.body.appendChild(stagingHost);
-  const images = Array.from(printableNode.querySelectorAll("img"));
-
-  await Promise.all(
-    images.map(async (image) => {
-      const source = image.getAttribute("src") || image.src;
-      if (!source || source.startsWith("data:") || source.startsWith("blob:")) {
-        await waitForImage(image);
-        return;
+  try {
+    // Use the same already-authorized bytes as the vector renderer. This is
+    // independent of the preview hook's loading state and never retries a
+    // public Cloudinary URL after an authentication/permission failure.
+    for (const host of printableNode.querySelectorAll("[data-pdf-signature]")) {
+      if (!signatureDataUrl) {
+        host.replaceChildren();
+        continue;
       }
-
-      try {
-        // A data URL makes the signature part of the canvas itself, avoiding
-        // a tainted canvas while still retaining the exact signed image.
-        const response = await fetch(source, {
-          mode: "cors",
-          credentials: "omit",
-        });
-        if (!response.ok) throw new Error(`No se pudo cargar la imagen (${response.status}).`);
-
-        image.src = await blobToDataUrl(await response.blob());
-      } catch {
-        // Cloudinary images normally support CORS. If a legacy URL does not,
-        // allow html2canvas to try it anonymously; `allowTaint: false` below
-        // ensures that an unavailable image never blocks the whole document.
-        image.removeAttribute("src");
-        image.crossOrigin = "anonymous";
-        image.src = source;
+      const image = document.createElement("img");
+      image.src = signatureDataUrl;
+      image.alt = "Firma digital del médico";
+      Object.assign(image.style, { height: "16mm", maxWidth: "68mm", objectFit: "contain", margin: "0 auto", display: "block" });
+      host.replaceChildren(image);
+    }
+    await Promise.all(Array.from(printableNode.querySelectorAll("img"), async (image) => {
+      const source = image.getAttribute("src") || "";
+      if (!/^(?:data:image\/(?:png|jpeg|webp);base64,|blob:)/i.test(source)) {
+        image.src = await blobToDataUrl(await getProtectedImageBlob(source));
       }
-
       await waitForImage(image);
-    }),
-  );
+      if (!image.naturalWidth) throw new Error("No se pudo decodificar la firma digital.");
+    }));
+  } catch (error) {
+    stagingHost.remove();
+    throw error;
+  }
 
   return {
     printableNode,
@@ -869,6 +869,9 @@ const preparePdfNode = async (element) => {
 };
 
 export function getClinicalHistoryPdfErrorMessage(error) {
+  if (error?.status === 401) return "Tu sesión caducó. Inicia sesión nuevamente para descargar el PDF con la firma protegida.";
+  if (error?.status === 403) return "No tienes permiso para acceder a la firma de este documento.";
+  if (error?.status === 400 || error?.code === "PROTECTED_IMAGE_SOURCE") return "La firma debe cargarse desde el sistema protegido. Actualiza la historia o vuelve a iniciar sesión e inténtalo nuevamente.";
   const message = String(error?.message || "").toLowerCase();
 
   if (message.includes("no se encontró el documento")) {
@@ -916,22 +919,10 @@ const normalizeSignatureDataUrl = async (dataUrl) => {
 const getSignatureDataUrl = async (source) => {
   const signatureSource = typeof source === "string" ? source.trim() : "";
   if (!signatureSource) return "";
-  if (signatureSource.startsWith("data:")) return normalizeSignatureDataUrl(signatureSource);
-
-  try {
-    const sourceUrl = new URL(signatureSource, window.location.href);
-    const response = await fetch(sourceUrl.href, {
-      mode: "cors",
-      credentials: sourceUrl.origin === window.location.origin ? "include" : "omit",
-    });
-    if (!response.ok) return "";
-    return normalizeSignatureDataUrl(await blobToDataUrl(await response.blob()));
-  } catch {
-    // A signature image must never prevent the clinical record itself from
-    // being downloaded. The DOM fallback below gets one more chance to render
-    // legacy image hosts when the browser blocks a CORS fetch.
-    return "";
-  }
+  if (/^data:image\/(?:png|jpeg|webp);base64,/i.test(signatureSource)) return normalizeSignatureDataUrl(signatureSource);
+  // Do not swallow authorization errors: a PDF must not look successfully
+  // signed when access to the doctor's image was actually denied.
+  return normalizeSignatureDataUrl(await blobToDataUrl(await getProtectedImageBlob(signatureSource)));
 };
 
 const addPdfPageFooter = (context) => {
@@ -1360,7 +1351,7 @@ const drawPdfSignature = (context, signatureDataUrl, doctor, cmp) => {
         imageHeight,
       );
     } catch {
-      // The document remains valid if an older image format cannot be embedded.
+      throw new Error("No se pudo incorporar la firma digital al PDF.");
     }
   }
 
@@ -1387,9 +1378,8 @@ const drawPdfSignature = (context, signatureDataUrl, doctor, cmp) => {
   context.y += layout.noteLines.length * 3.6;
 };
 
-const createClinicalHistoryPdf = async (record) => {
-  const { data, sections, doctor, signatureUrl } = getClinicalHistoryPdfModel(record);
-  const signatureDataUrl = await getSignatureDataUrl(signatureUrl);
+const createClinicalHistoryPdf = async (record, signatureDataUrl) => {
+  const { data, sections, doctor } = getClinicalHistoryPdfModel(record);
   const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
   doc.setProperties({
     title: "Historia clínica",
@@ -1431,9 +1421,9 @@ export function downloadClinicalHistoryPdfBlob(blob, record) {
   downloadBlob(blob, getClinicalHistoryPdfFileName(record));
 }
 
-const renderHtmlFallbackPdf = async (element, record) => {
+const renderHtmlFallbackPdf = async (element, record, signatureDataUrl) => {
   if (!element) throw new Error("No se encontró el documento para exportar.");
-  const prepared = await preparePdfNode(element);
+  const prepared = await preparePdfNode(element, signatureDataUrl);
 
   try {
     const blob = await html2pdf()
@@ -1472,18 +1462,31 @@ export async function generateClinicalHistoryPdfBlob(element, record) {
   cleanupPdfArtifacts();
 
   try {
-    const pdf = await createClinicalHistoryPdf(record);
-    const blob = pdf.output("blob");
-    assertPdfBlob(blob);
-    return blob;
-  } catch (primaryError) {
-    if (!element) throw primaryError;
-
-    console.warn(
-      "No se pudo generar el PDF vectorial; se usará el renderizado alternativo.",
-      primaryError,
-    );
-    return renderHtmlFallbackPdf(element, record);
+    // Authentication happens before either rendering path. Neither a failed
+    // request nor a revoked session may trigger an anonymous image fallback.
+    const { signatureUrl } = getClinicalHistoryPdfModel(record);
+    const protectedSignature = isProtectedMediaSource(signatureUrl);
+    const signatureSession = protectedSignature ? getAuthToken() : null;
+    const assertSignatureSession = () => {
+      if (protectedSignature && (!signatureSession || getAuthToken() !== signatureSession)) {
+        throw Object.assign(new Error("La sesión cambió durante la preparación de la firma."), { status: 401 });
+      }
+    };
+    const signatureDataUrl = await getSignatureDataUrl(signatureUrl);
+    assertSignatureSession();
+    try {
+      const pdf = await createClinicalHistoryPdf(record, signatureDataUrl);
+      const blob = pdf.output("blob");
+      assertPdfBlob(blob);
+      assertSignatureSession();
+      return blob;
+    } catch (primaryError) {
+      if (!element || primaryError?.status === 401 || primaryError?.status === 403) throw primaryError;
+      console.warn("No se pudo generar el PDF vectorial; se usará el renderizado alternativo.");
+      const blob = await renderHtmlFallbackPdf(element, record, signatureDataUrl);
+      assertSignatureSession();
+      return blob;
+    }
   } finally {
     cleanupPdfArtifacts();
   }

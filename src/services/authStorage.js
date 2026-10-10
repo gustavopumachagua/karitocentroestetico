@@ -1,3 +1,5 @@
+import { sanitizeAuthMediaUser } from "../utils/protectedMediaReference.js";
+
 const TOKEN_KEY = "token";
 const USER_KEY = "user";
 
@@ -20,7 +22,7 @@ const serializeUser = (user) => {
   if (!isUserRecord(user)) return null;
 
   try {
-    return JSON.stringify(user);
+    return JSON.stringify(sanitizeAuthMediaUser(user));
   } catch {
     return null;
   }
@@ -81,7 +83,12 @@ export const getAuthUser = () => {
 
   try {
     const user = JSON.parse(rawUser);
-    return isUserRecord(user) ? user : null;
+    if (!isUserRecord(user)) return null;
+    const sanitizedUser = sanitizeAuthMediaUser(user);
+    const sanitizedJson = JSON.stringify(sanitizedUser);
+    // Upgrade only image references, keeping the session and clinical data.
+    if (sanitizedJson !== rawUser) writeStorageValue(USER_KEY, sanitizedJson);
+    return sanitizedUser;
   } catch {
     return null;
   }

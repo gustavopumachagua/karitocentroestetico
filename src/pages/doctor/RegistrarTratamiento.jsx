@@ -49,6 +49,12 @@ export default function RegistrarTratamiento() {
   const [enviando, setEnviando] = useState(false);
   const envioEnCursoRef = useRef(false);
   const obtenerTratamientosRef = useRef(obtenerTratamientos);
+  const imagePreviewUrls = useRef(new Set());
+
+  useEffect(() => () => {
+    imagePreviewUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    imagePreviewUrls.current.clear();
+  }, []);
 
   useEffect(() => {
     obtenerTratamientosRef.current = obtenerTratamientos;
@@ -205,16 +211,21 @@ export default function RegistrarTratamiento() {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const nuevasImagenes = files.map((file) => ({
-      id: Date.now() + Math.random(),
-      url: URL.createObjectURL(file),
-      file,
-    }));
-    setImagenes([...imagenes, ...nuevasImagenes]);
+    const nuevasImagenes = files.map((file) => {
+      const url = URL.createObjectURL(file);
+      imagePreviewUrls.current.add(url);
+      return { id: Date.now() + Math.random(), url, file };
+    });
+    setImagenes((current) => [...current, ...nuevasImagenes]);
   };
 
   const handleRemoveImage = (id) => {
-    setImagenes(imagenes.filter((img) => img.id !== id));
+    const removed = imagenes.find((image) => image.id === id);
+    if (removed) {
+      URL.revokeObjectURL(removed.url);
+      imagePreviewUrls.current.delete(removed.url);
+    }
+    setImagenes((current) => current.filter((img) => img.id !== id));
   };
 
   useEffect(() => {
@@ -313,6 +324,8 @@ export default function RegistrarTratamiento() {
           observacion: "",
           insumos: [],
         });
+        imagePreviewUrls.current.forEach((url) => URL.revokeObjectURL(url));
+        imagePreviewUrls.current.clear();
         setImagenes([]);
         setCitaSeleccionada(null);
         setPacienteExistente(false);

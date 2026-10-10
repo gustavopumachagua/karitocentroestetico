@@ -1,8 +1,10 @@
 import { useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import { getAuthToken } from "../../services/authStorage";
+import ProtectedImage from "../common/ProtectedImage";
+import { resolveProtectedImageSource } from "../../api/media.api";
 
-export default function AvatarUploader({ avatar, setAvatar }) {
+export default function AvatarUploader({ avatar, setAvatar, userId }) {
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -49,7 +51,6 @@ export default function AvatarUploader({ avatar, setAvatar }) {
 
       setAvatar(data.url);
     } catch (err) {
-      console.error("Error al subir imagen:", err);
       setError(err.message);
     } finally {
       setUploading(false);
@@ -58,8 +59,9 @@ export default function AvatarUploader({ avatar, setAvatar }) {
 
   return (
     <div className="relative flex flex-col items-center">
-      <img
-        src={avatar}
+      <ProtectedImage
+        src={resolveProtectedImageSource(avatar, { kind: "avatars", userId })}
+        fallbackSrc="/avatar-default.svg"
         alt="Foto de perfil"
         className="w-28 h-28 rounded-full border-4 border-cyan-400/40 shadow-md shadow-cyan-950/30 object-cover"
       />

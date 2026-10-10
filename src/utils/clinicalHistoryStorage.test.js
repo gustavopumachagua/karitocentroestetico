@@ -4,6 +4,7 @@ import {
   createClinicalHistoryPatientSnapshot,
   getClinicalHistoryPatientId,
   loadClinicalHistory,
+  loadActiveClinicalHistory,
   saveClinicalHistory,
 } from "./clinicalHistoryStorage.js";
 
@@ -15,6 +16,30 @@ test("cached appointments remain distinguishable from treatments", () => {
   const treatment = createClinicalHistoryPatientSnapshot({ _id: "treatment-1", nombre: "Camila Perez", cita: "visit-1" });
   assert.equal(treatment.cliente, undefined);
   assert.equal(treatment.cita, "visit-1");
+});
+
+test("existing saved drafts upgrade signature references without changing answers", (t) => {
+  const ownerId = "111111111111111111111111";
+  const historyId = "222222222222222222222222";
+  const legacyUrl = "https://res.cloudinary.com/example/image/upload/v123/firmas/signature.webp";
+  const stored = new Map([["user", JSON.stringify({ id: ownerId, firmaDigital: legacyUrl })]]);
+  const originalWindow = globalThis.window;
+  const originalEvent = globalThis.CustomEvent;
+  globalThis.window = { localStorage: { getItem: (key) => stored.get(key) || null, setItem: (key, value) => stored.set(key, value) }, dispatchEvent() {} };
+  globalThis.CustomEvent = class { constructor(type, options) { this.type = type; this.detail = options.detail; } };
+  t.after(() => {
+    if (originalWindow === undefined) delete globalThis.window; else globalThis.window = originalWindow;
+    if (originalEvent === undefined) delete globalThis.CustomEvent; else globalThis.CustomEvent = originalEvent;
+  });
+  const patient = { _id: "visit-1", nombre: "Paciente" };
+  saveClinicalHistory({ patient, remoteId: historyId, formData: { nombreCompleto: "Paciente", observacion: "Conservar respuesta" }, signatureUrl: legacyUrl });
+  const key = [...stored.keys()].find((value) => value.endsWith(":visit-1"));
+  const oldRecord = JSON.parse(stored.get(key));
+  stored.set(key, JSON.stringify({ ...oldRecord, signatureUrl: legacyUrl }));
+  assert.equal(loadClinicalHistory(patient).signatureUrl, `/api/media/histories/${historyId}/signature`);
+  assert.equal(loadActiveClinicalHistory().formData.observacion, "Conservar respuesta");
+  assert.equal(JSON.parse(stored.get(key)).signatureUrl, `/api/media/histories/${historyId}/signature`);
+  assert.equal(JSON.parse(stored.get("user")).firmaDigital, `/api/media/signatures/${ownerId}`);
 });
 
 test("assigning a patient identity and correcting a name preserves the existing draft key", (t) => {

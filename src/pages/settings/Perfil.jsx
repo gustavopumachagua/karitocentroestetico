@@ -7,8 +7,7 @@ import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import { useModal } from "../../hooks/useModal";
 import API from "../../api/axiosConfig";
 
-const DEFAULT_AVATAR =
-  "https://res.cloudinary.com/db8tsilie/image/upload/v1759552820/avatar_ilbvur.jpg";
+const DEFAULT_AVATAR = "/avatar-default.svg";
 
 export default function Perfil({ user, setUser }) {
   const [avatar, setAvatar] = useState(user?.avatar || DEFAULT_AVATAR);
@@ -151,7 +150,14 @@ export default function Perfil({ user, setUser }) {
           </div>
 
           <div className="relative ui-card flex flex-col items-center py-5">
-            <AvatarUploader avatar={avatar} setAvatar={setAvatar} />
+            <AvatarUploader
+              avatar={avatar}
+              setAvatar={(url) => {
+                setAvatar(url);
+                updateAuthenticatedUser({ avatar: url });
+              }}
+              userId={userId}
+            />
             <p className="mt-3 text-lg font-semibold text-white">{nombre}</p>
             <p className="text-sm text-slate-400">{user?.rol || "Rol"}</p>
           </div>
@@ -190,6 +196,7 @@ export default function Perfil({ user, setUser }) {
                 </p>
               </div>
               <FirmaDigitalField
+                userId={userId}
                 firmaDigital={firmaDigital}
                 onSave={handleSaveFirma}
                 onCancel={handleCancelFirma}

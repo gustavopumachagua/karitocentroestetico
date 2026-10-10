@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 import TratamientoCard from "./TratamientoCard";
 import Paginacion from "../HistorialPacientes/Paginacion";
+import ProtectedImage from "../common/ProtectedImage";
 
 export default function ClienteDetalle({
   cliente,
@@ -268,7 +269,7 @@ export default function ClienteDetalle({
                 </button>
               )}
 
-              <img
+              <ProtectedImage
                 src={imagenSeleccionada.url}
                 alt={`Tratamiento ${imagenActiva + 1}`}
                 className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"

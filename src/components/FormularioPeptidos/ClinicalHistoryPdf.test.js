@@ -29,6 +29,7 @@ const bundle = await build({
   bundle: true,
   format: "cjs",
   platform: "node",
+  define: { "import.meta.env": "{}" },
   jsx: "automatic",
   external: ["react", "react/jsx-runtime"],
   plugins: [{
@@ -89,6 +90,7 @@ const {
   ClinicalHistoryPdfDocument,
   generateClinicalHistoryPdfBlob,
   getClinicalHistoryPdfSections,
+  getClinicalHistoryPdfErrorMessage,
 } = compiledModule.exports;
 
 // Valid generated one-pixel PNG; common pasted samples have invalid IDAT CRCs.
@@ -264,4 +266,91 @@ test("giant treatment cells are continued on later pages with repeated clear tab
   const html = markup({ patient: { sexo: "Masculino" }, formData: { tratamientosPreviosPeso: [{ medicamento: "Ejemplo" }], glucosaAyunas: "95" } });
   for (const header of html.match(/<th[^>]*>/gu) || []) assert.ok(!/bg-/u.test(header));
   assertClinicalBounds(capture);
+});
+
+const withProtectedSignatureBrowser = async (callback, fetchImpl) => {
+  const previousWindow = globalThis.window;
+  const previousFetch = globalThis.fetch;
+  const previousReader = globalThis.FileReader;
+  globalThis.window = { localStorage: { getItem: (key) => key === "token" ? "authorized-test-session" : null } };
+  globalThis.fetch = fetchImpl;
+  globalThis.FileReader = class {
+    readAsDataURL(blob) {
+      blob.arrayBuffer().then((bytes) => {
+        this.result = `data:${blob.type};base64,${btoa(String.fromCharCode(...new Uint8Array(bytes)))}`;
+        this.onload();
+      });
+    }
+  };
+  try {
+    await callback();
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window; else globalThis.window = previousWindow;
+    globalThis.fetch = previousFetch;
+    if (previousReader === undefined) delete globalThis.FileReader; else globalThis.FileReader = previousReader;
+  }
+};
+
+test("authorized protected signature is fetched with Bearer and embedded in a real PDF", async () => {
+  const source = "/api/media/signatures/111111111111111111111111?v=123";
+  let calls = 0;
+  await withProtectedSignatureBrowser(async () => {
+    const { capture } = await generate({ ...representativeRecord, signatureUrl: source });
+    assert.equal(calls, 1);
+    assert.equal(capture.images.length, 1);
+  }, async (url, options) => {
+    calls += 1;
+    assert.equal(url, source);
+    assert.equal(options.headers.Authorization, "Bearer authorized-test-session");
+    assert.equal(options.cache, "no-store");
+    assert.equal(options.redirect, "error");
+    const bytes = Uint8Array.from(atob(SIGNATURE_PNG.split(",")[1]), (character) => character.charCodeAt(0));
+    return new Response(new Blob([bytes], { type: "image/png" }));
+  });
+});
+
+test("401 or 403 signature denial stops both PDF renderers without an anonymous retry", async () => {
+  for (const status of [401, 403]) {
+    let calls = 0;
+    let clones = 0;
+    const firstCapture = capturedDocuments.length;
+    const element = { cloneNode() { clones += 1; throw new Error("Unauthorized fallback must not run"); } };
+    await withProtectedSignatureBrowser(async () => {
+      await assert.rejects(generateClinicalHistoryPdfBlob(element, {
+        ...representativeRecord, signatureUrl: "/api/media/histories/222222222222222222222222/signature",
+      }), (error) => error.status === status);
+      assert.equal(calls, 1);
+      assert.equal(clones, 0);
+      assert.equal(capturedDocuments.length, firstCapture);
+      assert.ok(getClinicalHistoryPdfErrorMessage({ status }).includes(status === 401 ? "sesión" : "permiso"));
+    }, async () => { calls += 1; return new Response("Denied", { status }); });
+  }
+});
+
+test("legacy public signature cannot be anonymously fetched during PDF export", async () => {
+  let calls = 0;
+  await withProtectedSignatureBrowser(async () => {
+    await assert.rejects(generateClinicalHistoryPdfBlob(null, {
+      ...representativeRecord,
+      signatureUrl: "https://res.cloudinary.com/example/image/upload/firmas/old.webp",
+    }), (error) => error.status === 400);
+    assert.equal(calls, 0);
+  }, async () => { calls += 1; throw new Error("Public signature fetch forbidden"); });
+});
+
+test("logout during signature conversion cancels PDF export before either renderer", async () => {
+  const firstCapture = capturedDocuments.length;
+  await withProtectedSignatureBrowser(async () => {
+    const AuthorizedReader = globalThis.FileReader;
+    globalThis.FileReader = class extends AuthorizedReader {
+      readAsDataURL(blob) {
+        globalThis.window.localStorage.getItem = () => null;
+        super.readAsDataURL(blob);
+      }
+    };
+    await assert.rejects(generateClinicalHistoryPdfBlob(null, {
+      ...representativeRecord, signatureUrl: "/api/media/signatures/111111111111111111111111",
+    }), (error) => error.status === 401);
+    assert.equal(capturedDocuments.length, firstCapture);
+  }, async () => new Response(new Blob([Uint8Array.from(atob(SIGNATURE_PNG.split(",")[1]), (character) => character.charCodeAt(0))], { type: "image/png" })));
 });

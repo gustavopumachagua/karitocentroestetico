@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import LogoutButton from "../LogoutButton/LogoutButton";
 import logo from "../../assets/Logo.jpg";
 import { FaChevronDown, FaChevronRight, FaUserCircle } from "react-icons/fa";
+import ProtectedImage from "../common/ProtectedImage";
+import { resolveProtectedImageSource } from "../../api/media.api";
 
 export default function Sidebar({
   active,
@@ -212,11 +214,9 @@ export default function Sidebar({
       >
         <div className="flex items-center gap-3 mb-3">
           <div className="relative">
-            <img
-              src={
-                user?.avatar ||
-                "https://res.cloudinary.com/db8tsilie/image/upload/v1759552820/avatar_ilbvur.jpg"
-              }
+            <ProtectedImage
+              src={resolveProtectedImageSource(user?.avatar, { kind: "avatars", userId: user?.id || user?._id })}
+              fallbackSrc="/avatar-default.svg"
               alt="Perfil"
               className="h-10 w-10 rounded-full object-cover shadow-lg"
               style={{ border: "2px solid rgba(34, 211, 238, 0.25)" }}

@@ -4,6 +4,7 @@ import { formatearFechaCita } from "../../utils/citasFecha";
 import { getProfessionalDisplayName } from "../../utils/professionalDirectory";
 import { getAttentionDate, isPendingTreatmentRecord } from "../../utils/attentionHistory";
 import AtencionPendienteBadge from "../HistorialPacientes/AtencionPendienteBadge";
+import ProtectedImage from "../common/ProtectedImage";
 
 export default function TratamientoCard({
   tratamiento,
@@ -34,7 +35,7 @@ export default function TratamientoCard({
           className="group relative h-44 w-full overflow-hidden bg-slate-950/50 text-left focus:outline-none focus:ring-2 focus:ring-cyan-300/70 sm:h-52 cursor-pointer"
           aria-label="Ver galería del tratamiento"
         >
-          <img
+          <ProtectedImage
             src={imagenes[0].thumbnailUrl || imagenes[0].url}
             alt="Tratamiento"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

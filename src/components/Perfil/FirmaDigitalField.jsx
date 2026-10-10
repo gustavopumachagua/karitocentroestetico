@@ -8,12 +8,15 @@ import {
   FaTrashAlt,
 } from "react-icons/fa";
 import { getAuthToken } from "../../services/authStorage";
+import ProtectedImage from "../common/ProtectedImage";
+import { resolveProtectedImageSource } from "../../api/media.api";
 
 export default function FirmaDigitalField({
   firmaDigital,
   onSave,
   onCancel,
   isSaving,
+  userId,
 }) {
   const [editing, setEditing] = useState(!firmaDigital);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -22,6 +25,7 @@ export default function FirmaDigitalField({
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const protectedSignature = resolveProtectedImageSource(firmaDigital, { kind: "signatures", userId });
 
   useEffect(() => {
     return () => {
@@ -86,7 +90,6 @@ export default function FirmaDigitalField({
       clearSelectedFile();
       setKeepExisting(true);
     } catch (err) {
-      console.error("Error al subir firma:", err);
       setError(err.message);
     } finally {
       setUploading(false);
@@ -149,8 +152,8 @@ export default function FirmaDigitalField({
             </button>
           </div>
           <div className="rounded-lg border border-slate-700/60 bg-white/5 p-3 flex items-center justify-center">
-            <img
-              src={firmaDigital}
+            <ProtectedImage
+              src={protectedSignature}
               alt="Firma digital"
               className="max-h-24 object-contain"
             />
@@ -175,8 +178,8 @@ export default function FirmaDigitalField({
         {/* Show existing image with delete option */}
         {showExistingImage && (
           <div className="relative rounded-lg border border-slate-700/60 bg-white/5 p-3">
-            <img
-              src={firmaDigital}
+            <ProtectedImage
+              src={protectedSignature}
               alt="Firma digital actual"
               className="max-h-28 mx-auto object-contain"
             />

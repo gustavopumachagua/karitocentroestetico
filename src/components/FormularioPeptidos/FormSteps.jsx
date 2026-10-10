@@ -21,6 +21,7 @@ import {
   isAdultAge,
   isAgeConsistentWithBirthDate,
 } from "./birthDateAge";
+import ProtectedImage from "../common/ProtectedImage";
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  I. DATOS DE IDENTIFICACIÓN                                               */
@@ -1035,7 +1036,7 @@ export function StepConstanciaMedica({ formData, updateField, firmaDigitalUrl })
         <div className="space-y-1">
           <label className="block text-sm font-medium text-slate-300">Firma digital</label>
           <div className="rounded-lg border border-slate-700/60 bg-white/5 p-4 flex items-center justify-center">
-            <img src={firmaDigitalUrl} alt="Firma digital del médico" className="max-h-20 object-contain" />
+            <ProtectedImage src={firmaDigitalUrl} alt="Firma digital del médico" className="max-h-20 object-contain" />
           </div>
         </div>
       )}

@@ -6,6 +6,7 @@ import {
   FaNotesMedical,
   FaTimes,
 } from "react-icons/fa";
+import ProtectedImage from "../common/ProtectedImage";
 
 export default function ObservacionesImagenes({ paciente }) {
   const imagenes = useMemo(
@@ -90,7 +91,7 @@ export default function ObservacionesImagenes({ paciente }) {
                 className="group relative h-32 w-full overflow-hidden rounded-lg border border-slate-700/70 bg-slate-950/50 transition duration-300 hover:border-cyan-300/60 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 sm:h-28"
                 aria-label={`Ver imagen ${i + 1} del tratamiento`}
               >
-                <img
+                <ProtectedImage
                   src={img.thumbnailUrl || img.url}
                   alt={`Tratamiento ${i + 1}`}
                   className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
@@ -143,7 +144,7 @@ export default function ObservacionesImagenes({ paciente }) {
                 </button>
               )}
 
-              <img
+              <ProtectedImage
                 src={imagenSeleccionada.url}
                 alt={`Tratamiento ${imagenActiva + 1}`}
                 className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
