@@ -2,15 +2,15 @@ import { FaCheck } from "react-icons/fa";
 
 const accentStyles = {
   cyan: {
-    checked: "border-cyan-400/70 bg-cyan-400/18 text-cyan-100 shadow-cyan-500/15",
-    hover: "group-hover:border-cyan-400/45 group-hover:bg-cyan-400/10",
-    dot: "bg-cyan-200",
+    checked: "border-indigo-400/70 bg-indigo-400/18 text-indigo-100 shadow-indigo-500/15",
+    hover: "group-hover:border-indigo-400/45 group-hover:bg-indigo-400/10",
+    dot: "bg-indigo-200",
   },
   violet: {
     checked:
-      "border-violet-400/70 bg-violet-400/18 text-violet-100 shadow-violet-500/15",
-    hover: "group-hover:border-violet-400/45 group-hover:bg-violet-400/10",
-    dot: "bg-violet-200",
+      "border-indigo-400/70 bg-indigo-400/18 text-indigo-100 shadow-indigo-500/15",
+    hover: "group-hover:border-indigo-400/45 group-hover:bg-indigo-400/10",
+    dot: "bg-indigo-200",
   },
 };
 
@@ -41,11 +41,11 @@ export default function CustomChoice({
       />
       <span
         aria-hidden="true"
-        className={`flex h-5 w-5 items-center justify-center border transition ${
+        className={`flex h-5 w-5 items-center justify-center border transition peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-indigo-300 ${
           isRadio ? "rounded-full" : "rounded-md"
         } ${
           checked
-            ? `${styles.checked} shadow-lg`
+            ? styles.checked
             : `border-slate-600 bg-slate-950/65 ${styles.hover}`
         } ${disabled ? "opacity-55" : ""}`}
       >

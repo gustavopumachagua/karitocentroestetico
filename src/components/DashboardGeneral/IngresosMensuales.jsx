@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import { FaChartBar } from "react-icons/fa";
 import Skeleton from "../common/Skeleton";
+import { CHART_LABEL_STYLE, CHART_LEGEND_STYLE, CHART_TOOLTIP_STYLE } from "../DashboardDoctor/chartTheme";
 
 export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading }) {
   const meses = [
@@ -27,13 +28,11 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
     .filter((item) => !filtroMes || item.numeroMes === filtroMes);
 
   return (
-    <section className="ui-panel">
-      <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl"
-            style={{ background: 'rgba(52, 211, 153, 0.10)', border: '1px solid rgba(52, 211, 153, 0.15)' }}
-          >
-            <FaChartBar className="text-emerald-400 text-lg" />
+    <section className="ui-panel ui-chart-card">
+      <div className="ui-chart-header flex flex-col gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          <div className="ui-chart-icon">
+            <FaChartBar className="text-lg" />
           </div>
           <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight">
             Ingresos por servicios mensuales
@@ -41,16 +40,16 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
         </div>
         <p className="text-slate-400 text-sm">
           Comparativa{" "}
-          <span className="text-blue-400 font-medium">{filtroAnio - 1}</span> vs{" "}
-          <span className="text-emerald-400 font-medium">{filtroAnio}</span>
+          <span className="font-medium" style={{ color: "var(--chart-slate, #93A7BF)" }}>{filtroAnio - 1}</span> vs{" "}
+          <span className="font-medium" style={{ color: "var(--chart-indigo, #818CF8)" }}>{filtroAnio}</span>
         </p>
       </div>
 
       {loading ? (
         <Skeleton variant="chart" height="370px" />
       ) : (
-        <div className="w-full overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-          <div className="min-w-[650px] sm:min-w-0 h-[280px] sm:h-[340px] md:h-[370px]">
+        <div className="ui-chart-body min-w-0 w-full">
+          <div className="min-w-0 h-[280px] sm:h-[340px] md:h-[370px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={dataComparativa}
@@ -59,56 +58,42 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="rgba(148, 163, 184, 0.06)"
-                  opacity={0.5}
+                  stroke="var(--line-soft, #2B3648)"
+                  vertical={false}
                 />
 
                 <XAxis
                   dataKey="mes"
-                  stroke="#64748b"
-                  tick={{ fontSize: 12, fill: '#94a3b8' }}
+                  stroke="var(--text-secondary, #94A3B8)"
+                  tick={{ fontSize: 12, fill: 'var(--text-secondary, #94A3B8)' }}
                   angle={-25}
                   textAnchor="end"
                   height={60}
-                  axisLine={{ stroke: 'rgba(148, 163, 184, 0.1)' }}
+                  axisLine={false}
+                  tickLine={false}
                 />
                 <YAxis
-                  stroke="#64748b"
-                  tick={{ fontSize: 12, fill: '#94a3b8' }}
+                  stroke="var(--text-secondary, #94A3B8)"
+                  tick={{ fontSize: 12, fill: 'var(--text-secondary, #94A3B8)' }}
+                  width={65}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(value) => `S/${value.toLocaleString()}`}
                 />
 
                 <Tooltip
-                  cursor={{ fill: "rgba(34, 211, 238, 0.06)" }}
+                  cursor={{ fill: "var(--bg-hover)" }}
                   formatter={(value, name) => [
                     `S/${value.toLocaleString()}`,
                     name,
                   ]}
-                  contentStyle={{
-                    backgroundColor: "rgba(12, 20, 42, 0.95)",
-                    border: "1px solid rgba(148, 163, 184, 0.15)",
-                    borderRadius: "12px",
-                    padding: "10px 14px",
-                    color: "#e2e8f0",
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
-                    backdropFilter: "blur(12px)",
-                  }}
-                  labelStyle={{
-                    color: "#a5b4fc",
-                    fontWeight: "600",
-                    marginBottom: "6px",
-                  }}
+                  contentStyle={CHART_TOOLTIP_STYLE}
+                  labelStyle={CHART_LABEL_STYLE}
                   itemStyle={{ fontSize: "13px" }}
                 />
 
                 <Legend
-                  wrapperStyle={{
-                    paddingTop: 10,
-                    fontSize: "13px",
-                    color: "#94a3b8",
-                  }}
+                  wrapperStyle={CHART_LEGEND_STYLE}
                   iconType="circle"
                 />
 
@@ -118,6 +103,7 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
                   name={`Año ${filtroAnio - 1}`}
                   radius={[6, 6, 0, 0]}
                   maxBarSize={20}
+                  isAnimationActive={false}
                 />
                 <Bar
                   dataKey="actual"
@@ -125,16 +111,17 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
                   name={`Año ${filtroAnio}`}
                   radius={[6, 6, 0, 0]}
                   maxBarSize={20}
+                  isAnimationActive={false}
                 />
 
                 <defs>
                   <linearGradient id="barGreen" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#34d399" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#34d399" stopOpacity={0.15} />
+                    <stop offset="0%" stopColor="var(--chart-indigo, #818CF8)" />
+                    <stop offset="100%" stopColor="var(--chart-indigo, #818CF8)" />
                   </linearGradient>
                   <linearGradient id="barBlue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#60a5fa" stopOpacity={0.8} />
-                    <stop offset="100%" stopColor="#60a5fa" stopOpacity={0.15} />
+                    <stop offset="0%" stopColor="var(--chart-slate, #93A7BF)" />
+                    <stop offset="100%" stopColor="var(--chart-slate, #93A7BF)" />
                   </linearGradient>
                 </defs>
               </BarChart>

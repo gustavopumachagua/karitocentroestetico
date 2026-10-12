@@ -713,7 +713,7 @@ export default function FormularioPeptidos() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {!completedRecord && (
-              <button type="button" onClick={handleSave} disabled={isSyncing} className="ui-button ui-button-secondary inline-flex items-center gap-2 rounded-lg border border-violet-400/30 bg-violet-400/10 px-4 py-2 text-sm font-medium text-violet-100 transition hover:bg-violet-400/15 disabled:cursor-not-allowed disabled:opacity-60">
+              <button type="button" onClick={handleSave} disabled={isSyncing} className="ui-button ui-button-primary disabled:opacity-60">
                 <FaSave /> {isSyncing ? "Guardando…" : "Guardar"}
               </button>
             )}
@@ -723,12 +723,12 @@ export default function FormularioPeptidos() {
               </button>
             )}
             {completedRecord && !showCompleted && (
-              <button type="button" onClick={() => setShowPreview(true)} className="ui-button ui-button-secondary inline-flex items-center gap-2 rounded-lg border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/15">
+              <button type="button" onClick={() => setShowPreview(true)} className="ui-button ui-button-secondary">
                 <FaEye /> Ver formulario
               </button>
             )}
             {!showCompleted && (
-              <button type="button" onClick={goBack} className="ui-button ui-button-ghost inline-flex items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/15">
+              <button type="button" onClick={goBack} className="ui-button ui-button-ghost">
                 <FaArrowLeft /> Volver
               </button>
             )}
@@ -750,7 +750,7 @@ export default function FormularioPeptidos() {
         )}
 
         {pendingReviewRequested && !completedRecord && (
-          <div className="ui-panel flex flex-col gap-3 rounded-xl border border-amber-400/25 bg-slate-900 px-4 py-3 text-sm shadow-lg shadow-slate-950/30 sm:flex-row sm:items-center sm:justify-between">
+          <div className="ui-panel flex flex-col gap-4 border-amber-400/25 px-4 py-4 text-sm lg:flex-row lg:items-center lg:justify-between">
             <span>
               <span className="block font-semibold text-amber-50">
                 {pendingQuestionCount > 0
@@ -779,7 +779,7 @@ export default function FormularioPeptidos() {
                 type="button"
                 onClick={handleFinish}
                 disabled={isSyncing}
-                className="ui-button ui-button-primary rounded-lg border border-emerald-400/35 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-100 transition hover:border-emerald-300/60 hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-60"
+                className="ui-button ui-button-primary text-xs disabled:opacity-60"
               >
                 {isSyncing
                   ? "Finalizando…"
@@ -801,11 +801,11 @@ export default function FormularioPeptidos() {
           <div className="ui-panel text-center">
             <p className="text-sm text-slate-300">
               La historia fue cerrada para preservar su integridad clínica. Puedes revisar
-              el documento final desde <span className="mx-1 font-semibold text-cyan-200">Ver formulario</span>.
+              el documento final desde <span className="mx-1 font-semibold text-indigo-200">Ver formulario</span>.
             </p>
           </div>
         ) : (
-          <div className="ui-panel animate-fade-in" key={activeStep.id}>
+          <div className="ui-panel ui-clinical-step animate-fade-in" key={activeStep.id}>
             <FormStepProvider section={activeStep.section}>
               <StepComponent formData={formData} updateField={updateField} patientSex={patientSex} firmaDigitalUrl={user?.firmaDigital || ""} />
             </FormStepProvider>
@@ -831,12 +831,12 @@ export default function FormularioPeptidos() {
       )}
 
       {showMissing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4">
+        <div className="ui-modal-backdrop">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="missing-questions-title"
-            className="w-full max-w-2xl rounded-2xl border border-amber-400/30 bg-slate-900 p-6 shadow-2xl"
+            className="ui-modal max-w-2xl p-4 sm:p-6"
           >
             <div className="flex gap-3">
               <FaExclamationTriangle className="mt-1 shrink-0 text-amber-300" />
@@ -872,10 +872,10 @@ export default function FormularioPeptidos() {
                         onClick={() =>
                           goToMissingQuestion(step.visibleIndex, question.field)
                         }
-                        className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-cyan-400/10 hover:text-white"
+                        className="flex min-h-11 w-full flex-wrap items-center justify-between gap-3 px-3 py-2.5 text-left text-sm text-slate-200 transition hover:bg-indigo-400/10 hover:text-white"
                       >
                         <span>{question.label}</span>
-                        <span className="shrink-0 text-xs font-medium text-cyan-300">
+                        <span className="shrink-0 text-xs font-medium text-indigo-300">
                           Ir a la pregunta
                         </span>
                       </button>
@@ -888,7 +888,7 @@ export default function FormularioPeptidos() {
               <button
                 type="button"
                 onClick={() => setShowMissing(false)}
-                className="rounded-lg border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-700"
+                className="ui-button ui-button-secondary"
               >
                 Continuar editando
               </button>
@@ -898,12 +898,12 @@ export default function FormularioPeptidos() {
       )}
 
       {showCompleted && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4">
+        <div className="ui-modal-backdrop">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="completed-history-title"
-            className="w-full max-w-md rounded-2xl border border-emerald-400/30 bg-slate-900 p-6 text-center shadow-2xl"
+            className="ui-modal max-w-md p-6 text-center"
           >
             <FaCheckCircle className="mx-auto text-4xl text-emerald-300" />
             <h2 id="completed-history-title" className="mt-3 text-xl font-semibold text-white">
@@ -924,9 +924,9 @@ export default function FormularioPeptidos() {
       )}
 
       {showPreview && completedRecordForPresentation && (
-        <div role="dialog" aria-modal="true" aria-label="Vista previa de historia clínica" className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-3 sm:p-6">
-          <div className="flex h-[calc(100dvh-1.5rem)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-cyan-400/25 bg-slate-900 shadow-2xl sm:h-[calc(100dvh-3rem)]">
-            <div className="flex items-center justify-between gap-3 border-b border-slate-700 px-4 py-3 sm:px-6">
+        <div role="dialog" aria-modal="true" aria-label="Vista previa de historia clínica" className="ui-modal-backdrop p-3 sm:p-6">
+          <div className="flex h-[calc(100dvh-1.5rem)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-slate-600 bg-[var(--surface-default)] shadow-2xl sm:h-[calc(100dvh-3rem)]">
+            <div className="ui-clinical-preview-toolbar flex items-center justify-between gap-3 border-b border-slate-700 px-4 py-3 sm:px-6">
               <div>
                 <h2 className="text-base font-semibold text-white">Historia clínica finalizada</h2>
                 <p className="text-xs text-slate-400">
@@ -938,14 +938,14 @@ export default function FormularioPeptidos() {
                   type="button"
                   onClick={downloadPdf}
                   disabled={downloading}
-                  className="inline-flex items-center gap-2 rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm font-medium text-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="ui-button ui-button-primary disabled:opacity-60"
                 >
                   <FaDownload /> {downloading ? "Descargando…" : "Descargar"}
                 </button>
-                <button type="button" onClick={() => setShowPreview(false)} className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-700">Cerrar</button>
+                <button type="button" onClick={() => setShowPreview(false)} className="ui-button ui-button-secondary">Cerrar</button>
               </div>
             </div>
-            <div className="min-h-0 flex-1 overflow-auto bg-slate-950/50 p-3 sm:p-6">
+            <div role="region" aria-label="Documento de historia clínica" tabIndex={0} className="min-h-0 flex-1 overflow-auto bg-slate-950/50 p-3 sm:p-6">
               {pdfError && (
                 <div
                   role="alert"

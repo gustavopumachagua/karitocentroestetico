@@ -11,13 +11,13 @@ export default function ClienteCard({ cliente }) {
   return (
     <div className="ui-card flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
       <div className="flex justify-center sm:justify-start w-full sm:w-auto">
-        <div className="flex h-20 w-20 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10 sm:h-24 sm:w-24">
-          <IconoUsuario className="text-cyan-300 text-5xl sm:text-6xl" />
+        <div className="flex h-20 w-20 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10 sm:h-24 sm:w-24">
+          <IconoUsuario className="text-indigo-300 text-5xl sm:text-6xl" />
         </div>
       </div>
 
-      <div className="flex-1 text-center sm:text-left">
-        <h2 className="text-xl sm:text-2xl font-semibold text-white mb-2">
+      <div className="min-w-0 flex-1 text-center sm:text-left">
+        <h2 className="mb-2 text-xl font-semibold text-slate-100 break-words sm:text-2xl">
           {cliente.nombre}
         </h2>
 

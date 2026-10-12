@@ -3,22 +3,22 @@ import logo from "../../assets/Logo.jpg";
 function HighlightCard({ icon, title, text }) {
   return (
     <div
-      className="flex gap-3 rounded-xl p-4 transition-all duration-200 hover:bg-white/[0.02]"
+      className="flex min-w-0 gap-3 rounded-xl p-4"
       style={{
-        border: "1px solid rgba(148, 163, 184, 0.08)",
-        background: "rgba(255, 255, 255, 0.02)",
+        border: "1px solid var(--border-subtle)",
+        background: "var(--bg-card)",
       }}
     >
       <div
         className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl"
         style={{
-          background: "rgba(34, 211, 238, 0.08)",
-          border: "1px solid rgba(34, 211, 238, 0.12)",
+          background: "rgba(129, 140, 248, 0.1)",
+          border: "1px solid rgba(129, 140, 248, 0.2)",
         }}
       >
-        <span className="text-cyan-300">{icon}</span>
+        <span className="text-indigo-300" aria-hidden="true">{icon}</span>
       </div>
-      <div>
+      <div className="min-w-0">
         <p className="font-semibold text-white">{title}</p>
         <p className="mt-1 text-sm leading-5 text-slate-400">{text}</p>
       </div>
@@ -31,8 +31,8 @@ function LogoBox({ className = "" }) {
     <div
       className={`flex h-14 w-14 items-center justify-center rounded-xl overflow-hidden ${className}`}
       style={{
-        background: "rgba(34, 211, 238, 0.08)",
-        border: "1px solid rgba(34, 211, 238, 0.15)",
+        background: "var(--bg-elevated)",
+        border: "1px solid var(--border-subtle)",
       }}
     >
       <img
@@ -56,14 +56,14 @@ export default function AuthPageLayout({
 }) {
   return (
     <section className="auth-screen">
-      <div className="auth-grid">
+      <div className="auth-grid min-w-0">
         <div className="auth-visual">
           <div>
             <LogoBox className="mb-6" />
-            <p className="text-sm font-semibold uppercase text-cyan-200">
+            <p className="ui-eyebrow">
               {subtitle}
             </p>
-            <h1 className="mt-3 max-w-lg text-4xl font-black leading-tight text-white">
+            <h1 className="mt-3 max-w-lg text-3xl font-semibold leading-tight tracking-tight text-slate-100 xl:text-4xl">
               {title}
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-6 text-slate-400">
@@ -85,13 +85,13 @@ export default function AuthPageLayout({
           )}
         </div>
 
-        <div className="auth-card">
-          <div className="mb-7 text-center">
-            <LogoBox className="mx-auto mb-4" />
-            <p className="text-xs font-semibold uppercase text-cyan-200">
+        <div className="auth-card min-w-0">
+          <div className="mb-7 text-left">
+            <LogoBox className="mb-5" />
+            <p className="ui-eyebrow">
               {cardSubtitle}
             </p>
-            <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl">
               {cardTitle}
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">

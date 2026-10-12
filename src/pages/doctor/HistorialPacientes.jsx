@@ -278,7 +278,7 @@ export default function HistorialPacientes() {
         {!pacienteSeleccionado && (
           <div className="ui-panel px-4 py-4 sm:px-6">
             <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-400">
-              <FaSearch className="text-cyan-300/80" /> Busca por nombre para abrir una historia específica.
+              <FaSearch className="text-indigo-300/80" /> Busca por nombre para abrir una historia específica.
             </div>
             <BuscadorPacientes
               busqueda={busqueda}

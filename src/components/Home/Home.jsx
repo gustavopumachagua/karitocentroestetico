@@ -2,10 +2,10 @@ import Hero from "./Hero";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col text-slate-100">
-      <main className="flex-grow">
+    <div className="flex min-w-0 flex-col text-slate-100">
+      <div className="min-w-0 flex-grow">
         <Hero />
-      </main>
+      </div>
     </div>
   );
 }

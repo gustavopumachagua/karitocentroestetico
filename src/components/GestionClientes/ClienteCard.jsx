@@ -19,31 +19,30 @@ export default function ClienteCard({ cliente, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="ui-card ui-card-interactive group relative flex cursor-pointer flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      className="ui-card ui-card-interactive group relative flex min-w-0 cursor-pointer flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
     >
-      <div className="flex items-center gap-4">
+      <div className="flex min-w-0 items-start gap-3 sm:gap-4">
         {/* Icono dinámico */}
-        <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl"
-          style={{ background: 'rgba(129, 140, 248, 0.08)', border: '1px solid rgba(129, 140, 248, 0.12)' }}
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10"
         >
           <IconoUsuario className="text-indigo-400 text-2xl" />
         </div>
 
-        <div>
+        <div className="min-w-0 flex-1">
           {/* Nombre */}
-          <h4 className="text-base font-bold text-white flex items-center gap-2 tracking-tight">
+          <h4 className="text-base font-semibold leading-relaxed text-slate-100 break-words">
             {cliente.nombre}
           </h4>
 
           {/* Sexo */}
           <p className="text-slate-400 flex items-center gap-2 mt-1 text-sm">
-            <FaVenusMars className="text-pink-400/70 text-xs" /> {cliente.sexo}
+            <FaVenusMars className="text-slate-400/70 text-xs" /> {cliente.sexo}
           </p>
 
           {/* Celular */}
           {cliente.celular && (
             <p className="text-slate-400 flex items-center gap-2 mt-1 text-sm">
-              <FaPhoneAlt className="text-blue-400/70 text-xs" /> {cliente.celular}
+              <FaPhoneAlt className="text-indigo-400/70 text-xs" /> {cliente.celular}
             </p>
           )}
 
@@ -56,7 +55,7 @@ export default function ClienteCard({ cliente, onClick }) {
           </p>
 
           {/* Tratamientos */}
-          <p className="text-slate-500 mt-2 text-xs">
+          <p className="text-slate-400 mt-2 text-xs">
             {cliente.tratamientos.length} atenciones registradas
           </p>
         </div>

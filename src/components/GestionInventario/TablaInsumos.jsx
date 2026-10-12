@@ -12,8 +12,8 @@ export default function TablaInsumos({
     <section className="ui-panel">
       <div className="ui-toolbar mb-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10">
-            <FaClipboardList className="text-emerald-300" />
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10">
+            <FaClipboardList className="text-indigo-300" />
           </div>
           <h3 className="text-lg sm:text-xl font-semibold text-white">
             Insumos – {rolSeleccionado}
@@ -25,14 +25,14 @@ export default function TablaInsumos({
         </span>
       </div>
 
-      <div className="ui-table-wrap hidden sm:block">
-        <table className="ui-table min-w-full text-center">
+      <div role="region" tabIndex={0} aria-label="Insumos del catálogo: desplazamiento horizontal disponible" className="ui-table-wrap hidden sm:block">
+        <table aria-label="Insumos del catálogo" className="ui-table min-w-full text-center">
           <thead>
             <tr>
-              <th className="px-4 py-3 text-left">Nombre</th>
-              <th className="px-4 py-3">Stock</th>
-              <th className="px-4 py-3">Umbral</th>
-              <th className="px-4 py-3">Acción</th>
+              <th scope="col" className="px-4 py-3 text-left">Nombre</th>
+              <th scope="col" className="px-4 py-3">Stock</th>
+              <th scope="col" className="px-4 py-3">Umbral</th>
+              <th scope="col" className="px-4 py-3">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -42,7 +42,7 @@ export default function TablaInsumos({
                 className={`border-t border-slate-700/70 transition-colors ${
                   item.stock === 0
                     ? "bg-rose-950/45 hover:bg-rose-950/65 text-rose-100"
-                    : "bg-slate-950/20 hover:bg-cyan-400/5"
+                    : "bg-slate-950/20 hover:bg-indigo-400/5"
                 }`}
               >
                 <td className="px-4 py-3 text-left font-medium text-white break-words">
@@ -51,17 +51,17 @@ export default function TablaInsumos({
                 <td className="px-4 py-3">{item.stock}</td>
                 <td className="px-4 py-3">{item.umbral}</td>
                 <td className="px-4 py-3">
-                  <div className="flex justify-center items-center gap-5 sm:gap-6 flex-wrap">
+                  <div className="flex flex-wrap items-center justify-center gap-2">
                     <button
                       onClick={() => onEditar(item)}
-                      className="text-cyan-300 hover:text-cyan-200 transition-transform hover:scale-110 cursor-pointer"
+                      className="ui-icon-button"
                       title="Editar"
                     >
                       <FaEdit size={18} />
                     </button>
                     <button
                       onClick={() => onEliminar(item)}
-                      className="text-rose-300 hover:text-rose-200 transition-transform hover:scale-110 cursor-pointer"
+                      className="ui-icon-button ui-button-danger"
                       title="Eliminar"
                     >
                       <FaTrash size={18} />
@@ -77,14 +77,14 @@ export default function TablaInsumos({
         {insumos.map((item) => (
           <div
             key={item._id}
-            className={`ui-card flex items-center justify-between gap-3 ${
+            className={`ui-card flex min-w-0 flex-col items-start gap-3 ${
               item.stock <= item.umbral
                 ? "border-rose-400/40 bg-rose-950/25"
                 : "border-slate-700/70 bg-slate-950/25"
             }`}
           >
             <div className="min-w-0 flex flex-col gap-1">
-              <span className="text-slate-100 font-medium">{item.nombre}</span>
+              <span className="font-medium text-slate-100 break-words">{item.nombre}</span>
               <span className="text-sm text-slate-400">
                 Stock:{" "}
                 <span
@@ -99,17 +99,17 @@ export default function TablaInsumos({
                 / Umbral: <span className="text-slate-300">{item.umbral}</span>
               </span>
             </div>
-            <div className="flex gap-4 items-center">
+            <div className="flex w-full items-center justify-end gap-2">
               <button
                 onClick={() => onEditar(item)}
-                className="text-cyan-300 hover:text-cyan-200 transition-transform hover:scale-110 cursor-pointer"
+                className="ui-icon-button"
                 title="Editar"
               >
                 <FaEdit />
               </button>
               <button
                 onClick={() => onEliminar(item)}
-                className="text-rose-300 hover:text-rose-200 transition-transform hover:scale-110 cursor-pointer"
+                className="ui-icon-button ui-button-danger"
                 title="Eliminar"
               >
                 <FaTrash />

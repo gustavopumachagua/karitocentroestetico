@@ -7,7 +7,7 @@ export default function FormInput({
   placeholder,
 }) {
   return (
-    <div className="ui-field">
+    <div className="ui-field min-w-0">
       <label className="ui-label">{label}</label>
       <input
         type="text"
@@ -18,7 +18,7 @@ export default function FormInput({
         className={`ui-control ${
           error
             ? "border-rose-400 focus:border-rose-400 focus:ring-rose-400/20"
-            : "border-slate-700 focus:border-cyan-400/60 focus:ring-cyan-400/15"
+            : "border-slate-700 focus:border-indigo-300 focus:ring-indigo-400/20"
         }`}
       />
       {error && <span className="text-rose-300 text-sm mt-1">{error}</span>}

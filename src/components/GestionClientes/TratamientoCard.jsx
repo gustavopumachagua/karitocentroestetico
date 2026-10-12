@@ -27,12 +27,12 @@ export default function TratamientoCard({
   );
 
   return (
-    <div className="ui-card ui-card-interactive flex flex-col overflow-hidden p-0">
+    <div className="ui-card ui-card-interactive flex min-w-0 flex-col overflow-hidden p-0">
       {totalImagenes > 0 ? (
         <button
           type="button"
           onClick={onAbrirGaleria}
-          className="group relative h-44 w-full overflow-hidden bg-slate-950/50 text-left focus:outline-none focus:ring-2 focus:ring-cyan-300/70 sm:h-52 cursor-pointer"
+          className="group relative h-44 w-full overflow-hidden bg-slate-950/50 text-left focus:outline-none focus:ring-2 focus:ring-indigo-300/70 sm:h-52 cursor-pointer"
           aria-label="Ver galería del tratamiento"
         >
           <ProtectedImage
@@ -44,18 +44,14 @@ export default function TratamientoCard({
           <span className="pointer-events-none absolute inset-0 bg-slate-950/0 transition group-hover:bg-slate-950/20" />
           {totalImagenes > 1 && (
             <span className="pointer-events-none absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-lg border border-slate-600/70 bg-slate-950/80 px-2.5 py-1 text-xs font-medium text-slate-100 shadow-lg">
-              <FaImages className="text-cyan-300" />
+              <FaImages className="text-indigo-300" />
               {totalImagenes}
             </span>
           )}
         </button>
       ) : (
         <div
-          className="w-full h-44 sm:h-52 flex items-center justify-center"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(15, 23, 48, 0.9), rgba(8, 14, 32, 0.8))",
-          }}
+          className="flex h-44 w-full items-center justify-center bg-[var(--surface-subtle)] sm:h-52"
         >
           <FaCamera className="text-3xl text-slate-600" />
         </div>
@@ -64,28 +60,23 @@ export default function TratamientoCard({
       <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
         <div>
           <p className="text-slate-400 flex items-center gap-2 text-sm">
-            <FaCalendarAlt className="text-cyan-400/70 text-xs" />{" "}
+            <FaCalendarAlt className="text-indigo-400/70 text-xs" />{" "}
             {fechaFormateada}
           </p>
 
           <AtencionPendienteBadge record={tratamiento} className="mt-3" />
 
-          <p className="text-slate-200 mt-2 text-sm">
-            <span className="font-semibold text-cyan-300">Servicio:</span>{" "}
+          <p className="mt-2 text-sm leading-relaxed text-slate-200 break-words">
+            <span className="font-semibold text-indigo-300">Servicio:</span>{" "}
             {servicioFormateado}
           </p>
 
           <p className="text-slate-400 mt-2 flex items-center gap-2 text-sm flex-wrap">
-            <FaUserMd className="text-violet-400/70 text-xs" />
+            <FaUserMd className="text-indigo-400/70 text-xs" />
             {nombreProfesional || "No registrado"}
             {tratamiento.rol && (
               <span
-                className="text-[11px] font-medium px-2 py-0.5 rounded-lg ml-1"
-                style={{
-                  background: "rgba(139, 92, 246, 0.12)",
-                  border: "1px solid rgba(139, 92, 246, 0.2)",
-                  color: "#c4b5fd",
-                }}
+                className="ui-status"
               >
                 {tratamiento.rol}
               </span>
@@ -93,7 +84,7 @@ export default function TratamientoCard({
           </p>
 
           {!esAtencionPendiente && (
-            <p className="text-slate-500 mt-3 text-sm leading-snug">
+            <p className="mt-3 text-sm leading-relaxed text-slate-400 break-words">
               <span className="text-slate-300 font-medium">Observaciones:</span>{" "}
               {tratamiento.observacion || "Sin observaciones"}
             </p>

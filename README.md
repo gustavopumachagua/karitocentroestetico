@@ -175,6 +175,10 @@ Esta separación es una guía, no una prohibición que el código ya cumpla en t
 
 [`src/index.css`](src/index.css) define el tema oscuro, tokens de color/espaciado y clases compartidas `ui-panel`, `ui-control`, `ui-button`, `ui-table` y estados vacíos. Tailwind complementa los layouts y ajustes por pantalla. `components/common/` centraliza elementos como selectores, fechas, skeletons y layouts de autenticación.
 
+La interfaz utiliza superficies sólidas, un acento indigo (`#818CF8`), tipografía legible, controles de 44 px y colores semánticos reservados para estados. Los estilos compartidos se organizan en `@layer components` para que las utilidades Tailwind puedan ajustar los layouts sin superponer iconos y texto. [`chartTheme.js`](src/components/DashboardDoctor/chartTheme.js) centraliza únicamente la presentación de Recharts; los calendarios conservan su implementación y callbacks originales. La apariencia de documentos imprimibles queda fuera del tema oscuro.
+
+El [informe de auditoría UI/UX](docs/ui-ux-audit.md) documenta la paleta, componentes, archivos, rutas revisadas, pruebas responsive de 320 a 1920 px y limitaciones. Las pruebas visuales utilizan usuarios/pacientes ficticios y APIs simuladas; no deben confundirse con una validación del backend o una certificación de accesibilidad.
+
 El documento clínico mantiene su propia presentación imprimible clara: el tema oscuro de la aplicación no debe trasladarse a un PDF ni modificar sus contrastes o tamaños de página.
 
 ## Flujos de datos y contratos

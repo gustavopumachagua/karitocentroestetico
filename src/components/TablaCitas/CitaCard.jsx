@@ -19,15 +19,15 @@ export function CitaCard({
 
   return (
     <div className="ui-card ui-card-interactive">
-      <div className="flex justify-between items-start mb-4">
-        <div className="space-y-1">
-          <h3 className="text-xl font-bold text-white">
+      <div className="mb-4 flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
+        <div className="min-w-0 space-y-1">
+          <h3 className="text-lg font-semibold leading-relaxed text-slate-100 break-words">
             {typeof cita.cliente === "object"
               ? cita.cliente?.nombre
               : cita.cliente}
           </h3>
-          <p className="flex items-center gap-2 text-sm text-slate-400">
-            <FaUserMd className="text-cyan-300" />
+          <p className="flex items-start gap-2 text-sm text-slate-400 break-words">
+            <FaUserMd className="mt-0.5 shrink-0 text-indigo-300" />
             {nombreProfesional || "Sin asignar"}
           </p>
         </div>
@@ -48,7 +48,7 @@ export function CitaCard({
                   {cita.servicio.map((serv, i) => (
                     <span
                       key={i}
-                      className="rounded-full border border-cyan-400/15 bg-cyan-300/12 px-3 py-1 text-xs font-medium text-cyan-100"
+                      className="rounded-lg border border-slate-700/60 bg-[var(--surface-raised)] px-2 py-1 text-xs font-medium text-slate-200 break-words"
                     >
                       {serv}
                     </span>

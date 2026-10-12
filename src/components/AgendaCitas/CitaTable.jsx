@@ -37,8 +37,8 @@ export default function CitaTable({
       <div className="ui-panel hidden lg:block">
         <div className="ui-toolbar mb-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-400/15 bg-violet-400/10">
-              <FaCalendarCheck className="text-violet-300" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
+              <FaCalendarCheck className="text-indigo-300" />
             </div>
             <h3 className="text-lg font-semibold text-white">
               Citas registradas
@@ -49,17 +49,17 @@ export default function CitaTable({
           </span>
         </div>
 
-        <div className="ui-table-wrap">
-          <table className="ui-table min-w-[920px]">
+        <div role="region" tabIndex={0} aria-label="Citas registradas: desplazamiento horizontal disponible" className="ui-table-wrap">
+          <table aria-label="Citas registradas" className="ui-table min-w-[920px]">
             <thead>
               <tr>
-                <th className="p-3">Cliente</th>
-                <th className="p-3">Rol</th>
-                <th className="p-3">Profesional</th>
-                <th className="p-3">Servicio</th>
-                <th className="p-3">Fecha</th>
-                <th className="p-3">Estado</th>
-                {showAcciones && <th className="p-3">Acciones</th>}
+                <th scope="col" className="p-3">Cliente</th>
+                <th scope="col" className="p-3">Rol</th>
+                <th scope="col" className="p-3">Profesional</th>
+                <th scope="col" className="p-3">Servicio</th>
+                <th scope="col" className="p-3">Fecha</th>
+                <th scope="col" className="p-3">Estado</th>
+                {showAcciones && <th scope="col" className="p-3">Acciones</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700/70">

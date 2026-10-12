@@ -9,11 +9,11 @@ export default function ResetSuccess({ email: emailProp }) {
 
   return (
     <section className="auth-screen">
-      <div className="auth-card text-center animate-fade-in">
+      <div className="auth-card min-w-0 text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-400/12 text-emerald-300">
           <FaCheckCircle />
         </div>
-        <h2 className="text-2xl font-bold text-white">Correo enviado</h2>
+        <h2 className="text-2xl font-semibold tracking-tight text-slate-100">Correo enviado</h2>
         <img
           src={enviadoImage}
           alt="Mensaje enviado"
@@ -24,7 +24,7 @@ export default function ResetSuccess({ email: emailProp }) {
         </p>
         <p className="mt-2 break-words text-sm leading-6 text-slate-400">
           Revisa la bandeja de entrada de{" "}
-          <span className="font-medium text-cyan-200">{email}</span>
+          <span className="font-medium text-indigo-300">{email}</span>
         </p>
         <Link
           to="/login"

@@ -6,12 +6,12 @@ export default function ActionButtons({
   const submitDisabled = disabled || isSubmitting;
 
   return (
-    <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6">
+    <div className="flex flex-col justify-end gap-3 border-t border-slate-700/60 pt-5 sm:flex-row">
       <button
         type="reset"
         onClick={onCancel}
         disabled={isSubmitting}
-        className={`rounded-lg border border-slate-600 bg-slate-800/80 px-5 py-2.5 text-white transition ${
+        className={`ui-button ui-button-secondary w-full sm:w-auto ${
           isSubmitting
             ? "cursor-not-allowed opacity-60"
             : "hover:bg-slate-700 cursor-pointer"
@@ -22,10 +22,10 @@ export default function ActionButtons({
       <button
         type="submit"
         disabled={submitDisabled}
-        className={`rounded-lg px-5 py-2.5 text-white transition ${
+        className={`ui-button w-full sm:w-auto ${
           submitDisabled
-            ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-            : "bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500 cursor-pointer shadow-md shadow-cyan-950/30"
+            ? "ui-button-secondary cursor-not-allowed"
+            : "ui-button-primary"
         }`}
       >
         {isSubmitting ? "Guardando..." : "Guardar"}

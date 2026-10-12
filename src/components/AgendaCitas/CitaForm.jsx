@@ -255,8 +255,8 @@ export default function CitaForm({
     >
       <div className="ui-toolbar md:col-span-2 border-b border-slate-700/50 pb-5">
         <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10">
-          <FaCalendarAlt className="text-cyan-300 text-lg" />
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
+          <FaCalendarAlt className="text-indigo-300 text-lg" />
         </div>
           <div>
             <h2 className="text-xl font-semibold text-white">
@@ -279,7 +279,7 @@ export default function CitaForm({
           }`}
         >
           <FaSearch className="search-icon" />
-          <input
+          <input aria-label="Nombre del cliente"
             type="text"
             name="cliente"
             value={nuevaCita.cliente}
@@ -312,7 +312,7 @@ export default function CitaForm({
         )}
 
         {errorCliente && (
-          <span className="text-red-400 text-sm mt-1">{errorCliente}</span>
+          <span className="text-rose-300 text-sm mt-1">{errorCliente}</span>
         )}
       </div>
 

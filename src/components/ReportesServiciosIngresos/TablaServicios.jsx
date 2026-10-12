@@ -18,11 +18,11 @@ export default function TablaServicios({
   return (
     <div className="ui-panel">
       <div className="ui-toolbar mb-6">
-        <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10">
-            <FaCalendarAlt className="text-cyan-300 text-lg" />
+        <div className="flex min-w-0 items-start gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10">
+            <FaCalendarAlt className="text-indigo-300 text-lg" />
           </div>
-          <h3 className="text-xl font-semibold text-white">
+          <h3 className="min-w-0 text-lg font-semibold leading-relaxed text-slate-100 break-words">
             Reporte de Servicios del Día
           </h3>
         </div>
@@ -34,23 +34,23 @@ export default function TablaServicios({
         />
       </div>
 
-      <div className="ui-table-wrap hidden sm:block">
-        <table className="ui-table text-sm sm:text-base">
+      <div role="region" tabIndex={0} aria-label="Servicios registrados: desplazamiento horizontal disponible" className="ui-table-wrap hidden sm:block">
+        <table aria-label="Servicios registrados" className="ui-table min-w-[900px]">
           <thead>
             <tr>
-              <th className="p-4 border-b border-slate-700/70">Fecha</th>
-              <th className="p-4 border-b border-slate-700/70">Cliente</th>
-              <th className="p-4 border-b border-slate-700/70 min-w-[220px]">
+              <th scope="col" className="p-4 border-b border-slate-700/70">Fecha</th>
+              <th scope="col" className="p-4 border-b border-slate-700/70">Cliente</th>
+              <th scope="col" className="p-4 border-b border-slate-700/70 min-w-[220px]">
                 Servicio
               </th>
-              <th className="p-4 border-b border-slate-700/70">Rol</th>
-              <th className="p-4 border-b border-slate-700/70">
+              <th scope="col" className="p-4 border-b border-slate-700/70">Rol</th>
+              <th scope="col" className="p-4 border-b border-slate-700/70">
                 Profesional
               </th>
-              <th className="p-4 border-b border-slate-700/70">
+              <th scope="col" className="p-4 border-b border-slate-700/70">
                 Método de Pago
               </th>
-              <th className="p-4 border-b border-slate-700/70 text-right">
+              <th scope="col" className="p-4 border-b border-slate-700/70 text-right">
                 Monto (S/.)
               </th>
             </tr>
@@ -78,13 +78,13 @@ export default function TablaServicios({
                     <td className="p-4 border-b border-slate-700/70 font-medium text-white">
                       {t.nombre}
                     </td>
-                    <td className="p-4 border-b border-slate-700/70 max-w-[320px] whitespace-normal break-words leading-relaxed text-cyan-100">
+                    <td className="p-4 border-b border-slate-700/70 max-w-[320px] whitespace-normal break-words leading-relaxed text-indigo-100">
                       {Array.isArray(t.servicio)
                         ? t.servicio.join(", ")
                         : t.servicio}
                       <AtencionPendienteBadge record={t} className="mt-1" />
                     </td>
-                    <td className="p-4 border-b border-slate-700/70 text-violet-200">
+                    <td className="p-4 border-b border-slate-700/70 text-indigo-200">
                       {t.rol || "—"}
                     </td>
                     <td className="p-4 border-b border-slate-700/70 text-slate-300">
@@ -92,12 +92,12 @@ export default function TablaServicios({
                     </td>
                     <td className="p-4 border-b border-slate-700/70 text-slate-300">
                       {pagoRelacionado?.metodoPago || (
-                        <span className="text-slate-500 italic">
+                        <span className="text-slate-400 italic">
                           No registrado
                         </span>
                       )}
                     </td>
-                    <td className="p-4 border-b border-slate-700/70 text-right text-emerald-300 font-semibold whitespace-nowrap">
+                    <td className="p-4 border-b border-slate-700/70 text-right text-emerald-300 font-semibold tabular-nums whitespace-nowrap">
                       S/. {monto}
                     </td>
                   </tr>
@@ -134,7 +134,7 @@ export default function TablaServicios({
                 onClick={() => buscarCliente(t)}
                 className="ui-card ui-card-interactive cursor-pointer text-slate-200"
               >
-                <div className="flex justify-between items-center mb-2">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                   <span className="text-sm text-slate-400">
                     {formatearFechaCita(getAttentionDate(t))}
                   </span>
@@ -142,8 +142,8 @@ export default function TablaServicios({
                     S/. {monto}
                   </span>
                 </div>
-                <p className="text-base font-medium">{t.nombre}</p>
-                <p className="text-sm text-cyan-100 leading-relaxed break-words">
+                <p className="text-base font-medium break-words">{t.nombre}</p>
+                <p className="text-sm text-indigo-100 leading-relaxed break-words">
                   {Array.isArray(t.servicio)
                     ? t.servicio.join(", ")
                     : t.servicio}
@@ -161,7 +161,7 @@ export default function TablaServicios({
                   <p>
                     <span className="text-slate-400">Pago: </span>
                     {pagoRelacionado?.metodoPago || (
-                      <span className="text-slate-500 italic">
+                      <span className="text-slate-400 italic">
                         No registrado
                       </span>
                     )}
@@ -181,7 +181,7 @@ export default function TablaServicios({
         <span className="text-slate-300 font-medium text-base sm:text-lg">
           Total ingresos del día:
         </span>
-        <span className="text-emerald-300 font-bold text-lg sm:text-2xl flex items-center gap-2">
+        <span className="flex flex-wrap items-center justify-center gap-2 text-lg font-semibold tabular-nums text-emerald-300 sm:text-2xl">
           <FaMoneyBillWave className="text-emerald-300" /> S/.{" "}
           {Number(totalIngresos).toFixed(2)}
         </span>

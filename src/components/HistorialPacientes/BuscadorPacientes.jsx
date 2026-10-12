@@ -13,7 +13,7 @@ export default function BuscadorPacientes({
     <div className="relative mx-auto max-w-2xl">
       <div className="search-field">
         <FaSearch className="search-icon" />
-        <input
+        <input aria-label="Buscar paciente por nombre"
           type="text"
           value={busqueda}
           onChange={(e) => {

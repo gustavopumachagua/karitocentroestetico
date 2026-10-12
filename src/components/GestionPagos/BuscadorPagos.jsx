@@ -25,7 +25,7 @@ export default function BuscadorPagos({ busqueda, setBusqueda, citas }) {
       <p className="mb-3 text-sm font-semibold text-slate-200">Buscar cita atendida</p>
       <div className="search-field">
         <FaSearch className="search-icon" />
-        <input
+        <input aria-label="Buscar cita atendida por cliente"
           type="text"
           value={busqueda}
           onChange={(e) => {

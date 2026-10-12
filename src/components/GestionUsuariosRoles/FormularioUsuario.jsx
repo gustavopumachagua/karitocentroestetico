@@ -13,8 +13,8 @@ export default function FormularioUsuario({
       className="ui-panel"
     >
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10">
-          <FaUserPlus className="text-cyan-300" />
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
+          <FaUserPlus className="text-indigo-300" />
         </div>
         <h3 className="text-lg sm:text-xl font-semibold text-white">
           Registrar Nuevo Trabajador
@@ -27,7 +27,7 @@ export default function FormularioUsuario({
             htmlFor="nombre"
             className="ui-label flex items-center gap-2"
           >
-            <FaUser className="text-cyan-300" /> Nombre
+            <FaUser className="text-indigo-300" /> Nombre
           </label>
           <input
             id="nombre"
@@ -36,7 +36,7 @@ export default function FormularioUsuario({
             value={nuevoUsuario.nombre}
             onChange={handleChange}
             placeholder="Ej. María López"
-            className="ui-control focus:border-cyan-400/60 focus:ring-cyan-400/15"
+            className="ui-control focus:border-indigo-400/60 focus:ring-indigo-400/15"
             required
           />
         </div>
@@ -46,7 +46,7 @@ export default function FormularioUsuario({
             htmlFor="email"
             className="ui-label flex items-center gap-2"
           >
-            <FaEnvelope className="text-cyan-300" /> Correo
+            <FaEnvelope className="text-indigo-300" /> Correo
           </label>
           <input
             id="email"
@@ -55,7 +55,7 @@ export default function FormularioUsuario({
             value={nuevoUsuario.email}
             onChange={handleChange}
             placeholder="ejemplo@centro.com"
-            className="ui-control focus:border-cyan-400/60 focus:ring-cyan-400/15"
+            className="ui-control focus:border-indigo-400/60 focus:ring-indigo-400/15"
             required
           />
         </div>
@@ -65,14 +65,14 @@ export default function FormularioUsuario({
             htmlFor="rol"
             className="ui-label flex items-center gap-2"
           >
-            <FaUserShield className="text-violet-300" /> Rol
+            <FaUserShield className="text-indigo-300" /> Rol
           </label>
           <CustomSelect
             id="rol"
             name="rol"
             value={nuevoUsuario.rol}
             onChange={handleChange}
-            accent="violet"
+            accent="indigo"
             placeholder="Seleccionar rol"
             options={[
               { value: "", label: "Seleccionar rol" },

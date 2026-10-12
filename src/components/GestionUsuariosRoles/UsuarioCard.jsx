@@ -12,17 +12,17 @@ export default function UsuarioCard({
   return (
     <div className="ui-card ui-card-interactive flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4 w-full sm:w-auto">
-        <div className="hidden h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10 sm:flex">
-          <FaUserCircle className="text-2xl text-cyan-300" />
+        <div className="hidden h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10 sm:flex">
+          <FaUserCircle className="text-2xl text-indigo-300" />
         </div>
         <div className="min-w-0">
-          <p className="text-lg font-semibold text-white">{usuario.nombre}</p>
+          <p className="text-lg font-semibold text-slate-100 break-words">{usuario.nombre}</p>
           <p className="break-all text-slate-400 text-sm">{usuario.email}</p>
 
           <div className="mt-1 flex flex-col sm:flex-row sm:items-center sm:gap-4 text-sm">
             <p>
               <span className="font-semibold text-slate-300">Rol: </span>
-              <span className="capitalize text-cyan-100">{usuario.rol}</span>
+              <span className="capitalize text-indigo-100">{usuario.rol}</span>
             </p>
             <p>
               <span className="font-semibold text-slate-300">Estado: </span>
@@ -38,11 +38,11 @@ export default function UsuarioCard({
         <button
           onClick={() => suspenderUsuario(usuario._id)}
           disabled={loading}
-          className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all duration-300 ${
+          className={`ui-button flex-1 sm:flex-none ${
             usuario.activo
               ? "border border-amber-400/20 bg-amber-500/15 text-amber-100 hover:bg-amber-500/25"
               : "border border-emerald-400/20 bg-emerald-500/15 text-emerald-100 hover:bg-emerald-500/25"
-          } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:scale-[1.02]"}`}
+          } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer "}`}
         >
           {loading ? (
             <FaSpinner className="animate-spin" />
@@ -55,8 +55,8 @@ export default function UsuarioCard({
         <button
           onClick={() => eliminarUsuario(usuario._id)}
           disabled={loading}
-          className={`flex-1 sm:flex-none px-4 py-2 rounded-lg border border-rose-400/20 bg-rose-500/15 text-rose-100 font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:bg-rose-500/25 ${
-            loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:scale-[1.02]"
+          className={`ui-button ui-button-danger flex-1 sm:flex-none ${
+            loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer "
           }`}
         >
           {loading ? (

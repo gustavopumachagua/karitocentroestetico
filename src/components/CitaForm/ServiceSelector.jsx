@@ -22,15 +22,15 @@ export default function ServiceSelector({
   );
 
   return (
-    <div className="col-span-1 md:col-span-2">
-      <label className="mb-3 flex items-center gap-2 text-lg font-semibold text-white">
-        <FaSpa className="text-violet-300" />
+    <div className="min-w-0 col-span-1 md:col-span-2">
+      <label className="ui-label mb-3 flex items-center gap-2 font-semibold">
+        <FaSpa className="text-indigo-300" />
         Servicio(s)
       </label>
 
       <div
-        className={`max-h-72 overflow-y-auto rounded-xl border border-slate-700/70 bg-slate-950/25 p-4 custom-scroll sm:p-5 ${
-          disabled ? "opacity-50 pointer-events-none" : ""
+        className={`min-w-0 max-h-72 overflow-y-auto rounded-xl border border-slate-700 bg-slate-950/25 p-3 custom-scroll sm:p-4 ${
+          disabled ? "pointer-events-none" : ""
         }`}
       >
         {disabled ? (
@@ -62,9 +62,9 @@ export default function ServiceSelector({
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid min-w-0 grid-cols-1 sm:grid-cols-2 gap-3">
               {serviciosFiltrados.length === 0 ? (
-                <p className="text-slate-400 text-sm col-span-2 text-center">
+                <p className="text-slate-400 text-sm col-span-full text-center">
                   No se encontraron servicios
                 </p>
               ) : (
@@ -73,10 +73,10 @@ export default function ServiceSelector({
                   return (
                     <label
                       key={serv}
-                      className={`group flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition ${
+                      className={`group flex min-h-11 min-w-0 cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors ${
                         seleccionado
-                          ? "bg-violet-400/10 border-violet-400/35"
-                          : "bg-slate-950/40 border-slate-700 hover:bg-cyan-400/5 hover:border-cyan-400/25"
+                          ? "bg-indigo-400/10 border-indigo-400/45"
+                          : "bg-slate-950/40 border-slate-700 hover:bg-indigo-400/5 hover:border-indigo-400/40"
                       }`}
                     >
                       <CustomChoice
@@ -86,7 +86,7 @@ export default function ServiceSelector({
                         accent="violet"
                         ariaLabel={`Seleccionar ${serv}`}
                       />
-                      <span className="text-slate-200 capitalize">{serv}</span>
+                      <span className="min-w-0 break-words text-sm text-slate-200 capitalize">{serv}</span>
                     </label>
                   );
                 })

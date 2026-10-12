@@ -80,11 +80,11 @@ export default function EditarItemModal({ show, item, onClose, onSave }) {
   const nuevoTotal = item?.stock + incremento;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 p-4 sm:p-6">
-      <div className="page-panel w-full max-w-lg rounded-xl p-6 sm:p-8 shadow-2xl transition-all">
+    <div className="ui-modal-backdrop">
+      <div role="dialog" aria-modal="true" aria-label="Editar ítem del catálogo" className="ui-modal max-w-lg p-5 sm:p-7">
         <div className="mb-5 flex items-center gap-3 border-b border-slate-700/50 pb-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10">
-            <span className="text-lg font-bold text-emerald-300">+</span>
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10">
+            <span className="text-lg font-semibold text-indigo-300">+</span>
           </div>
           <h3 className="text-lg sm:text-xl font-semibold text-white">
             Editar {item.tipo === "insumo" ? "Insumo" : "Servicio"}
@@ -96,11 +96,13 @@ export default function EditarItemModal({ show, item, onClose, onSave }) {
             <label className="text-slate-300 text-sm mb-2 block">Nombre</label>
             <input
               name="nombre"
+              aria-label="Nombre del insumo o servicio"
+              aria-invalid={Boolean(errors.nombre)}
               type="text"
               value={form.nombre}
               onChange={handleChange}
-              className={`w-full rounded-lg border bg-slate-950/50 px-3 py-2.5 text-slate-200 outline-none transition ${
-                errors.nombre ? "border-rose-400 focus:border-rose-400 focus:ring-rose-400/20" : "border-slate-700 focus:border-emerald-400/60 focus:ring-emerald-400/15"
+              className={`ui-control ${
+                errors.nombre ? "border-rose-400 focus:border-rose-400 focus:ring-rose-400/20" : "border-slate-700 focus:border-indigo-400/60 focus:ring-indigo-400/15"
               } focus:ring-2`}
             />
             {errors.nombre && (
@@ -125,13 +127,15 @@ export default function EditarItemModal({ show, item, onClose, onSave }) {
                 </label>
                 <input
                   name="stock"
+                  aria-label="Cantidad de stock que se añadirá"
+                  aria-invalid={Boolean(errors.stock)}
                   type="number"
                   min="1"
                   placeholder="Ingrese cantidad a añadir"
                   value={form.stock}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border bg-slate-950/50 px-3 py-2.5 text-slate-200 outline-none transition ${
-                    errors.stock ? "border-rose-400 focus:border-rose-400 focus:ring-rose-400/20" : "border-slate-700 focus:border-emerald-400/60 focus:ring-emerald-400/15"
+                  className={`ui-control ${
+                    errors.stock ? "border-rose-400 focus:border-rose-400 focus:ring-rose-400/20" : "border-slate-700 focus:border-indigo-400/60 focus:ring-indigo-400/15"
                   } focus:ring-2`}
                 />
                 {errors.stock && (
@@ -145,7 +149,7 @@ export default function EditarItemModal({ show, item, onClose, onSave }) {
                       {incremento}
                     </span>{" "}
                     unidades →{" "}
-                    <span className="text-cyan-300 font-semibold">
+                    <span className="text-indigo-300 font-semibold">
                       Nuevo total: {nuevoTotal}
                     </span>
                   </p>
@@ -158,12 +162,14 @@ export default function EditarItemModal({ show, item, onClose, onSave }) {
                 </label>
                 <input
                   name="umbral"
+                  aria-label="Umbral de stock"
+                  aria-invalid={Boolean(errors.umbral)}
                   type="number"
                   min="1"
                   value={form.umbral}
                   onChange={handleChange}
-                  className={`w-full rounded-lg border bg-slate-950/50 px-3 py-2.5 text-slate-200 outline-none transition ${
-                    errors.umbral ? "border-rose-400 focus:border-rose-400 focus:ring-rose-400/20" : "border-slate-700 focus:border-emerald-400/60 focus:ring-emerald-400/15"
+                  className={`ui-control ${
+                    errors.umbral ? "border-rose-400 focus:border-rose-400 focus:ring-rose-400/20" : "border-slate-700 focus:border-indigo-400/60 focus:ring-indigo-400/15"
                   } focus:ring-2`}
                 />
                 {errors.umbral && (
@@ -177,17 +183,17 @@ export default function EditarItemModal({ show, item, onClose, onSave }) {
         <div className="flex justify-end gap-3 sm:gap-4 mt-6 sm:mt-8 flex-wrap">
           <button
             onClick={onClose}
-            className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg border border-slate-600 bg-slate-800/80 hover:bg-slate-700 text-white font-medium transition w-full sm:w-auto cursor-pointer"
+            className="ui-button ui-button-secondary w-full sm:w-auto"
           >
             Cancelar
           </button>
           <button
             onClick={handleGuardar}
             disabled={!isValid}
-            className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold transition w-full sm:w-auto ${
+            className={`ui-button w-full sm:w-auto ${
               isValid
-                ? "bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer"
-                : "bg-slate-700 text-slate-400 cursor-not-allowed"
+                ? "ui-button-primary"
+                : "ui-button-secondary cursor-not-allowed"
             }`}
           >
             Guardar

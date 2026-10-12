@@ -34,8 +34,8 @@ export default function ListaTratamientosAnteriores({
   return (
     <div className="page-panel page-panel-pad">
       <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-400/15 bg-violet-400/10">
-          <FaHistory className="text-violet-300" />
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
+          <FaHistory className="text-indigo-300" />
         </div>
         <h4 className="text-lg font-semibold text-white">
           {mostrarAtenciones ? "Otras atenciones" : "Tratamientos anteriores"}
@@ -49,13 +49,13 @@ export default function ListaTratamientosAnteriores({
               <li
                 key={t._id || i}
                 onClick={() => onSeleccionar(t)}
-                className="flex cursor-pointer flex-col gap-2 rounded-xl border border-slate-700/60 bg-slate-950/25 p-3 transition hover:border-cyan-400/25 hover:bg-cyan-400/10 sm:flex-row sm:items-center sm:justify-between"
+                className="flex cursor-pointer flex-col gap-2 rounded-xl border border-slate-700/60 bg-slate-950/25 p-3 transition hover:border-indigo-400/25 hover:bg-indigo-400/10 sm:flex-row sm:items-center sm:justify-between"
               >
                 <span className="text-sm text-slate-300">
                   {getAttentionDate(t) ? formatearFechaCita(getAttentionDate(t)) : "Sin fecha"}
                 </span>
                 <div className="space-y-1 sm:text-right">
-                  <span className="text-sm font-medium leading-relaxed text-cyan-100 break-words">
+                  <span className="text-sm font-medium leading-relaxed text-indigo-100 break-words">
                     {formatearServicios(t.servicio)}
                   </span>
                   <AtencionPendienteBadge record={t} className="block w-fit sm:ml-auto" />

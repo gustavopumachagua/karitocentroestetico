@@ -139,9 +139,8 @@ export default function Perfil({ user, setUser }) {
   return (
     <section className="page-section ui-page">
       <div className="page-stack page-stack-narrow">
-        <div className="ui-panel relative space-y-6 overflow-hidden">
-          <div className="absolute -right-12 -top-16 h-44 w-44 rounded-full bg-cyan-400/10 blur-3xl" />
-          <div className="relative text-center">
+        <div className="ui-panel min-w-0 space-y-6">
+          <div>
             <p className="ui-eyebrow">Configuración de cuenta</p>
             <h1 className="ui-title mt-2">Editar perfil</h1>
             <p className="ui-description mt-2 text-sm">
@@ -149,7 +148,7 @@ export default function Perfil({ user, setUser }) {
             </p>
           </div>
 
-          <div className="relative ui-card flex flex-col items-center py-5">
+          <div className="ui-card flex min-w-0 flex-col items-center py-6 text-center">
             <AvatarUploader
               avatar={avatar}
               setAvatar={(url) => {
@@ -158,7 +157,7 @@ export default function Perfil({ user, setUser }) {
               }}
               userId={userId}
             />
-            <p className="mt-3 text-lg font-semibold text-white">{nombre}</p>
+            <p className="mt-3 max-w-full break-words text-lg font-semibold text-slate-100">{nombre}</p>
             <p className="text-sm text-slate-400">{user?.rol || "Rol"}</p>
           </div>
 
@@ -173,9 +172,9 @@ export default function Perfil({ user, setUser }) {
 
         {isDoctor && (
           <>
-            <div className="ui-panel space-y-4">
-              <div className="text-center">
-                <h2 className="text-xl font-semibold text-white">Registro CMP</h2>
+            <div className="ui-panel min-w-0 space-y-5">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-100">Registro CMP</h2>
                 <p className="ui-description mt-1 text-sm">
                   Número de colegiatura del Colegio Médico del Perú.
                 </p>
@@ -188,9 +187,9 @@ export default function Perfil({ user, setUser }) {
               />
             </div>
 
-            <div className="ui-panel space-y-4">
-              <div className="text-center">
-                <h2 className="text-xl font-semibold text-white">Firma Digital</h2>
+            <div className="ui-panel min-w-0 space-y-5">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-100">Firma Digital</h2>
                 <p className="ui-description mt-1 text-sm">
                   Sube una imagen de tu firma para los documentos clínicos.
                 </p>

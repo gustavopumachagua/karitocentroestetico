@@ -27,20 +27,18 @@ export default function Topbar({
   });
 
   return (
-    <div
-      className="animate-fade-in mb-5 flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 sm:mb-6 sm:gap-4 sm:px-5 sm:py-4"
+    <header
+      className="mb-5 flex min-w-0 items-center justify-between gap-3 rounded-2xl px-3.5 py-4 sm:mb-6 sm:gap-4 sm:px-5"
       style={{
-        background: 'linear-gradient(135deg, rgba(13, 23, 46, 0.86), rgba(7, 13, 29, 0.8))',
-        border: '1px solid rgba(148, 163, 184, 0.12)',
-        boxShadow: '0 14px 34px rgba(0, 0, 0, 0.18)',
-        backdropFilter: 'blur(20px)',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-subtle)',
       }}
     >
       <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-200/80 sm:text-[11px]">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-slate-400 sm:text-[11px]">
           Panel de gestión
         </p>
-        <h1 className="mt-1 break-words text-lg font-semibold tracking-tight text-white sm:text-xl md:text-2xl">
+        <h1 className="mt-1 break-words text-lg font-semibold leading-snug tracking-tight text-slate-100 sm:text-xl md:text-2xl">
           {active}
         </h1>
       </div>
@@ -72,14 +70,18 @@ export default function Topbar({
 
         {/* Mobile menu */}
         <button
-          className="rounded-xl p-2.5 text-white transition-all duration-200 hover:bg-white/[0.06] active:scale-95 md:hidden"
-          style={{ border: '1px solid rgba(148, 163, 184, 0.1)' }}
+          className={`ui-icon-button h-11 w-11 shrink-0 md:hidden ${
+            sidebarOpen
+              ? "fixed right-4 top-4 z-50 bg-[var(--bg-card)] shadow-lg shadow-black/20"
+              : ""
+          }`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          aria-label="Toggle sidebar"
+          aria-label={sidebarOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+          aria-expanded={sidebarOpen}
         >
           {sidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
         </button>
       </div>
-    </div>
+    </header>
   );
 }

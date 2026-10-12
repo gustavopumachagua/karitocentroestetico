@@ -9,7 +9,7 @@ export default function FormSelect({
   disabled,
 }) {
   return (
-    <div className="ui-field">
+    <div className="ui-field min-w-0">
       <label className="ui-label">{label}</label>
       <CustomSelect
         name={name}

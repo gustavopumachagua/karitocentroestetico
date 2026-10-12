@@ -7,26 +7,26 @@ export default function TablaUsuarios({
   loading,
 }) {
   return (
-    <div className="ui-table-wrap hidden md:block">
-      <table className="ui-table text-left">
+    <div role="region" tabIndex={0} aria-label="Usuarios registrados: desplazamiento horizontal disponible" className="ui-table-wrap hidden md:block">
+      <table aria-label="Usuarios registrados" className="ui-table min-w-[720px] text-left">
         <thead>
           <tr>
-            <th className="px-4 py-3">Nombre</th>
-            <th className="px-4 py-3">Correo</th>
-            <th className="px-4 py-3">Rol</th>
-            <th className="px-4 py-3">Estado</th>
-            <th className="px-4 py-3">Acciones</th>
+            <th scope="col" className="px-4 py-3">Nombre</th>
+            <th scope="col" className="px-4 py-3">Correo</th>
+            <th scope="col" className="px-4 py-3">Rol</th>
+            <th scope="col" className="px-4 py-3">Estado</th>
+            <th scope="col" className="px-4 py-3">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {usuarios.map((u) => (
             <tr
               key={u._id}
-              className="border-t border-slate-700/70 bg-slate-950/20 transition hover:bg-cyan-400/5"
+              className="border-t border-slate-700/70 bg-slate-950/20 transition hover:bg-indigo-400/5"
             >
               <td className="px-4 py-3 font-medium text-white">{u.nombre}</td>
               <td className="px-4 py-3 break-all">{u.email}</td>
-              <td className="px-4 py-3 capitalize text-cyan-100">{u.rol}</td>
+              <td className="px-4 py-3 capitalize text-indigo-100">{u.rol}</td>
               <td className="px-4 py-3">
                 {u.activo ? (
                   <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-xs font-semibold text-emerald-300">
@@ -43,7 +43,7 @@ export default function TablaUsuarios({
                 <button
                   onClick={() => suspenderUsuario(u._id)}
                   disabled={loading}
-                  className={`inline-flex items-center gap-2 rounded-lg border border-amber-400/20 bg-amber-500/15 px-3 py-2 text-sm font-medium text-amber-100 transition hover:bg-amber-500/25 ${
+                  className={`ui-button border-amber-400/20 bg-amber-400/10 text-amber-200 hover:bg-amber-400/15 ${
                     loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                   }`}
                 >
@@ -53,7 +53,7 @@ export default function TablaUsuarios({
                 <button
                   onClick={() => eliminarUsuario(u._id)}
                   disabled={loading}
-                  className={`inline-flex items-center gap-2 rounded-lg border border-rose-400/20 bg-rose-500/15 px-3 py-2 text-sm font-medium text-rose-100 transition hover:bg-rose-500/25 ${
+                  className={`ui-button ui-button-danger ${
                     loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                   }`}
                 >

@@ -390,11 +390,11 @@ export default function RegistrarTratamiento() {
     <section className="page-section ui-page">
       <div className="page-stack page-stack-narrow">
         <div className="ui-panel">
-          <div className="mb-6 flex items-center gap-3 border-b border-slate-700/50 pb-5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/10">
-              <FaNotesMedical className="text-cyan-300 text-lg" />
+          <div className="mb-6 flex min-w-0 items-start gap-3 border-b border-slate-700/60 pb-5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10">
+              <FaNotesMedical className="text-indigo-300 text-lg" />
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="ui-eyebrow mb-1">Registro de atención</p>
               <h2 className="text-xl font-semibold text-white">
                 Registrar tratamiento
@@ -461,9 +461,9 @@ export default function RegistrarTratamiento() {
               readOnly
             />
 
-            <div className="rounded-xl border border-slate-700/70 bg-slate-950/25 p-5">
+            <div className="rounded-xl border border-slate-700/60 bg-[var(--surface-subtle)] p-3 sm:p-5">
               <label className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                <FaListUl className="text-cyan-300" />
+                <FaListUl className="text-indigo-300" />
                 Insumos utilizados
               </label>
 
@@ -484,10 +484,10 @@ export default function RegistrarTratamiento() {
                   return (
                     <label
                       key={insumo._id}
-                      className={`group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition border ${
+                      className={`group flex min-w-0 items-start gap-3 p-3 rounded-lg cursor-pointer transition border ${
                         seleccionado
-                          ? "bg-cyan-400/10 border-cyan-400/35"
-                          : "bg-slate-950/40 border-slate-700 hover:bg-cyan-400/5 hover:border-cyan-400/25"
+                          ? "bg-indigo-400/10 border-indigo-400/35"
+                          : "bg-slate-950/40 border-slate-700 hover:bg-indigo-400/5 hover:border-indigo-400/25"
                       }`}
                     >
                       <CustomChoice
@@ -504,7 +504,7 @@ export default function RegistrarTratamiento() {
                         disabled={formBloqueado}
                         ariaLabel={`Seleccionar ${insumo.nombre}`}
                       />
-                      <span className="text-slate-200 capitalize">
+                      <span className="min-w-0 text-sm leading-relaxed text-slate-200 capitalize break-words">
                         {insumo.nombre}
                       </span>
                     </label>

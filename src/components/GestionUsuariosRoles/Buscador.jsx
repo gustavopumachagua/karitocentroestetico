@@ -4,7 +4,7 @@ export default function Buscador({ busqueda, setBusqueda }) {
   return (
     <div className="search-field mb-6">
       <FaSearch className="search-icon" />
-      <input
+      <input aria-label="Buscar usuario por nombre, correo o rol"
         type="text"
         placeholder="Buscar por nombre, correo o rol..."
         value={busqueda}

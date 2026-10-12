@@ -7,14 +7,14 @@ export default function InventarioTable({ data, mostrarSoloBajos, loading }) {
     : data;
 
   return (
-    <section className="ui-panel">
-      <h3 className="text-lg font-semibold text-red-400/90 mb-6 text-center tracking-tight">
+    <section className="ui-panel min-w-0">
+      <h3 className="text-base sm:text-lg font-semibold text-slate-100 mb-6 tracking-tight">
         Estado de Stock de Insumos
       </h3>
 
       {loading ? (
-        <div className="overflow-hidden rounded-xl">
-          <table className="min-w-full">
+        <div className="ui-table-shell overflow-x-auto rounded-xl">
+          <table className="min-w-[360px] w-full">
             <thead>
               <tr className="border-b border-white/[0.06]">
                 {["Insumo", "Cantidad", "Estado"].map((h) => (
@@ -32,18 +32,18 @@ export default function InventarioTable({ data, mostrarSoloBajos, loading }) {
           </table>
         </div>
       ) : inventarioFiltrado.length === 0 ? (
-        <p className="flex items-center justify-center gap-2 py-8 text-center text-slate-500 italic text-sm">
+        <p className="flex items-center justify-center gap-2 py-8 text-center text-slate-400 text-sm">
           {mostrarSoloBajos && <FaCheckCircle className="text-emerald-400" />}
           {mostrarSoloBajos
             ? "Todos los insumos tienen stock suficiente."
             : "No hay insumos registrados en el inventario."}
         </p>
       ) : (
-        <div className="overflow-y-auto max-h-[420px] rounded-xl" style={{ scrollbarWidth: 'thin' }}>
-          <table className="min-w-full border-collapse text-slate-200 text-sm">
+        <div className="ui-table-shell overflow-auto max-h-[420px] rounded-xl custom-scroll">
+          <table className="min-w-[360px] w-full border-collapse text-slate-200 text-sm">
             <thead>
-              <tr className="uppercase text-slate-500 text-xs sticky top-0 z-10"
-                style={{ background: 'rgba(15, 23, 48, 0.95)', borderBottom: '1px solid rgba(148, 163, 184, 0.08)' }}
+              <tr className="text-slate-300 text-xs sticky top-0 z-10"
+                style={{ background: 'var(--surface-raised, #1E293B)', borderBottom: '1px solid var(--line-soft, #2B3648)' }}
               >
                 <th className="p-3 text-left font-semibold">Insumo</th>
                 <th className="p-3 text-center font-semibold">Cantidad</th>
@@ -55,19 +55,19 @@ export default function InventarioTable({ data, mostrarSoloBajos, loading }) {
                 <tr
                   key={i}
                   className="transition-colors hover:bg-white/[0.03]"
-                  style={{ borderBottom: '1px solid rgba(148, 163, 184, 0.05)' }}
+                  style={{ borderBottom: '1px solid var(--line-soft, #2B3648)' }}
                 >
                   <td className="p-3 font-medium">{item.insumo}</td>
-                  <td className="p-3 text-center">{item.cantidad}</td>
+                  <td className="p-3 text-center tabular-nums">{item.cantidad}</td>
                   <td className="p-3 text-center">
                     {item.cantidad < item.umbral ? (
-                      <span className="inline-flex items-center gap-1.5 text-red-400 font-semibold text-xs px-2.5 py-1 rounded-lg"
-                        style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.15)' }}
+                      <span className="inline-flex items-center whitespace-nowrap gap-1.5 text-amber-300 font-semibold text-xs px-2.5 py-1 rounded-lg"
+                        style={{ background: 'rgba(251, 191, 36, 0.08)', border: '1px solid rgba(251, 191, 36, 0.2)' }}
                       >
                         <FaExclamationTriangle className="text-[10px]" /> Bajo
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 text-emerald-400 font-semibold text-xs px-2.5 py-1 rounded-lg"
+                      <span className="inline-flex items-center whitespace-nowrap gap-1.5 text-emerald-300 font-semibold text-xs px-2.5 py-1 rounded-lg"
                         style={{ background: 'rgba(52, 211, 153, 0.08)', border: '1px solid rgba(52, 211, 153, 0.15)' }}
                       >
                         <FaCheckCircle className="text-[10px]" /> OK

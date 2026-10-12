@@ -11,7 +11,7 @@ export default function BuscadorClientes({
       <p className="mb-3 text-sm font-semibold text-slate-200">Buscar cliente</p>
       <div className="search-field">
         <FaSearch className="search-icon" />
-        <input
+        <input aria-label="Buscar cliente por nombre"
           type="text"
           placeholder="Buscar cliente..."
           value={busqueda}

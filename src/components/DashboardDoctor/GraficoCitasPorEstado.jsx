@@ -3,12 +3,12 @@ import PieChartCard from "./PieChartCard";
 
 export default function GraficoCitasPorEstado({ data }) {
   const estadoColors = {
-    Atendido: "#10B981",
-    Cancelado: "#EF4444",
-    Aplazado: "#F59E0B",
+    Atendido: "var(--chart-teal, #5FB9AE)",
+    Cancelado: "var(--chart-rose, #D98F9D)",
+    Aplazado: "var(--chart-amber, #E0B96B)",
   };
 
-  const colors = data.map((d) => estadoColors[d.name] || "#9CA3AF");
+  const colors = data.map((d) => estadoColors[d.name] || "var(--chart-slate, #93A7BF)");
 
   return (
     <PieChartCard

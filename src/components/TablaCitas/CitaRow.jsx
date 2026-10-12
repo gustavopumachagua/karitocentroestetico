@@ -30,7 +30,7 @@ export function CitaRow({
             {cita.servicio.map((serv, idx) => (
               <span
                 key={idx}
-                className="rounded-full border border-cyan-400/15 bg-cyan-300/12 px-2 py-1 text-xs font-medium text-cyan-100"
+                className="rounded-full border border-indigo-400/15 bg-indigo-300/12 px-2 py-1 text-xs font-medium text-indigo-100"
               >
                 {serv}
               </span>

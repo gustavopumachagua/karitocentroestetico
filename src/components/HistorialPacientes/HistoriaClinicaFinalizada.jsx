@@ -113,7 +113,7 @@ export default function HistoriaClinicaFinalizada({ paciente }) {
       <div className="glass-card p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-400/10">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-400/10">
               <FaFileMedical className="text-emerald-300" />
             </div>
             <div>

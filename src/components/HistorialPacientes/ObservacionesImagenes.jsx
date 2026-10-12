@@ -60,11 +60,11 @@ export default function ObservacionesImagenes({ paciente }) {
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4">
       {paciente.observacion && (
         <div className="ui-card p-5">
           <div className="flex items-center gap-2 mb-2">
-            <FaNotesMedical className="text-rose-300" />
+            <FaNotesMedical className="text-indigo-300" />
             <h4 className="font-semibold text-white">Observación</h4>
           </div>
           <p className="italic text-slate-300 text-sm sm:text-base leading-relaxed break-words">
@@ -76,7 +76,7 @@ export default function ObservacionesImagenes({ paciente }) {
       {imagenes.length > 0 && (
         <div className="ui-card p-5">
           <div className="flex items-center gap-2 mb-3">
-            <FaImages className="text-violet-300" />
+            <FaImages className="text-indigo-300" />
             <h4 className="text-white font-medium">
               Imágenes del tratamiento
             </h4>
@@ -88,7 +88,7 @@ export default function ObservacionesImagenes({ paciente }) {
                 key={i}
                 type="button"
                 onClick={() => abrirGaleria(i)}
-                className="group relative h-32 w-full overflow-hidden rounded-lg border border-slate-700/70 bg-slate-950/50 transition duration-300 hover:border-cyan-300/60 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 sm:h-28"
+                className="group relative h-32 w-full overflow-hidden rounded-lg border border-slate-700/70 bg-slate-950/50 transition duration-300 hover:border-indigo-300/60 focus:outline-none focus:ring-2 focus:ring-indigo-300/70 sm:h-28"
                 aria-label={`Ver imagen ${i + 1} del tratamiento`}
               >
                 <ProtectedImage
@@ -106,7 +106,7 @@ export default function ObservacionesImagenes({ paciente }) {
 
       {modalAbierto && imagenSeleccionada && (
         <div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/95 px-3 py-4 backdrop-blur-sm sm:px-6"
+          className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-950/95 px-3 py-4 backdrop-blur-sm sm:px-6"
           onClick={cerrarGaleria}
           role="dialog"
           aria-modal="true"
@@ -123,7 +123,7 @@ export default function ObservacionesImagenes({ paciente }) {
               <button
                 type="button"
                 onClick={cerrarGaleria}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-600/80 bg-slate-900/80 text-slate-100 transition hover:border-cyan-300/70 hover:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 cursor-pointer"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-900/80 text-slate-100 transition hover:border-indigo-300/70 hover:text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-300/70 cursor-pointer"
                 aria-label="Cerrar galería"
                 title="Cerrar"
               >
@@ -136,7 +136,7 @@ export default function ObservacionesImagenes({ paciente }) {
                 <button
                   type="button"
                   onClick={mostrarAnterior}
-                  className="absolute left-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-950/80 text-slate-100 shadow-lg transition hover:border-cyan-300/70 hover:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 sm:left-3 sm:h-12 sm:w-12 cursor-pointer"
+                  className="absolute left-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-950/80 text-slate-100 shadow-lg transition hover:border-indigo-300/70 hover:text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-300/70 sm:left-3 sm:h-12 sm:w-12 cursor-pointer"
                   aria-label="Imagen anterior"
                   title="Anterior"
                 >
@@ -154,7 +154,7 @@ export default function ObservacionesImagenes({ paciente }) {
                 <button
                   type="button"
                   onClick={mostrarSiguiente}
-                  className="absolute right-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-950/80 text-slate-100 shadow-lg transition hover:border-cyan-300/70 hover:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 sm:right-3 sm:h-12 sm:w-12 cursor-pointer"
+                  className="absolute right-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-950/80 text-slate-100 shadow-lg transition hover:border-indigo-300/70 hover:text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-300/70 sm:right-3 sm:h-12 sm:w-12 cursor-pointer"
                   aria-label="Imagen siguiente"
                   title="Siguiente"
                 >

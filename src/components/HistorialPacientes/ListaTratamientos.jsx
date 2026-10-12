@@ -27,24 +27,24 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar, mostrar
     if (sexoNormalizado === "masculino") {
       return {
         Icono: FaMale,
-        color: "text-cyan-300",
-        bg: "bg-cyan-400/10",
-        border: "border-cyan-400/15",
+        color: "text-indigo-300",
+        bg: "bg-indigo-400/10",
+        border: "border-indigo-400/20",
       };
     }
     if (sexoNormalizado === "femenino") {
       return {
         Icono: FaFemale,
-        color: "text-pink-300",
-        bg: "bg-pink-400/10",
-        border: "border-pink-400/15",
+        color: "text-indigo-300",
+        bg: "bg-indigo-400/10",
+        border: "border-indigo-400/20",
       };
     }
     return {
       Icono: FaUser,
-      color: "text-violet-300",
-      bg: "bg-violet-400/10",
-      border: "border-violet-400/15",
+      color: "text-indigo-300",
+      bg: "bg-indigo-400/10",
+      border: "border-indigo-400/20",
     };
   };
 
@@ -67,7 +67,7 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar, mostrar
             <div
               key={t._id || index}
               onClick={() => onSeleccionar(t)}
-              className="ui-card ui-card-interactive glow-border flex min-h-[210px] cursor-pointer flex-col justify-between gap-5 p-5 sm:p-6 group"
+              className="ui-card ui-card-interactive flex min-h-[210px] cursor-pointer flex-col justify-between gap-5 p-5 sm:p-6 group"
             >
               <div className="flex items-start gap-4">
                 <div
@@ -81,7 +81,7 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar, mostrar
                     {t.nombre}
                   </h4>
                   <div className="mt-2 flex items-center gap-2 text-slate-400 text-sm">
-                    <FaCalendarAlt className="text-amber-300 flex-shrink-0" />
+                    <FaCalendarAlt className="text-indigo-300 flex-shrink-0" />
                     <span className="whitespace-normal">
                       {getAttentionDate(t) ? formatearFechaCita(getAttentionDate(t)) : "Sin fecha"}
                     </span>
@@ -92,11 +92,11 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar, mostrar
               <AtencionPendienteBadge record={t} />
 
               <div className="rounded-xl border border-slate-700/60 bg-slate-950/25 p-3">
-                <p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500">
-                  <FaStethoscope className="text-emerald-300" />
+                <p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-400">
+                  <FaStethoscope className="text-indigo-300" />
                   Servicio
                 </p>
-                <p className="text-sm font-medium leading-relaxed text-cyan-100 break-words">
+                <p className="text-sm font-medium leading-relaxed text-indigo-100 break-words">
                   {formatearServicios(t.servicio)}
                 </p>
               </div>

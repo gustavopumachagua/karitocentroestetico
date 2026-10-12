@@ -13,18 +13,18 @@ export default function ResetForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div
-        className={`flex min-h-12 items-stretch overflow-hidden rounded-lg border bg-slate-950/50 transition-colors focus-within:ring-2 ${
+        className={`flex min-h-12 items-stretch overflow-hidden rounded-xl border bg-slate-950/40 transition-colors focus-within:ring-2 ${
           isEmailInvalid
-            ? "border-red-400/70 focus-within:border-red-300 focus-within:ring-red-400/30"
-            : "border-white/10 hover:border-cyan-300/45 hover:bg-slate-900/80 focus-within:border-cyan-300/70 focus-within:ring-cyan-300/20"
+            ? "border-rose-400/70 focus-within:border-rose-300 focus-within:ring-rose-400/25"
+            : "border-slate-700 hover:border-slate-500 focus-within:border-indigo-300 focus-within:ring-indigo-300/20"
         }`}
       >
         <span
           aria-hidden="true"
           className={`flex w-11 shrink-0 items-center justify-center border-r transition-colors ${
             isEmailInvalid
-              ? "border-red-400/25 bg-red-500/5 text-red-300"
-              : "border-white/10 bg-slate-900/40 text-slate-300"
+              ? "border-rose-400/25 text-rose-300"
+              : "border-slate-700 text-slate-400"
           }`}
         >
           <FaEnvelope />
@@ -38,7 +38,7 @@ export default function ResetForm({
           onChange={(e) => setEmail(e.target.value)}
           aria-label="Correo electrónico"
           aria-invalid={isEmailInvalid || undefined}
-          className="min-w-0 flex-1 bg-transparent px-3 py-3 text-slate-100 outline-none placeholder:text-slate-300"
+          className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-400"
         />
       </div>
 

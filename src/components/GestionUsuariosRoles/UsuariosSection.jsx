@@ -23,8 +23,8 @@ export default function UsuariosSection({
     <section className="ui-panel">
       <div className="ui-toolbar mb-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-400/15 bg-violet-400/10">
-            <FaUser className="text-violet-300" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
+            <FaUser className="text-indigo-300" />
           </div>
           <h3 className="text-lg font-semibold text-white">
             Usuarios Registrados

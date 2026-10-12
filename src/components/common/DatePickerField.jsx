@@ -9,12 +9,12 @@ registerLocale("es", es);
 
 const accentStyles = {
   cyan: {
-    focus: "focus:border-cyan-400/60 focus:ring-cyan-400/15",
-    icon: "text-cyan-300",
+    focus: "focus:border-indigo-300 focus:ring-indigo-400/20",
+    icon: "text-indigo-300",
   },
   emerald: {
-    focus: "focus:border-emerald-400/60 focus:ring-emerald-400/15",
-    icon: "text-emerald-300",
+    focus: "focus:border-indigo-300 focus:ring-indigo-400/20",
+    icon: "text-indigo-300",
   },
 };
 
@@ -85,7 +85,7 @@ const DateInput = forwardRef(function DateInput(
   const styles = accentStyles[accent] || accentStyles.cyan;
 
   return (
-    <div className="relative w-full">
+    <div className="relative min-w-0 w-full">
       <FaCalendarAlt
         className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm ${styles.icon}`}
       />
@@ -107,7 +107,7 @@ const DateInput = forwardRef(function DateInput(
         required={required}
         tabIndex={tabIndex}
         inputMode="numeric"
-        className={`min-h-11 w-full rounded-lg border border-slate-700 bg-slate-950/50 py-2.5 pl-11 pr-4 text-sm text-slate-200 outline-none transition placeholder:text-slate-500 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 ${styles.focus} ${className}`}
+        className={`ui-control min-h-11 w-full py-2.5 pl-11 pr-4 text-sm text-slate-100 outline-none transition-colors placeholder:text-slate-400 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 ${styles.focus} ${className}`}
       />
     </div>
   );
@@ -136,8 +136,8 @@ function TimeInput({ value = "", onChange, onTimeSelectionComplete }) {
           onValueChange={handleHourChange}
           options={hourOptions}
           size="sm"
-          className="w-full"
-          buttonClassName="rounded-xl border-slate-700/70 bg-slate-950/55"
+          className="min-w-0 w-full"
+          buttonClassName="min-h-11 rounded-xl border-slate-700 bg-slate-950/55"
           menuClassName="max-h-56"
           ariaLabel="Seleccionar hora"
           preventParentOutsideClick
@@ -150,8 +150,8 @@ function TimeInput({ value = "", onChange, onTimeSelectionComplete }) {
           onValueChange={handleMinuteChange}
           options={minuteOptions}
           size="sm"
-          className="w-full"
-          buttonClassName="rounded-xl border-slate-700/70 bg-slate-950/55"
+          className="min-w-0 w-full"
+          buttonClassName="min-h-11 rounded-xl border-slate-700 bg-slate-950/55"
           menuClassName="max-h-56"
           ariaLabel="Seleccionar minuto"
           preventParentOutsideClick
@@ -194,8 +194,8 @@ export default function DatePickerField({
   };
 
   return (
-    <div className={`flex flex-col ${className}`}>
-      {label && <label className="text-sm text-slate-300 mb-2">{label}</label>}
+    <div className={`ui-field min-w-0 flex flex-col ${className}`}>
+      {label && <label className="ui-label mb-2">{label}</label>}
       <DatePicker
         selected={selected}
         onChange={handleDateChange}
@@ -212,7 +212,7 @@ export default function DatePickerField({
         disabled={disabled}
         placeholderText={placeholder}
         autoComplete="off"
-        wrapperClassName="w-full"
+        wrapperClassName="min-w-0 w-full"
         popperClassName="app-datepicker-popper"
         calendarClassName="app-datepicker-calendar"
         showPopperArrow={false}

@@ -9,13 +9,11 @@ export default function FiltrosInventario({
   };
 
   return (
-    <div className="ui-panel mx-auto max-w-4xl">
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-5 gap-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl"
-            style={{ background: 'rgba(129, 140, 248, 0.10)', border: '1px solid rgba(129, 140, 248, 0.15)' }}
-          >
-            <FaFilter className="text-indigo-400 text-sm" />
+    <div className="ui-panel min-w-0 w-full">
+      <div className="flex min-w-0 items-start mb-5 gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="ui-chart-icon">
+            <FaFilter className="text-sm" />
           </div>
           <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight">
             Filtros de Inventario
@@ -23,7 +21,7 @@ export default function FiltrosInventario({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="flex flex-col items-stretch justify-between gap-4">
         <div className="flex items-center gap-3 text-slate-400 text-sm">
           <FaBoxOpen className="text-amber-400" />
           <label>
@@ -34,17 +32,11 @@ export default function FiltrosInventario({
 
         <button
           onClick={handleToggle}
-          className={`px-5 py-2 rounded-xl text-sm font-semibold text-white transition-all duration-300 active:scale-95 ${
+          className={`ui-button ui-button-secondary min-h-11 w-full text-sm ${
             mostrarSoloBajos
-              ? "hover:shadow-red-500/10"
-              : "hover:shadow-indigo-500/10"
+              ? "border-indigo-400/40"
+              : "border-slate-700"
           }`}
-          style={{
-            background: mostrarSoloBajos
-              ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.8), rgba(220, 38, 38, 0.9))'
-              : 'linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(79, 70, 229, 0.9))',
-            border: `1px solid ${mostrarSoloBajos ? 'rgba(239, 68, 68, 0.3)' : 'rgba(99, 102, 241, 0.3)'}`,
-          }}
         >
           {mostrarSoloBajos ? "Ver Todo" : "Ver Solo Bajos"}
         </button>

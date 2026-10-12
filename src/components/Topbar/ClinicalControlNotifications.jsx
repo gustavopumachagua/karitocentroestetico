@@ -75,8 +75,7 @@ export default function ClinicalControlNotifications({ targetPath }) {
           if (!isOpen) updatePopupPosition();
           setIsOpen((open) => !open);
         }}
-        className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border text-slate-200 transition hover:border-cyan-300/40 hover:bg-cyan-400/10 hover:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-300/50"
-        style={{ borderColor: "rgba(148, 163, 184, 0.16)" }}
+        className="ui-icon-button relative h-11 w-11"
         aria-label={
           notificationCount
             ? `${notificationCount} controles próximos`
@@ -88,7 +87,7 @@ export default function ClinicalControlNotifications({ targetPath }) {
       >
         <FiBell size={18} aria-hidden="true" />
         {notificationCount > 0 && (
-          <span className="absolute -right-1.5 -top-1.5 flex min-h-5 min-w-5 items-center justify-center rounded-full border border-slate-950 bg-amber-400 px-1 text-[10px] font-extrabold leading-none text-slate-950 shadow-lg shadow-amber-400/20">
+          <span className="absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full border border-slate-950 bg-indigo-300 px-1 text-[10px] font-bold leading-none text-slate-950">
             {badgeLabel}
           </span>
         )}
@@ -101,16 +100,18 @@ export default function ClinicalControlNotifications({ targetPath }) {
             id={popupId}
             role="dialog"
             aria-label="Notificaciones de próximos controles"
-            className="fixed w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-950/95 shadow-2xl shadow-black/40 backdrop-blur-xl sm:w-96"
+            className="ui-notification-popup fixed flex max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl shadow-black/30"
             style={{
               top: popupPosition.top,
-              right: popupPosition.right,
+              right: `clamp(1rem, ${popupPosition.right}px, max(1rem, calc(100vw - 24rem - 1rem)))`,
               zIndex: 2147483647,
+              maxHeight: "calc(100dvh - 8rem)",
+              background: "var(--bg-card)",
             }}
           >
-            <header className="flex items-start justify-between gap-3 border-b border-slate-700/70 bg-slate-900/80 px-4 py-4">
-            <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-300/20 bg-amber-300/10 text-amber-200">
+            <header className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-700 px-4 py-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-indigo-300/20 bg-indigo-400/10 text-indigo-200">
                 <FiBell aria-hidden="true" />
               </span>
               <div>
@@ -125,14 +126,14 @@ export default function ClinicalControlNotifications({ targetPath }) {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="rounded-lg p-1.5 text-slate-400 transition hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-300/50"
+              className="ui-icon-button h-11 w-11 shrink-0"
               aria-label="Cerrar notificaciones"
             >
               <FiX size={17} />
             </button>
             </header>
 
-            <div className="max-h-[min(26rem,calc(100vh-11rem))] overflow-y-auto p-2">
+            <div className="min-h-0 max-h-[min(26rem,calc(100dvh-11rem))] overflow-y-auto overscroll-contain p-2">
             {isLoading && notificationCount === 0 ? (
               <p className="px-3 py-6 text-center text-sm text-slate-400">
                 Cargando controles…
@@ -153,15 +154,15 @@ export default function ClinicalControlNotifications({ targetPath }) {
               <ul className="space-y-1">
                 {notifications.map((notification) => (
                   <li key={notification.id}>
-                    <article className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-cyan-300/15 bg-cyan-400/10 text-cyan-200">
+                    <article className="flex w-full items-start gap-3 rounded-xl border border-slate-700/60 px-3 py-3 text-left">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-indigo-300/15 bg-indigo-400/10 text-indigo-200">
                         <FiCalendar aria-hidden="true" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium text-white">
+                        <span className="block break-words text-sm font-medium text-white">
                           {notification.patient?.nombre || "Paciente"}
                         </span>
-                        <span className="mt-0.5 block truncate text-xs text-slate-400">
+                        <span className="mt-0.5 block break-words text-xs leading-relaxed text-slate-400">
                           {notification.servicio}
                         </span>
                         <span className="mt-1 block text-xs font-medium text-amber-200">
@@ -176,8 +177,8 @@ export default function ClinicalControlNotifications({ targetPath }) {
             </div>
 
             {notificationCount > 0 && (
-              <footer className="border-t border-slate-700/70 bg-slate-900/60 px-4 py-2.5">
-                <p className="text-[11px] text-slate-500">
+              <footer className="shrink-0 border-t border-slate-700 px-4 py-2.5">
+                <p className="text-[11px] leading-relaxed text-slate-400">
                   Avisos informativos de controles pendientes de coordinar.
                 </p>
               </footer>

@@ -4,22 +4,22 @@ import { FaCheck, FaChevronDown } from "react-icons/fa";
 
 const accentStyles = {
   cyan: {
-    focus: "focus:border-cyan-400/60 focus:ring-cyan-400/15",
-    hover: "hover:bg-cyan-400/10 hover:text-white",
-    active: "bg-cyan-400/15 text-white",
-    icon: "text-cyan-300",
+    focus: "focus:border-indigo-400/60 focus:ring-indigo-400/15",
+    hover: "hover:bg-indigo-400/10 hover:text-white",
+    active: "bg-indigo-400/15 text-white",
+    icon: "text-indigo-300",
   },
   emerald: {
-    focus: "focus:border-emerald-400/60 focus:ring-emerald-400/15",
-    hover: "hover:bg-emerald-400/10 hover:text-white",
-    active: "bg-emerald-400/15 text-white",
-    icon: "text-emerald-300",
+    focus: "focus:border-indigo-400/60 focus:ring-indigo-400/15",
+    hover: "hover:bg-indigo-400/10 hover:text-white",
+    active: "bg-indigo-400/15 text-white",
+    icon: "text-indigo-300",
   },
   violet: {
-    focus: "focus:border-violet-400/60 focus:ring-violet-400/15",
-    hover: "hover:bg-violet-400/10 hover:text-white",
-    active: "bg-violet-400/15 text-white",
-    icon: "text-violet-300",
+    focus: "focus:border-indigo-400/60 focus:ring-indigo-400/15",
+    hover: "hover:bg-indigo-400/10 hover:text-white",
+    active: "bg-indigo-400/15 text-white",
+    icon: "text-indigo-300",
   },
   indigo: {
     focus: "focus:border-indigo-400/60 focus:ring-indigo-400/15",
@@ -30,7 +30,7 @@ const accentStyles = {
 };
 
 const sizeStyles = {
-  sm: "min-h-10 px-3 py-2 text-sm",
+  sm: "min-h-11 px-3 py-2 text-sm",
   md: "min-h-11 px-4 py-2.5 text-sm",
   lg: "min-h-12 px-4 py-3 text-base",
 };
@@ -249,8 +249,9 @@ export default function CustomSelect({
             ref={menuRef}
             id={`${selectId}-listbox`}
             role="listbox"
+            aria-labelledby={selectId}
             style={menuStyle}
-            className={`react-datepicker-ignore-onclickoutside fixed z-[10050] overflow-y-auto rounded-xl border border-slate-700/80 bg-slate-950/95 p-1 shadow-2xl shadow-black/40 backdrop-blur-xl animate-fade-in ${menuClassName}`}
+            className={`react-datepicker-ignore-onclickoutside fixed z-[var(--z-select)] overflow-y-auto rounded-xl border border-slate-600 bg-[var(--surface-raised)] p-1 shadow-xl animate-fade-in ${menuClassName}`}
           >
             {normalizedOptions.length > 0 ? (
               normalizedOptions.map((option, index) => {
@@ -267,7 +268,7 @@ export default function CustomSelect({
                     disabled={option.disabled}
                     onMouseEnter={() => setHighlightedIndex(index)}
                     onClick={() => handleSelect(option)}
-                    className={`react-datepicker-ignore-onclickoutside flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition ${
+                    className={`react-datepicker-ignore-onclickoutside flex w-full items-center justify-between gap-3 min-h-11 rounded-lg px-3 py-2.5 text-left text-sm transition ${
                       selected || highlighted ? styles.active : "text-slate-300"
                     } ${styles.hover} ${
                       option.disabled
@@ -293,7 +294,7 @@ export default function CustomSelect({
       : null;
 
   return (
-    <div className={`relative w-full ${className}`}>
+    <div className={`relative min-w-0 w-full ${className}`}>
       <button
         ref={buttonRef}
         id={selectId}
@@ -305,13 +306,13 @@ export default function CustomSelect({
         disabled={disabled}
         onClick={() => setOpen((current) => !current)}
         onKeyDown={handleKeyDown}
-        className={`flex w-full items-center justify-between gap-3 rounded-lg border border-slate-700 bg-slate-950/50 text-left outline-none transition focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={`flex w-full min-w-0 items-center justify-between gap-3 rounded-lg border border-slate-600 bg-[var(--surface-input)] text-left outline-none transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 ${
           sizeStyles[size] || sizeStyles.md
         } ${styles.focus} ${buttonClassName}`}
       >
         <span
           className={`min-w-0 truncate ${
-            isPlaceholder ? "text-slate-500" : "text-slate-200"
+            isPlaceholder ? "text-slate-400" : "text-slate-200"
           }`}
         >
           {displayLabel}
@@ -319,7 +320,7 @@ export default function CustomSelect({
         <FaChevronDown
           className={`shrink-0 text-xs transition-transform ${
             open ? "rotate-180" : ""
-          } ${disabled ? "text-slate-500" : styles.icon}`}
+          } ${disabled ? "text-slate-400" : styles.icon}`}
         />
       </button>
       {menu}

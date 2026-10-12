@@ -13,27 +13,18 @@ export default function Navbar() {
 
   return (
     <header
-      className="sticky top-0 z-50 shadow-2xl shadow-black/20"
+      className="sticky top-0 z-50"
       style={{
-        background: 'rgba(5, 10, 24, 0.9)',
-        borderBottom: '1px solid rgba(148, 163, 184, 0.1)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
+        background: 'var(--bg-surface)',
+        borderBottom: '1px solid var(--border-subtle)',
       }}
     >
-      {/* Decorative glow line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px"
-        style={{
-          background: 'linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.14), rgba(139, 92, 246, 0.08), transparent)',
-        }}
-      />
-
       <div
-        className={`mx-auto flex max-w-7xl px-4 py-3 transition-all sm:px-6 sm:py-3.5 lg:px-12 xl:px-20
+        className={`mx-auto flex max-w-7xl gap-3 px-4 py-3 sm:px-6 sm:py-3.5 lg:px-12
           ${
             isAuthPage
               ? "justify-center"
-              : "flex-col md:flex-row md:justify-between md:items-center"
+              : "items-center justify-between"
           }`}
       >
         <div>
@@ -41,7 +32,7 @@ export default function Navbar() {
         </div>
 
         {!isAuthPage && (
-          <nav className="hidden md:flex justify-center md:justify-end">
+          <nav aria-label="Acceso al sistema" className="flex shrink-0 justify-end">
             <AccessButton />
           </nav>
         )}

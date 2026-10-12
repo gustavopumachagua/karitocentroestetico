@@ -3,12 +3,10 @@ import Skeleton from "../common/Skeleton";
 
 export default function ResumenCitas({ data, loading }) {
   return (
-    <div className="ui-panel">
-      <div className="flex items-center gap-3 mb-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl"
-          style={{ background: 'rgba(129, 140, 248, 0.10)', border: '1px solid rgba(129, 140, 248, 0.15)' }}
-        >
-          <FaClipboardList className="text-indigo-400 text-lg" />
+    <div className="ui-panel ui-chart-card">
+      <div className="ui-chart-header flex min-w-0 items-start gap-3">
+        <div className="ui-chart-icon">
+          <FaClipboardList className="text-lg" />
         </div>
         <h3 className="text-lg font-semibold text-white tracking-tight">
           Resumen de Citas Total
@@ -25,19 +23,19 @@ export default function ResumenCitas({ data, loading }) {
           ))}
         </div>
       ) : (
-        <ul className="divide-y divide-white/[0.06]">
+        <ul className="divide-y divide-slate-700/60">
           {data.map((cita, i) => (
             <li
               key={i}
-              className="flex justify-between items-center py-3 px-2 rounded-lg transition-colors hover:bg-white/[0.03]"
+              className="flex justify-between items-center gap-4 py-4 px-1 rounded-lg transition-colors hover:bg-white/[0.03]"
             >
               <span className="text-slate-300 font-medium text-sm">{cita.name}</span>
               <span
-                className="font-semibold text-sm px-3 py-1 rounded-lg"
+                className="shrink-0 font-semibold tabular-nums text-lg px-3 py-1 rounded-lg"
                 style={{
-                  background: 'rgba(129, 140, 248, 0.08)',
-                  border: '1px solid rgba(129, 140, 248, 0.15)',
-                  color: '#c7d2fe',
+                  background: 'var(--surface-raised, #1E293B)',
+                  border: '1px solid var(--line-strong, #2B3648)',
+                  color: 'var(--text-primary, #F1F5F9)',
                 }}
               >
                 {cita.value}

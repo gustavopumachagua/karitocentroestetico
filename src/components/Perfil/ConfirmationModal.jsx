@@ -23,23 +23,17 @@ export default function ConfirmationModal({
     ) : type === "error" ? (
       <FaTimesCircle className="text-rose-300 text-4xl sm:text-5xl" />
     ) : (
-      <FaInfoCircle className="text-cyan-300 text-4xl sm:text-5xl" />
+      <FaInfoCircle className="text-sky-300 text-4xl sm:text-5xl" />
     );
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="ui-modal-backdrop">
       <div
-        className="
-          page-panel
-          px-5 py-6 sm:px-8 sm:py-8
-          rounded-xl
-          shadow-2xl
-          text-center
-          max-w-xs sm:max-w-md w-[90%] sm:w-full
-          space-y-4 sm:space-y-5
-          transform transition-all
-          animate-fadeInUp
-        "
+        role="dialog"
+        aria-modal="true"
+        aria-label="Confirmación del sistema"
+        aria-live="polite"
+        className="ui-modal w-full max-w-md space-y-4 px-5 py-6 text-center sm:space-y-5 sm:px-8 sm:py-8"
       >
         <div className="flex justify-center">{icon}</div>
         <p className="text-slate-100 text-base sm:text-lg font-medium leading-relaxed break-words">

@@ -37,48 +37,51 @@ export default function ProfileForm({
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
+        <label htmlFor="profile-name" className="ui-label mb-2 block">
           Nombre del perfil
         </label>
         <div
-          className={`flex items-center rounded-lg px-3 py-2 border transition ${
+          className={`flex min-h-12 min-w-0 items-center rounded-xl border bg-slate-950/40 px-3 py-2 transition-colors focus-within:ring-2 ${
             error
-              ? "bg-slate-950/50 border-rose-400"
-              : "bg-slate-950/50 border-slate-700 focus-within:border-cyan-400/60"
+              ? "border-rose-400 focus-within:ring-rose-400/20"
+              : "border-slate-700 focus-within:border-indigo-300 focus-within:ring-indigo-300/20"
           }`}
         >
           <FaUser
-            className={`mr-3 ${error ? "text-rose-300" : "text-cyan-300/80"}`}
+            className={`mr-3 shrink-0 ${error ? "text-rose-300" : "text-slate-400"}`}
+            aria-hidden="true"
           />
           <input
+            id="profile-name"
             type="text"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
             placeholder="Tu nombre"
-            className="w-full bg-transparent outline-none text-slate-100 placeholder:text-slate-600"
+            aria-invalid={Boolean(error)}
+            className="min-w-0 w-full bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-400"
           />
         </div>
         {error && (
-          <p className="text-sm text-rose-300 mt-2 animate-fadeIn">{error}</p>
+          <p role="alert" className="mt-2 text-sm text-rose-300">{error}</p>
         )}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4">
+      <div className="flex flex-col justify-end gap-3 border-t border-slate-700 pt-5 sm:flex-row">
         <button
           type="button"
           onClick={onCancel}
           disabled={isSaving}
-          className="px-4 py-2 rounded-lg border border-slate-600 bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition active:scale-95 cursor-pointer"
+          className="ui-button ui-button-secondary min-h-11"
         >
           Cancelar
         </button>
         <button
           type="submit"
           disabled={!isFormValid || isSaving}
-          className={`px-6 py-2 rounded-lg font-semibold shadow-md transition active:scale-95 ${
+          className={`ui-button min-h-11 px-6 ${
             !isFormValid || isSaving
-              ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500 text-white cursor-pointer"
+              ? "ui-button-secondary cursor-not-allowed"
+              : "ui-button-primary"
           }`}
         >
           {isSaving ? "Guardando..." : "Guardar cambios"}

@@ -16,7 +16,7 @@ export default function ModalRegistrarPago({
 
   return (
     <div className="ui-modal-backdrop z-[1000]">
-      <div className="ui-modal relative max-w-lg p-6 sm:p-8">
+      <div role="dialog" aria-modal="true" aria-label="Registrar pago" className="ui-modal relative max-w-lg p-5 sm:p-7">
         <button
           onClick={onCancelar}
           className="ui-icon-button absolute right-4 top-4"
@@ -25,7 +25,7 @@ export default function ModalRegistrarPago({
           <FaTimes size={18} />
         </button>
 
-        <h3 className="text-xl sm:text-2xl font-bold text-emerald-300 mb-6 text-center sm:text-left">
+        <h3 className="mb-6 pr-12 text-xl font-semibold text-slate-100 break-words sm:text-2xl">
           Registrar Pago de {citaSeleccionada.cliente}
         </h3>
 
@@ -43,12 +43,13 @@ export default function ModalRegistrarPago({
               </span>
               <input
                 type="number"
+                aria-label={`Precio de ${serv.nombre} en soles`}
                 min="0"
                 step="0.01"
                 value={serv.precio}
                 onChange={(e) => onPrecioChange(index, e.target.value)}
                 placeholder="Precio (S/)"
-                className="w-full sm:w-36 rounded-lg border border-slate-700 bg-slate-950/50 p-2 text-white text-sm outline-none transition focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/15"
+                className="ui-control tabular-nums sm:w-36 sm:shrink-0"
               />
             </div>
           ))}
@@ -61,7 +62,7 @@ export default function ModalRegistrarPago({
           <CustomSelect
             value={metodoPago}
             onValueChange={onMetodoPagoChange}
-            accent="emerald"
+            ariaLabel="Método de pago"
             placeholder="Seleccionar..."
             options={[
               { value: "", label: "Seleccionar..." },
@@ -77,7 +78,7 @@ export default function ModalRegistrarPago({
           <span className="font-semibold text-slate-200 text-lg sm:text-xl">
             Monto Total:
           </span>
-          <span className="text-emerald-300 font-bold text-2xl sm:text-3xl flex items-center justify-center gap-2">
+          <span className="flex flex-wrap items-center justify-center gap-2 text-2xl font-semibold tabular-nums text-emerald-300 sm:text-3xl">
             <FaMoneyBillWave />
             S/ {Number(total || 0).toFixed(2)}
           </span>

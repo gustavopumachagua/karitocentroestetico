@@ -7,6 +7,7 @@ import GraficoTratamientos from "../../components/DashboardDoctor/GraficoTratami
 import GraficoCitasPorEstado from "../../components/DashboardDoctor/GraficoCitasPorEstado";
 import GraficoInsumos from "../../components/DashboardDoctor/GraficoInsumos";
 import { belongsToProfessionalRole } from "../../utils/professionalOwnership";
+import { CHART_COLORS } from "../../components/DashboardDoctor/chartTheme";
 
 const toTextList = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -46,7 +47,7 @@ export default function MisReportes() {
     [],
   );
 
-  const COLORS = ["#34D399", "#FBBF24", "#EF4444", "#60A5FA", "#8B5CF6"];
+  const COLORS = CHART_COLORS;
 
   useEffect(() => {
     void recargarCitas();
@@ -206,7 +207,7 @@ export default function MisReportes() {
   return (
     <section className="page-section ui-page">
       <div className="page-stack">
-        <div className="ui-panel p-2 sm:p-3">
+        <div className="min-w-0">
           <FiltrosReportes
             filtroAnio={filtroAnio}
             setFiltroAnio={setFiltroAnio}
@@ -215,7 +216,7 @@ export default function MisReportes() {
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
+        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
           <GraficoCitasEvolucion data={citasEvolucion} anio={filtroAnio} />
           <GraficoTratamientos
             data={tratamientosDistribucion}

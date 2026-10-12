@@ -6,23 +6,25 @@ export default function Paginacion({
   cambiarPagina,
 }) {
   return (
-    <div className="flex justify-center items-center gap-4 mt-6">
+    <div className="mt-5 flex min-w-0 flex-wrap items-center justify-center gap-2 sm:gap-3">
       <button
         onClick={() => cambiarPagina(paginaActual - 1)}
         disabled={paginaActual === 1}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700/70 bg-slate-950/35 text-cyan-100 transition hover:border-cyan-400/35 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+        aria-label="Página anterior"
+        className="ui-icon-button shrink-0"
       >
         <FaArrowLeft />
       </button>
 
-      <span className="rounded-lg border border-slate-700/70 bg-slate-950/25 px-3 py-2 text-sm text-slate-300">
+      <span aria-live="polite" className="px-1 py-2 text-center text-sm tabular-nums text-slate-300 sm:px-3">
         Página {paginaActual} de {totalPaginas}
       </span>
 
       <button
         onClick={() => cambiarPagina(paginaActual + 1)}
         disabled={paginaActual === totalPaginas}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700/70 bg-slate-950/35 text-cyan-100 transition hover:border-cyan-400/35 hover:bg-cyan-400/10 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+        aria-label="Página siguiente"
+        className="ui-icon-button shrink-0"
       >
         <FaArrowRight />
       </button>

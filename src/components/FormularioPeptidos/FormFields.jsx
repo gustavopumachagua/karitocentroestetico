@@ -17,7 +17,7 @@ export function FormStepProvider({ section, children }) {
 }
 
 const CONTROL_CLASS_NAME =
-  "ui-control w-full rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2.5 text-slate-100 placeholder:text-slate-600 outline-none transition focus:border-cyan-400/60";
+  "ui-control";
 
 /**
  * Keeps a positive decimal value while the user is typing. Commas are
@@ -43,15 +43,15 @@ export function FormHeader({ section, title }) {
   const activeSection = useContext(FormStepContext);
 
   return (
-    <div className="ui-card space-y-1 border-b border-slate-700/50 px-4 py-4 text-center sm:px-6">
-      <p className="ui-eyebrow justify-center">Formulario clínico</p>
-      <h1 className="text-lg font-bold tracking-wide text-white sm:text-xl">
+    <div className="mb-6 space-y-1 border-b border-slate-700 pb-5 text-left">
+      <p className="ui-eyebrow">Formulario clínico</p>
+      <h1 className="text-sm font-medium text-slate-300">
         {FORM_TITLE}
       </h1>
-      <p className="text-xs sm:text-sm text-cyan-300/80 font-medium">
+      <p className="text-xs text-slate-400">
         {FORM_SUBTITLE}
       </p>
-      <h2 className="text-base sm:text-lg font-semibold text-white pt-2">
+      <h2 className="pt-3 text-lg font-semibold tracking-tight text-slate-100 sm:text-xl">
         {activeSection || section}. {title}
       </h2>
     </div>
@@ -79,6 +79,7 @@ export function TextField({
         {required && <span className="text-rose-400 ml-1">*</span>}
       </label>
       <input
+        aria-label={label}
         type={type}
         name={name}
         value={value}
@@ -88,7 +89,7 @@ export function TextField({
         min={min}
         max={max}
         required={required}
-        className="ui-control w-full rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2.5 text-slate-100 placeholder:text-slate-600 outline-none transition focus:border-cyan-400/60 disabled:opacity-50"
+        className="ui-control disabled:opacity-100"
       />
     </div>
   );
@@ -110,12 +111,13 @@ export function TextAreaField({
         {label}
       </label>
       <textarea
+        aria-label={label}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
         rows={rows}
-        className="ui-control w-full resize-none rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2.5 text-slate-100 placeholder:text-slate-600 outline-none transition focus:border-cyan-400/60"
+        className="ui-control w-full resize-none rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2.5 text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-indigo-400/60"
       />
     </div>
   );
@@ -192,15 +194,16 @@ export function DniField({ label, name, value, onChange, className = "" }) {
         inputMode="numeric"
         pattern="[0-9]*"
         minLength={8}
+        aria-label={label}
         maxLength={8}
         required
         name={name}
         value={value}
         onChange={handleChange}
         placeholder="00000000"
-        className="ui-control w-full rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2.5 text-slate-100 placeholder:text-slate-600 outline-none transition focus:border-cyan-400/60 tracking-widest"
+        className="ui-control tracking-widest"
       />
-      <span className="text-xs text-slate-500">{value.length}/8 dígitos</span>
+      <span className="text-xs text-slate-400">{value.length}/8 dígitos</span>
     </div>
   );
 }
@@ -276,6 +279,7 @@ export function AgeField({
         min={min}
         max={max}
         maxLength={3}
+        aria-label={label}
         required
         name={name}
         data-form-field={name}
@@ -285,13 +289,13 @@ export function AgeField({
         placeholder="años"
         aria-invalid={Boolean(message)}
         aria-describedby={`${name}-age-help`}
-        className={`ui-control w-full rounded-lg bg-slate-950/50 border px-3 py-2.5 text-slate-100 placeholder:text-slate-600 outline-none transition focus:border-cyan-400/60 ${
+        className={`ui-control w-full rounded-lg bg-slate-950/50 border px-3 py-2.5 text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-indigo-400/60 ${
           message ? "border-rose-400/80" : "border-slate-700"
         }`}
       />
       <span
         id={`${name}-age-help`}
-        className={`text-xs ${message ? "text-rose-300" : "text-slate-500"}`}
+        className={`text-xs ${message ? "text-rose-300" : "text-slate-400"}`}
         role={message ? "alert" : undefined}
       >
         {message || `Edad mínima: ${min} años`}
@@ -322,9 +326,9 @@ export function RadioGroup({
         {options.map((opt) => (
           <label
             key={opt}
-          className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
+          className={`ui-choice-label inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
               value === opt
-                ? "border-cyan-400/50 bg-cyan-400/10 text-cyan-100"
+                ? "border-indigo-400/50 bg-indigo-400/10 text-indigo-100"
                 : "border-slate-700 bg-slate-950/30 text-slate-300 hover:border-slate-600"
             } ${disabled ? "cursor-not-allowed opacity-75" : "cursor-pointer"}`}
           >
@@ -335,15 +339,15 @@ export function RadioGroup({
               checked={value === opt}
               onChange={onChange}
               disabled={disabled}
-              className="hidden"
+              className="peer sr-only"
             />
             <span
               className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                value === opt ? "border-cyan-400" : "border-slate-500"
+                value === opt ? "border-indigo-400" : "border-slate-500"
               }`}
             >
               {value === opt && (
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                <span className="w-2 h-2 rounded-full bg-indigo-400" />
               )}
             </span>
             {opt}
@@ -353,11 +357,12 @@ export function RadioGroup({
       {otherName && value === "Otro" && !disabled && (
         <input
           type="text"
+          aria-label={`${label}: especifique otra opción`}
           name={otherName}
           value={otherValue}
           onChange={onOtherChange}
           placeholder="Especifique..."
-          className="ui-control mt-1 w-full rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 outline-none transition focus:border-cyan-400/60"
+          className="ui-control mt-1 w-full rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-indigo-400/60"
         />
       )}
     </div>
@@ -392,9 +397,9 @@ export function CheckboxGroup({
         {options.map((opt) => (
           <label
             key={opt}
-          className={`inline-flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
+          className={`ui-choice-label inline-flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
               values.includes(opt)
-                ? "border-cyan-400/50 bg-cyan-400/10 text-cyan-100"
+                ? "border-indigo-400/50 bg-indigo-400/10 text-indigo-100"
                 : "border-slate-700 bg-slate-950/30 text-slate-300 hover:border-slate-600"
             }`}
           >
@@ -403,11 +408,11 @@ export function CheckboxGroup({
               name={name}
               checked={values.includes(opt)}
               onChange={() => handleToggle(opt)}
-              className="hidden"
+              className="peer sr-only"
             />
             <span
               className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                values.includes(opt) ? "border-cyan-400 bg-cyan-400" : "border-slate-500"
+                values.includes(opt) ? "border-indigo-400 bg-indigo-400" : "border-slate-500"
               }`}
             >
               {values.includes(opt) && (
@@ -423,11 +428,12 @@ export function CheckboxGroup({
       {otherName && values.includes("Otros") && (
         <input
           type="text"
+          aria-label={`${label}: especifique otras opciones`}
           name={otherName}
           value={otherValue}
           onChange={onOtherChange}
           placeholder="Especifique..."
-          className="ui-control mt-1 w-full rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 outline-none transition focus:border-cyan-400/60"
+          className="ui-control mt-1 w-full rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-indigo-400/60"
         />
       )}
     </div>
@@ -445,9 +451,9 @@ export function YesNoField({ label, name, value, onChange, className = "" }) {
         {["No", "Sí"].map((opt) => (
           <label
             key={opt}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer transition text-sm ${
+            className={`ui-choice-label inline-flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer transition text-sm ${
               value === opt
-                ? "border-cyan-400/50 bg-cyan-400/10 text-cyan-100"
+                ? "border-indigo-400/50 bg-indigo-400/10 text-indigo-100"
                 : "border-slate-700 bg-slate-950/30 text-slate-300 hover:border-slate-600"
             }`}
           >
@@ -457,15 +463,15 @@ export function YesNoField({ label, name, value, onChange, className = "" }) {
               value={opt}
               checked={value === opt}
               onChange={onChange}
-              className="hidden"
+              className="peer sr-only"
             />
             <span
               className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                value === opt ? "border-cyan-400" : "border-slate-500"
+                value === opt ? "border-indigo-400" : "border-slate-500"
               }`}
             >
               {value === opt && (
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                <span className="w-2 h-2 rounded-full bg-indigo-400" />
               )}
             </span>
             {opt}
@@ -489,21 +495,21 @@ export function FormNavigation({
   return (
     <div className="ui-toolbar mt-6 flex flex-col gap-4 border-t border-slate-700/50 pt-5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-col gap-1">
-        <span className="text-xs text-slate-500">
+        <span className="text-xs text-slate-400">
           Paso {currentStep + 1} de {totalSteps}
         </span>
         {!isValid && (
-          <span className="text-xs text-amber-300/80 animate-pulse">
+          <span className="text-xs text-amber-300">
             Complete todos los campos requeridos
           </span>
         )}
       </div>
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         {!isFirst && (
           <button
             type="button"
             onClick={onPrev}
-            className="ui-button ui-button-secondary rounded-lg border border-slate-600 bg-slate-800/80 px-5 py-2.5 text-sm font-medium text-slate-200 transition active:scale-95"
+            className="ui-button ui-button-secondary"
           >
             Anterior
           </button>
@@ -512,9 +518,9 @@ export function FormNavigation({
           type="button"
           onClick={onNext}
           disabled={!isValid}
-            className={`ui-button rounded-lg px-5 py-2.5 text-sm font-semibold shadow-md transition active:scale-95 ${
+            className={`ui-button ${
               isValid
-              ? "ui-button-primary bg-gradient-to-r from-cyan-600 to-violet-600 text-white hover:from-cyan-500 hover:to-violet-500"
+              ? "ui-button-primary"
               : "bg-slate-700 text-slate-400 cursor-not-allowed"
           }`}
         >
@@ -533,13 +539,13 @@ export function StepProgress({ currentStep, totalSteps, steps }) {
         <span className="text-xs text-slate-400">
           Sección {steps[currentStep].section}
         </span>
-        <span className="text-xs text-slate-500">
+        <span className="text-xs text-slate-400">
           {currentStep + 1}/{totalSteps}
         </span>
       </div>
       <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-cyan-500 to-violet-500 rounded-full transition-all duration-500 ease-out"
+          className="h-full rounded-full bg-indigo-400 transition-[width] duration-200 ease-out"
           style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
         />
       </div>

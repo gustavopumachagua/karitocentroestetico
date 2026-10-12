@@ -59,9 +59,9 @@ const ChangePasswordForm = ({
       />
 
       <div className="ui-card p-3">
-        <div className="mb-2 flex items-center justify-between gap-3 text-xs">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs">
           <span className="font-semibold text-slate-300">{strengthLabel}</span>
-          <span className={hasSpaces ? "text-red-300" : "text-cyan-200"}>
+          <span className={hasSpaces ? "text-rose-300" : "text-indigo-200"}>
             Sin espacios
           </span>
         </div>
@@ -70,13 +70,13 @@ const ChangePasswordForm = ({
             <span
               key={item}
               className={`h-1.5 rounded-full ${
-                passwordScore > item ? "bg-cyan-300" : "bg-slate-700"
+                passwordScore > item ? "bg-indigo-300" : "bg-slate-700"
               }`}
             />
           ))}
         </div>
         <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-slate-400">
-          <FaCheckCircle className="mt-0.5 flex-shrink-0 text-cyan-300" />
+          <FaCheckCircle className="mt-0.5 flex-shrink-0 text-indigo-300" aria-hidden="true" />
           Utiliza al menos 6 caracteres. Puedes mezclar mayúsculas, números y
           símbolos para mejorarla.
         </p>

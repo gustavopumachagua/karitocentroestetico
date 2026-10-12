@@ -18,8 +18,8 @@ const LoginForm = ({
   return (
     <>
       {errors.general && (
-        <div className="ui-card flex items-center justify-center gap-2 border-red-400/30 bg-red-500/10 p-3 text-center text-sm text-red-200 animate-fade-in">
-          <FaExclamationCircle />
+        <div role="alert" className="mb-5 flex items-start gap-2 rounded-xl border border-rose-400/30 bg-rose-400/10 p-3 text-sm leading-relaxed text-rose-200">
+          <FaExclamationCircle className="mt-0.5 shrink-0" aria-hidden="true" />
           {errors.general}
         </div>
       )}
@@ -55,10 +55,10 @@ const LoginForm = ({
         </button>
       </form>
 
-      <div className="text-center text-sm text-slate-400">
+      <div className="mt-5 text-center text-sm text-slate-400">
         <Link
           to="/reset-password"
-          className="font-medium text-cyan-200 transition hover:text-cyan-100 hover:underline"
+          className="inline-flex min-h-11 items-center rounded-lg px-2 font-medium text-indigo-300 transition-colors hover:text-indigo-200 hover:underline"
         >
           ¿Has olvidado tu contraseña?
         </Link>

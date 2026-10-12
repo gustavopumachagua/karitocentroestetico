@@ -6,22 +6,15 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { CHART_LEGEND_STYLE, CHART_TOOLTIP_STYLE } from "./chartTheme";
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const item = payload[0];
     return (
       <div
-        style={{
-          background: "rgba(12, 20, 42, 0.95)",
-          border: "1px solid rgba(148, 163, 184, 0.15)",
-          borderRadius: "12px",
-          padding: "10px 14px",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
-          backdropFilter: "blur(12px)",
-          minWidth: "140px",
-          color: "#e2e8f0",
-        }}
+        className="ui-chart-tooltip"
+        style={CHART_TOOLTIP_STYLE}
       >
         <p className="text-sm font-semibold text-indigo-300 mb-1">
           {item.name}
@@ -49,18 +42,14 @@ export default function PieChartCard({
   showLegend = false,
 }) {
   return (
-    <div className="glass-card p-4 sm:p-6 transition-all duration-300">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
-        <div className="flex items-center justify-center sm:justify-start gap-3">
+    <div className="ui-panel ui-chart-card">
+      <div className="ui-chart-header">
+        <div className="flex min-w-0 items-start gap-3">
           {Icon && (
             <div
-              className="flex h-10 w-10 items-center justify-center rounded-xl"
-              style={{
-                background: "rgba(129, 140, 248, 0.10)",
-                border: "1px solid rgba(129, 140, 248, 0.15)",
-              }}
+              className="ui-chart-icon"
             >
-              <Icon className="text-indigo-400 text-lg" />
+              <Icon className="text-lg" />
             </div>
           )}
           <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight">
@@ -69,21 +58,9 @@ export default function PieChartCard({
         </div>
       </div>
 
-      <div className="w-full h-[240px] sm:h-[280px] md:h-[320px]">
+      <div className="ui-chart-body min-w-0 w-full h-[280px] sm:h-[320px] md:h-[360px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <defs>
-              <filter id="pieShadow" x="-10%" y="-10%" width="120%" height="120%">
-                <feDropShadow
-                  dx="0"
-                  dy="2"
-                  stdDeviation="3"
-                  floodColor="#000"
-                  floodOpacity="0.3"
-                />
-              </filter>
-            </defs>
-
             <Pie
               data={data}
               dataKey={dataKey}
@@ -94,15 +71,15 @@ export default function PieChartCard({
               innerRadius="45%"
               paddingAngle={3}
               blendStroke
-              stroke="rgba(5, 10, 24, 0.8)"
+              stroke="var(--surface-default, #161D29)"
               strokeWidth={2}
+              isAnimationActive={false}
             >
               {data.map((entry, i) => (
                 <Cell
                   key={`cell-${i}`}
                   fill={colors[i % colors.length]}
-                  filter="url(#pieShadow)"
-                  className="cursor-pointer transition-all duration-200 hover:opacity-80"
+                  className="transition-opacity duration-150 hover:opacity-90"
                 />
               ))}
             </Pie>
@@ -114,11 +91,7 @@ export default function PieChartCard({
                 layout="horizontal"
                 verticalAlign="bottom"
                 align="center"
-                wrapperStyle={{
-                  fontSize: "13px",
-                  color: "#94a3b8",
-                  marginTop: "12px",
-                }}
+                wrapperStyle={CHART_LEGEND_STYLE}
                 iconType="circle"
               />
             )}

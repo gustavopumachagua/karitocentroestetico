@@ -181,7 +181,7 @@ export default function DashboardGeneral() {
           setFiltroMes={setFiltroMes}
         />
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
           <ResumenCitas data={resumenCitas} />
           <IngresosMensuales
             data={ingresosFacturacion}
@@ -189,10 +189,10 @@ export default function DashboardGeneral() {
             filtroMes={filtroMes}
           />
 
-          <div className="grid grid-cols-1 gap-6 lg:col-span-2 lg:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 gap-5 xl:col-span-2 xl:grid-cols-2 xl:gap-6">
             <MetodosPagoChart data={metodosPago} />
 
-            <div className="flex flex-col gap-6">
+            <div className="flex min-w-0 flex-col gap-5 xl:gap-6">
               <FiltrosInventario
                 mostrarSoloBajos={mostrarSoloBajos}
                 setMostrarSoloBajos={setMostrarSoloBajos}

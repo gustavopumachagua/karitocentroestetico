@@ -79,12 +79,12 @@ export default function DashboardLayout({
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-slate-950/70 backdrop-blur-[1px] md:hidden"
+          className="fixed inset-0 z-20 bg-slate-950/80 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      <main className="app-dashboard-main min-w-0 w-full flex-1 overflow-x-hidden overflow-y-auto p-3 sm:p-5 lg:p-7 xl:p-8">
+      <main className="app-dashboard-main min-w-0 w-full flex-1 overflow-x-hidden overflow-y-auto p-3 sm:p-5 lg:p-6 xl:p-8">
         <Topbar
           active={active}
           sidebarOpen={sidebarOpen}

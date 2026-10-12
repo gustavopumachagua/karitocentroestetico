@@ -32,8 +32,8 @@ export default function AgregarItemForm({
   return (
     <section className="ui-panel">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10">
-          <FaPlus className="text-emerald-300" />
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10">
+          <FaPlus className="text-indigo-300" />
         </div>
         <h3 className="text-lg sm:text-xl font-semibold text-white">
           Agregar Insumo o Servicio
@@ -53,7 +53,8 @@ export default function AgregarItemForm({
                 umbral: "",
               })
             }
-            accent="emerald"
+            accent="indigo"
+            ariaLabel="Tipo de ítem"
             options={[
               { value: "insumo", label: "Insumo" },
               { value: "servicio", label: "Servicio" },
@@ -65,6 +66,8 @@ export default function AgregarItemForm({
           <label className="ui-label">Nombre</label>
           <input
             type="text"
+            aria-label="Nombre del insumo o servicio"
+            aria-invalid={!nombreValido}
             placeholder="Ej: Crema hidratante (50ml)"
             value={nuevo.nombre}
             onChange={handleNombreChange}
@@ -72,18 +75,18 @@ export default function AgregarItemForm({
             autoComplete="off"
             className={`ui-control ${
               nombreValido ? "border-slate-700" : "border-rose-400"
-            } focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/15`}
+            } focus:border-indigo-400/60 focus:ring-2 focus:ring-indigo-400/15`}
           />
 
           {sugerencias.length > 0 && (
             <div className="relative w-full">
-              <ul className="bg-slate-950/95 border border-slate-700 rounded-lg mt-2 w-full max-h-40 overflow-y-auto shadow-lg z-10 backdrop-blur-xl">
+              <ul className="search-suggestion-list relative mt-2">
                 {sugerencias.map((nombre, index) => (
                   <li
                     key={index}
                     onClick={() => handleSeleccionSugerencia(nombre)}
-                    className={`px-4 py-2 cursor-pointer text-slate-200 hover:bg-emerald-400/10 hover:text-white ${
-                      index === indexSeleccionado ? "bg-emerald-400/10" : ""
+                    className={`search-suggestion-item ${
+                      index === indexSeleccionado ? "bg-indigo-400/10" : ""
                     }`}
                   >
                     {nombre}
@@ -100,16 +103,17 @@ export default function AgregarItemForm({
               <label className="ui-label">Stock</label>
               <input
                 type="number"
+                aria-label="Stock que se añadirá"
                 placeholder="0"
                 value={nuevo.stock}
                 onChange={handleStockChange}
                 min="0"
-                className="ui-control text-center focus:border-emerald-400/60 focus:ring-emerald-400/15"
+                className="ui-control text-center focus:border-indigo-400/60 focus:ring-indigo-400/15"
               />
               {nuevo.stock && Number(nuevo.stock) > 0 && (
                 <p className="text-sm text-slate-400 mt-2">
                   Stock actual:{" "}
-                  <span className="text-cyan-300 font-semibold">
+                  <span className="text-indigo-300 font-semibold">
                     {stockExistente}
                   </span>{" "}
                   + Añadir:{" "}
@@ -130,11 +134,12 @@ export default function AgregarItemForm({
               <label className="ui-label">Umbral</label>
               <input
                 type="number"
+                aria-label="Umbral de stock"
                 placeholder="0"
                 value={nuevo.umbral}
                 onChange={handleUmbralChange}
                 min="0"
-                className="ui-control text-center focus:border-emerald-400/60 focus:ring-emerald-400/15"
+                className="ui-control text-center focus:border-indigo-400/60 focus:ring-indigo-400/15"
               />
             </div>
           </>

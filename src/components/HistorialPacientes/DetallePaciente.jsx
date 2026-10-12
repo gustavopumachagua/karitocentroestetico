@@ -183,23 +183,23 @@ export default function DetallePaciente({
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="min-w-0 space-y-6">
       <div className="ui-page-header flex flex-col gap-4 rounded-2xl px-1 py-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium uppercase tracking-wide text-cyan-300/80">
+          <p className="ui-eyebrow">
             Paciente seleccionado
           </p>
-          <h3 className="mt-1 text-2xl font-semibold text-white">
+          <h3 className="mt-1 text-2xl font-semibold text-slate-100 break-words">
             {paciente.nombre}
           </h3>
           <AtencionPendienteBadge record={paciente} className="mt-3" />
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           {puedeVerHistoriaClinica && esPeptidos && (
             <button
               onClick={handleFormulario}
-              className="ui-button ui-button-secondary inline-flex items-center justify-center gap-2 rounded-lg border border-violet-400/20 bg-violet-400/10 px-4 py-2 text-sm font-medium text-violet-100 transition hover:border-violet-300/40 hover:bg-violet-400/15"
+              className="ui-button ui-button-primary w-full sm:w-auto"
             >
               <FaFileAlt />
               {FORM_BUTTON_LABELS[historyStatus]}
@@ -207,14 +207,14 @@ export default function DetallePaciente({
           )}
           <button
             onClick={onVolver}
-            className="ui-button ui-button-ghost inline-flex items-center justify-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-400/15"
+            className="ui-button ui-button-secondary w-full sm:w-auto"
           >
             <FaArrowLeft /> Volver al listado
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2 xl:gap-6">
         <InfoPaciente paciente={paciente} />
         {esAtencionPendiente ? (
           <div className="ui-card p-5 sm:p-6">

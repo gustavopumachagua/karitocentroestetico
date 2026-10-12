@@ -198,7 +198,7 @@ export default function ReportesServiciosIngresos() {
           <div className="space-y-4">
             <button
               onClick={() => setClienteSeleccionado(null)}
-              className="inline-flex items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-400/15 cursor-pointer"
+              className="ui-button ui-button-secondary w-full sm:w-auto"
             >
               <FaArrowLeft /> Volver al reporte
             </button>

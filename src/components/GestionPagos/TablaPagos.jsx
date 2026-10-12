@@ -21,18 +21,18 @@ export default function TablaPagos({
         </div>
         <span className="ui-status">{citas.length} citas</span>
       </div>
-      <div className="ui-table-wrap hidden md:block">
-        <table className="ui-table min-w-[900px] text-sm lg:text-base">
+      <div role="region" tabIndex={0} aria-label="Citas por cobrar: desplazamiento horizontal disponible" className="ui-table-wrap hidden md:block">
+        <table aria-label="Citas por cobrar" className="ui-table min-w-[900px]">
           <thead>
             <tr>
-              <th className="p-3 text-left">Cliente</th>
-              <th className="p-3 text-left">Profesional</th>
-              <th className="p-3 text-left">Rol</th>
-              <th className="p-3 text-left min-w-[220px]">Servicios</th>
-              <th className="p-3 text-left">Método</th>
-              <th className="p-3 text-left">Monto</th>
-              <th className="p-3 text-left">Fecha</th>
-              <th className="p-3 text-left">Estado</th>
+              <th scope="col" className="p-3 text-left">Cliente</th>
+              <th scope="col" className="p-3 text-left">Profesional</th>
+              <th scope="col" className="p-3 text-left">Rol</th>
+              <th scope="col" className="p-3 text-left min-w-[220px]">Servicios</th>
+              <th scope="col" className="p-3 text-left">Método</th>
+              <th scope="col" className="p-3 text-left">Monto</th>
+              <th scope="col" className="p-3 text-left">Fecha</th>
+              <th scope="col" className="p-3 text-left">Estado</th>
             </tr>
           </thead>
           <tbody>
@@ -50,8 +50,8 @@ export default function TablaPagos({
                   key={cita._id}
                 className={`${
                     bloqueado
-                      ? "opacity-60 cursor-pointer"
-                      : "hover:bg-cyan-400/5 cursor-pointer"
+                      ? "cursor-pointer"
+                      : "hover:bg-indigo-400/5 cursor-pointer"
                   } transition`}
                   onClick={() => {
                     if (bloqueado) onVerTicket(cita);
@@ -75,7 +75,7 @@ export default function TablaPagos({
                   <td className="p-3 capitalize text-slate-300">
                     {pago ? pago.metodoPago : "—"}
                   </td>
-                  <td className="p-3 font-semibold text-green-400">
+                  <td className="p-3 font-semibold tabular-nums text-emerald-300 whitespace-nowrap">
                     S/ {pago ? pago.total.toFixed(2) : "0.00"}
                   </td>
                   <td className="p-3 text-slate-400 whitespace-nowrap">
@@ -83,15 +83,15 @@ export default function TablaPagos({
                   </td>
                   <td className="p-3">
                     {pago?.estadoPago === "pagado" ? (
-                      <span className="flex items-center gap-1 text-green-400 font-semibold">
+                      <span className="flex items-center gap-1 text-emerald-300 font-semibold">
                         <FaCheckCircle /> Pagado
                       </span>
                     ) : pago?.estadoPago === "cancelado" ? (
-                      <span className="flex items-center gap-1 text-red-400 font-semibold">
+                      <span className="flex items-center gap-1 text-rose-300 font-semibold">
                         <FaTimesCircle /> Cancelado
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 text-yellow-400 font-semibold">
+                      <span className="flex items-center gap-1 text-amber-300 font-semibold">
                         <FaClock /> Pendiente
                       </span>
                     )}
@@ -118,16 +118,16 @@ export default function TablaPagos({
               key={cita._id}
               className={`ui-card ui-card-interactive ${
                 bloqueado
-                  ? "opacity-60 cursor-pointer"
-                  : "hover:bg-cyan-400/5 cursor-pointer"
+                  ? "cursor-pointer"
+                  : "hover:bg-indigo-400/5 cursor-pointer"
               } transition`}
               onClick={() => {
                 if (bloqueado) onVerTicket(cita);
                 else onSeleccionCita(cita);
               }}
             >
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="font-semibold text-white text-sm">
+              <div className="mb-2 flex min-w-0 flex-wrap items-start justify-between gap-2">
+                <h3 className="min-w-0 text-sm font-semibold text-slate-100 break-words">
                   {cita.cliente}
                 </h3>
                 <span className="text-slate-400 text-xs">
@@ -136,7 +136,7 @@ export default function TablaPagos({
               </div>
 
               <p className="text-slate-300 text-sm">
-                <span className="font-medium text-cyan-300">
+                <span className="font-medium text-indigo-300">
                   {nombreProfesional || "—"}
                 </span>{" "}
                 ({rolProfesional || "—"})
@@ -146,21 +146,21 @@ export default function TablaPagos({
                 {pago ? pago.servicios.map((s) => s.nombre).join(", ") : "—"}
               </p>
 
-              <div className="flex justify-between items-center mt-3">
-                <span className="text-green-400 font-semibold text-sm">
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                <span className="text-sm font-semibold tabular-nums text-emerald-300">
                   S/ {pago ? pago.total.toFixed(2) : "0.00"}
                 </span>
                 <span className="flex items-center gap-1 text-xs font-semibold">
                   {pago?.estadoPago === "pagado" ? (
-                    <span className="text-green-400 flex items-center gap-1">
+                    <span className="text-emerald-300 flex items-center gap-1">
                       <FaCheckCircle /> Pagado
                     </span>
                   ) : pago?.estadoPago === "cancelado" ? (
-                    <span className="text-red-400 flex items-center gap-1">
+                    <span className="text-rose-300 flex items-center gap-1">
                       <FaTimesCircle /> Cancelado
                     </span>
                   ) : (
-                    <span className="text-yellow-400 flex items-center gap-1">
+                    <span className="text-amber-300 flex items-center gap-1">
                       <FaClock /> Pendiente
                     </span>
                   )}

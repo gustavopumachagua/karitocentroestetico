@@ -58,23 +58,26 @@ export default function AvatarUploader({ avatar, setAvatar, userId }) {
   };
 
   return (
-    <div className="relative flex flex-col items-center">
-      <ProtectedImage
-        src={resolveProtectedImageSource(avatar, { kind: "avatars", userId })}
-        fallbackSrc="/avatar-default.svg"
-        alt="Foto de perfil"
-        className="w-28 h-28 rounded-full border-4 border-cyan-400/40 shadow-md shadow-cyan-950/30 object-cover"
-      />
-      <button
-        type="button"
-        onClick={handleCameraClick}
-        disabled={uploading}
-        className={`absolute bottom-0 right-0 border border-cyan-300/25 bg-cyan-600 hover:bg-cyan-500 text-white p-2 rounded-full shadow-md transition active:scale-95 cursor-pointer ${
-          uploading ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-      >
-        <FaCamera size={16} />
-      </button>
+    <div className="flex max-w-full flex-col items-center">
+      <div className="relative">
+        <ProtectedImage
+          src={resolveProtectedImageSource(avatar, { kind: "avatars", userId })}
+          fallbackSrc="/avatar-default.svg"
+          alt="Foto de perfil"
+          className="h-28 w-28 rounded-full border-2 border-slate-600 object-cover"
+        />
+        <button
+          type="button"
+          onClick={handleCameraClick}
+          disabled={uploading}
+          aria-label="Cambiar foto de perfil"
+          className={`absolute -bottom-1 -right-1 inline-flex h-11 w-11 items-center justify-center rounded-full border-4 border-slate-800 bg-indigo-300 text-slate-950 transition-colors hover:bg-indigo-200 ${
+            uploading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          <FaCamera size={16} />
+        </button>
+      </div>
       <input
         type="file"
         accept="image/*"
@@ -89,7 +92,7 @@ export default function AvatarUploader({ avatar, setAvatar, userId }) {
         </p>
       )}
       {error && (
-        <p className="text-xs text-red-400 mt-2 animate-fadeIn">{error}</p>
+        <p role="alert" className="mt-3 max-w-full break-words text-center text-xs text-rose-300">{error}</p>
       )}
     </div>
   );

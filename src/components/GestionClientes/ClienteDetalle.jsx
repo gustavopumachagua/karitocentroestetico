@@ -136,32 +136,27 @@ export default function ClienteDetalle({
         <div className="ui-panel">
           {/* Header del cliente */}
           <div
-            className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 pb-6"
-            style={{ borderBottom: "1px solid rgba(148, 163, 184, 0.08)" }}
+            className="mb-6 flex min-w-0 flex-col gap-4 border-b border-slate-700/60 pb-6 sm:flex-row sm:items-center"
           >
             <div
-              className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl"
-              style={{
-                background: "rgba(34, 211, 238, 0.08)",
-                border: "1px solid rgba(34, 211, 238, 0.15)",
-              }}
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10"
             >
-              <IconoUsuario className="text-cyan-400 text-2xl" />
+              <IconoUsuario className="text-indigo-400 text-2xl" />
             </div>
 
-            <div className="flex-1">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-2xl font-semibold tracking-tight text-slate-100 break-words sm:text-3xl">
                 {cliente.nombre}
               </h2>
 
               <div className="flex flex-wrap items-center gap-4 mt-2">
                 <p className="text-slate-400 flex items-center gap-2 text-sm">
-                  <FaVenusMars className="text-pink-400/70" /> {cliente.sexo}
+                  <FaVenusMars className="text-slate-400/70" /> {cliente.sexo}
                 </p>
 
                 {cliente.celular && (
                   <p className="text-slate-400 flex items-center gap-2 text-sm">
-                    <FaPhoneAlt className="text-blue-400/70" />{" "}
+                    <FaPhoneAlt className="text-indigo-400/70" />{" "}
                     {cliente.celular}
                   </p>
                 )}
@@ -177,13 +172,9 @@ export default function ClienteDetalle({
           </div>
 
           {/* Título de tratamientos */}
-          <div className="flex items-center gap-3 mb-6">
+          <div className="mb-5 flex min-w-0 flex-wrap items-center gap-3">
             <div
-              className="flex h-10 w-10 items-center justify-center rounded-xl"
-              style={{
-                background: "rgba(129, 140, 248, 0.10)",
-                border: "1px solid rgba(129, 140, 248, 0.15)",
-              }}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10"
             >
               <FaClinicMedical className="text-indigo-400 text-lg" />
             </div>
@@ -191,12 +182,7 @@ export default function ClienteDetalle({
               Historial de atenciones
             </h3>
             <span
-              className="text-xs font-medium px-2.5 py-1 rounded-lg"
-              style={{
-                background: "rgba(129, 140, 248, 0.08)",
-                border: "1px solid rgba(129, 140, 248, 0.15)",
-                color: "#a5b4fc",
-              }}
+              className="ui-status"
             >
               {cliente.tratamientos.length}
             </span>
@@ -231,7 +217,7 @@ export default function ClienteDetalle({
 
       {modalAbierto && imagenSeleccionada && (
         <div
-          className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/95 px-3 py-4 backdrop-blur-sm sm:px-6"
+          className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-950/95 px-3 py-4 backdrop-blur-sm sm:px-6"
           onClick={cerrarGaleria}
           role="dialog"
           aria-modal="true"
@@ -248,7 +234,7 @@ export default function ClienteDetalle({
               <button
                 type="button"
                 onClick={cerrarGaleria}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-600/80 bg-slate-900/80 text-slate-100 transition hover:border-cyan-300/70 hover:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 cursor-pointer"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-900/80 text-slate-100 transition hover:border-indigo-300/70 hover:text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-300/70 cursor-pointer"
                 aria-label="Cerrar galería"
                 title="Cerrar"
               >
@@ -261,7 +247,7 @@ export default function ClienteDetalle({
                 <button
                   type="button"
                   onClick={mostrarAnterior}
-                  className="absolute left-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-950/80 text-slate-100 shadow-lg transition hover:border-cyan-300/70 hover:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 sm:left-3 sm:h-12 sm:w-12 cursor-pointer"
+                  className="absolute left-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-950/80 text-slate-100 shadow-lg transition hover:border-indigo-300/70 hover:text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-300/70 sm:left-3 sm:h-12 sm:w-12 cursor-pointer"
                   aria-label="Imagen anterior"
                   title="Anterior"
                 >
@@ -279,7 +265,7 @@ export default function ClienteDetalle({
                 <button
                   type="button"
                   onClick={mostrarSiguiente}
-                  className="absolute right-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-950/80 text-slate-100 shadow-lg transition hover:border-cyan-300/70 hover:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 sm:right-3 sm:h-12 sm:w-12 cursor-pointer"
+                  className="absolute right-0 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-600/80 bg-slate-950/80 text-slate-100 shadow-lg transition hover:border-indigo-300/70 hover:text-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-300/70 sm:right-3 sm:h-12 sm:w-12 cursor-pointer"
                   aria-label="Imagen siguiente"
                   title="Siguiente"
                 >

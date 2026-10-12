@@ -5,6 +5,7 @@ import GraficoCitasPorRol from "../../components/ReportesAvanzados/GraficoCitasP
 import GraficoIngresosComparativos from "../../components/ReportesAvanzados/GraficoIngresosComparativos";
 import GraficoServiciosRentables from "../../components/ReportesAvanzados/GraficoServiciosRentables";
 import { useProfessionalDirectory } from "../../hooks/useProfessionalDirectory";
+import { CHART_COLORS } from "../../components/DashboardDoctor/chartTheme";
 import {
   getProfessionalDisplayName,
   getProfessionalId,
@@ -65,7 +66,7 @@ export default function ReportesAvanzados() {
   const [filtroAnio, setFiltroAnio] = useState(new Date().getFullYear());
   const [filtroMes, setFiltroMes] = useState("");
 
-  const COLORS = ["#10B981", "#3B82F6", "#F59E0B", "#EF4444", "#8B5CF6"];
+  const COLORS = CHART_COLORS;
 
   useEffect(() => {
     obtenerCitasRef.current = obtenerCitas;
@@ -350,7 +351,7 @@ export default function ReportesAvanzados() {
           setFiltroMes={setFiltroMes}
         />
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
           <GraficoCitasPorRol
             rol="doctor"
             data={citasPorRol.doctor}
@@ -374,7 +375,7 @@ export default function ReportesAvanzados() {
           anio={filtroAnio}
         />
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
           <GraficoServiciosRentables
             rol="doctor"
             data={serviciosRentables.doctor}

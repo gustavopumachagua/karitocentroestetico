@@ -3,14 +3,15 @@ import { FaTrash, FaUpload } from "react-icons/fa";
 export default function ImageUploader({ imagenes, onUpload, onRemove }) {
   return (
     <div>
-      <label className="inline-flex items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-500/15 px-4 py-2.5 text-cyan-100 cursor-pointer transition hover:bg-cyan-500/25">
+      <label className="ui-button ui-button-secondary relative w-full cursor-pointer focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-300 sm:w-auto">
         <FaUpload /> Subir imágenes
         <input
           type="file"
           accept="image/*"
           multiple
           onChange={onUpload}
-          className="hidden"
+          aria-label="Subir imágenes del tratamiento"
+          className="sr-only"
         />
       </label>
 
@@ -37,7 +38,8 @@ export default function ImageUploader({ imagenes, onUpload, onRemove }) {
               <button
                 type="button"
                 onClick={() => onRemove(img.id)}
-                className="absolute top-2 right-2 rounded-full border border-rose-300/20 bg-rose-500/85 p-2 text-white opacity-90 transition hover:opacity-100 cursor-pointer"
+                aria-label="Eliminar imagen seleccionada"
+                className="ui-icon-button absolute top-2 right-2 border-rose-300/30 bg-slate-950/90 text-rose-200 transition hover:border-rose-300/60 hover:text-rose-100"
               >
                 <FaTrash />
               </button>

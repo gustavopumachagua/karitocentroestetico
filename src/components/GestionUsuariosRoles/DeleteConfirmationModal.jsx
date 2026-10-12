@@ -13,9 +13,9 @@ export default function DeleteConfirmationModal({
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="page-panel rounded-xl shadow-2xl max-w-md w-full transform animate-scaleIn">
-        <div className="flex items-center justify-between p-6 border-b border-slate-700/70">
+    <div className="ui-modal-backdrop">
+      <div role="dialog" aria-modal="true" aria-label={title} className="ui-modal max-w-md">
+        <div className="flex items-start justify-between gap-3 border-b border-slate-700/60 p-4 sm:p-6">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl border border-rose-400/20 bg-rose-500/12 flex items-center justify-center">
               <FaExclamationTriangle className="text-rose-300 text-xl" />
@@ -24,13 +24,14 @@ export default function DeleteConfirmationModal({
           </div>
           <button
             onClick={onCancel}
-            className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+            aria-label="Cerrar confirmación"
+            className="ui-icon-button shrink-0"
           >
             <FaTimes className="text-xl" />
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="space-y-4 p-4 sm:p-6">
           <p className="text-slate-300 text-base leading-relaxed">
             {message || (
               <>
@@ -50,16 +51,16 @@ export default function DeleteConfirmationModal({
           </div>
         </div>
 
-        <div className="flex gap-3 p-6 border-t border-slate-700/70">
+        <div className="flex flex-col gap-3 border-t border-slate-700/60 p-4 sm:flex-row sm:p-6">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-3 rounded-lg border border-slate-600 bg-slate-800/80 hover:bg-slate-700 text-white font-medium transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+            className="ui-button ui-button-secondary flex-1"
           >
             Cancelar
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-3 rounded-lg border border-rose-400/20 bg-rose-600 hover:bg-rose-500 text-white font-medium transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-rose-950/30 cursor-pointer"
+            className="ui-button ui-button-danger flex-1"
           >
             {confirmText}
           </button>

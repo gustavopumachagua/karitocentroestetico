@@ -73,13 +73,13 @@ export default function ModalTicket({ isOpen, onClose, ticket }) {
           </p>
         </div>
 
-        <table className="w-full border-collapse mb-3">
+        <table aria-label="Detalle de la boleta de venta" className="w-full border-collapse mb-3">
           <thead>
             <tr className="border-t border-b">
-              <th className="text-left p-1">CANT</th>
-              <th className="text-left p-1">DESCRIPCIÓN</th>
-              <th className="text-right p-1">P. UNIT</th>
-              <th className="text-right p-1">TOTAL</th>
+              <th scope="col" className="text-left p-1">CANT</th>
+              <th scope="col" className="text-left p-1">DESCRIPCIÓN</th>
+              <th scope="col" className="text-right p-1">P. UNIT</th>
+              <th scope="col" className="text-right p-1">TOTAL</th>
             </tr>
           </thead>
 
