@@ -28,3 +28,12 @@ export const buscarPaciente = async (nombre) => {
   );
   return data;
 };
+
+/** Shared intake fields only; the server resolves the patient from an owned appointment. */
+export const obtenerPacientePorCita = async (citaId, { signal } = {}) => {
+  if (typeof citaId !== "string" || !/^[a-f\d]{24}$/iu.test(citaId)) {
+    throw new Error("Selecciona una cita válida para recuperar los datos del paciente.");
+  }
+  const { data } = await API.get(`/tratamientos/paciente-por-cita/${citaId}`, { signal });
+  return data;
+};

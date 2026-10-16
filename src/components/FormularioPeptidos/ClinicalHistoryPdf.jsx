@@ -8,6 +8,7 @@ import ProtectedImage from "../common/ProtectedImage";
 import { getProtectedImageBlob, isProtectedMediaSource } from "../../api/media.api";
 import { getAuthToken } from "../../services/authStorage.js";
 import { layoutPdfTextFlow } from "./pdfTextFlow";
+import { getFilledClinicalExamRows } from "./clinicalExamRows";
 import {
   isFemalePatient,
   normalizeDiagnosisValues,
@@ -287,18 +288,7 @@ const SECTIONS = [
     title: "EXÁMENES AUXILIARES",
     fields: [
       ["Fecha de laboratorio", "fechaLaboratorio", "date"],
-      ["Glucosa en ayunas", "glucosaAyunas"],
-      ["HbA1c", "hba1c"],
-      ["Creatinina", "creatinina"],
-      ["TFGe / eGFR", "tfge"],
-      ["TGO / AST", "tgoAst"],
-      ["TGP / ALT", "tgpAlt"],
-      ["Colesterol total", "colesterolTotal"],
-      ["LDL", "ldl"],
-      ["HDL", "hdl"],
-      ["Triglicéridos", "trigliceridos"],
-      ["TSH", "tsh"],
-      ["Otros exámenes", "otrosExamenes"],
+      ["Exámenes auxiliares", "examenesAuxiliares", "exams"],
     ],
   },
   {
@@ -369,7 +359,7 @@ export function getClinicalHistoryPdfSections(patient, formData) {
       ...section,
       fields: onlyFilledFields
         ? getSectionPdfFields(section, normalizedData).filter(([, key, type]) =>
-            hasPrintableValue(normalizedData[key], type),
+            type === "exams" ? getFilledClinicalExamRows(normalizedData).length > 0 : hasPrintableValue(normalizedData[key], type),
           )
         : getSectionPdfFields(section, normalizedData),
     }))
@@ -507,14 +497,14 @@ const getPdfFieldRows = (fields, data, doc) => {
   return rows;
 };
 
-const getSectionPrintableParts = (section) => {
+const getSectionPrintableParts = (section, data) => {
   const treatmentField = section.fields.find(([, , type]) => type === "treatments");
   const regularFields = section.fields.filter(
-    ([, key, type]) => type !== "treatments" && !SIGNATURE_FIELD_KEYS.has(key),
+    ([, key, type]) => type !== "treatments" && type !== "exams" && !SIGNATURE_FIELD_KEYS.has(key),
   );
   const laboratoryFields =
     section.id === "examenes-auxiliares"
-      ? regularFields.filter(([, key]) => key !== "fechaLaboratorio")
+      ? getFilledClinicalExamRows(data)
       : [];
   const standardFields =
     section.id === "examenes-auxiliares"
@@ -585,25 +575,18 @@ const TreatmentTable = ({ rows }) => {
   );
 };
 
-const AuxiliaryExamsTable = ({ fields, data }) => {
-  const rows = [];
-  for (let index = 0; index < fields.length; index += 2) {
-    rows.push([fields[index], fields[index + 1]]);
-  }
-
+const AuxiliaryExamsTable = ({ rows }) => {
   if (!rows.length) return null;
 
   return (
     <table className="w-full table-fixed border-collapse text-left text-slate-950" style={{ marginTop: "3mm", fontSize: `${PDF_TYPE.table}pt`, lineHeight: "4mm" }}>
       <colgroup>
-        <col className="w-[24%]" />
-        <col className="w-[26%]" />
-        <col className="w-[24%]" />
-        <col className="w-[26%]" />
+        <col className="w-[39%]" />
+        <col className="w-[61%]" />
       </colgroup>
       <thead>
         <tr>
-          {["Examen", "Resultado", "Examen", "Resultado"].map((heading, index) => (
+          {["Examen", "Resultado"].map((heading, index) => (
             <th
               key={`${heading}-${index}`}
               className="border-y border-slate-400 px-2 py-2 align-bottom font-semibold break-words"
@@ -614,12 +597,10 @@ const AuxiliaryExamsTable = ({ fields, data }) => {
         </tr>
       </thead>
       <tbody>
-        {rows.map(([left, right]) => (
-          <tr key={`${left?.[1] || "left"}-${right?.[1] || "right"}`}>
-            <td className="border-b border-slate-200 px-2 py-2 font-semibold" style={{ overflowWrap: "anywhere" }}>{left?.[0] || ""}</td>
-            <td className="border-b border-slate-200 px-2 py-2" style={{ overflowWrap: "anywhere" }}>{left ? getFieldContent(data[left[1]], left[2]) : ""}</td>
-            <td className="border-b border-slate-200 px-2 py-2 font-semibold" style={{ overflowWrap: "anywhere" }}>{right?.[0] || ""}</td>
-            <td className="border-b border-slate-200 px-2 py-2" style={{ overflowWrap: "anywhere" }}>{right ? getFieldContent(data[right[1]], right[2]) : ""}</td>
+        {rows.map((row, index) => (
+          <tr key={`${row.examen}-${index}`}>
+            <td className="border-b border-slate-200 px-2 py-2 font-semibold" style={{ overflowWrap: "anywhere" }}>{row.examen || "—"}</td>
+            <td className="border-b border-slate-200 px-2 py-2 whitespace-pre-wrap" style={{ overflowWrap: "anywhere" }}>{row.resultado || "—"}</td>
           </tr>
         ))}
       </tbody>
@@ -628,7 +609,7 @@ const AuxiliaryExamsTable = ({ fields, data }) => {
 };
 
 const SectionPreview = ({ section, index, data }) => {
-  const { treatmentField, laboratoryFields, standardFields } = getSectionPrintableParts(section);
+  const { treatmentField, laboratoryFields, standardFields } = getSectionPrintableParts(section, data);
   const fieldRows = getPdfFieldRows(standardFields, data);
   const hasAuxiliaryExams = laboratoryFields.length > 0;
 
@@ -657,7 +638,7 @@ const SectionPreview = ({ section, index, data }) => {
         </div>
       )}
       {treatmentField && <TreatmentTable rows={data[treatmentField[1]]} />}
-      {hasAuxiliaryExams && <AuxiliaryExamsTable fields={laboratoryFields} data={data} />}
+      {hasAuxiliaryExams && <AuxiliaryExamsTable rows={laboratoryFields} />}
     </section>
   );
 };
@@ -1188,20 +1169,7 @@ const getPdfTableHeight = (doc, headers, widths, rows) => {
   }, 0) + 2.5;
 };
 
-const getAuxiliaryExamsPdfRows = (fields, data) => {
-  const rows = [];
-  for (let index = 0; index < fields.length; index += 2) {
-    const left = fields[index];
-    const right = fields[index + 1];
-    rows.push([
-      left?.[0] || "",
-      left ? getFieldContent(data[left[1]], left[2]) : "",
-      right?.[0] || "",
-      right ? getFieldContent(data[right[1]], right[2]) : "",
-    ]);
-  }
-  return rows;
-};
+const getAuxiliaryExamsPdfRows = (rows) => rows.map((row) => [row.examen || "", row.resultado || ""]);
 
 const getPdfSectionStartReservation = (context, section, standardFields) => {
   const pageContentHeight =
@@ -1227,7 +1195,7 @@ const getPdfSectionStartReservation = (context, section, standardFields) => {
     return Math.min(certificateHeight, pageContentHeight);
   }
 
-  const { treatmentField, laboratoryFields } = getSectionPrintableParts(section);
+  const { treatmentField, laboratoryFields } = getSectionPrintableParts(section, context.data);
   const treatments = treatmentField
     ? getFilledTreatmentRows(context.data[treatmentField[1]]).map((row) =>
         [row.medicamento, row.dosis, row.tiempoUso, row.resultado])
@@ -1236,8 +1204,8 @@ const getPdfSectionStartReservation = (context, section, standardFields) => {
     ["Medicamento", "Dosis", "Tiempo de uso", "Resultado / efectos adversos"],
     [48, 35, 42, 55], treatments) : 0;
   const laboratoryHeight = getPdfTableHeight(context.doc,
-    ["Examen", "Resultado", "Examen", "Resultado"], [43, 47, 43, 47],
-    getAuxiliaryExamsPdfRows(laboratoryFields, context.data));
+    ["Examen", "Resultado"], [70, 110],
+    getAuxiliaryExamsPdfRows(laboratoryFields));
   const blockHeight = PDF_SECTION_HEADING_HEIGHT + fieldGridHeight + treatmentHeight + laboratoryHeight + 1;
   // Ordinary sections remain together, especially a laboratory title/date
   // and its result table. Large sections still flow between pages instead of
@@ -1257,13 +1225,13 @@ const getPdfSectionStartReservation = (context, section, standardFields) => {
     ? 5 + getPdfTableHeaderLayout(context.doc,
         ["Medicamento", "Dosis", "Tiempo de uso", "Resultado / efectos adversos"], [48, 35, 42, 55]).height + 7
     : laboratoryFields.length
-      ? getPdfTableHeaderLayout(context.doc, ["Examen", "Resultado", "Examen", "Resultado"], [43, 47, 43, 47]).height + 7
+      ? getPdfTableHeaderLayout(context.doc, ["Examen", "Resultado"], [70, 110]).height + 7
       : 0;
   return Math.min(PDF_SECTION_HEADING_HEIGHT + firstRowHeight + tableStartHeight + 2.2, pageContentHeight);
 };
 
 const drawPdfSection = (context, section, index) => {
-  const { treatmentField, laboratoryFields, standardFields } = getSectionPrintableParts(section);
+  const { treatmentField, laboratoryFields, standardFields } = getSectionPrintableParts(section, context.data);
   ensurePdfSpace(context, getPdfSectionStartReservation(context, section, standardFields));
   context.doc.setFont("helvetica", "bold");
   context.doc.setFontSize(PDF_TYPE.section);
@@ -1301,9 +1269,9 @@ const drawPdfSection = (context, section, index) => {
   if (laboratoryFields.length) {
     drawPdfTable(
       context,
-      ["Examen", "Resultado", "Examen", "Resultado"],
-      [43, 47, 43, 47],
-      getAuxiliaryExamsPdfRows(laboratoryFields, context.data),
+      ["Examen", "Resultado"],
+      [70, 110],
+      getAuxiliaryExamsPdfRows(laboratoryFields),
     );
   }
 

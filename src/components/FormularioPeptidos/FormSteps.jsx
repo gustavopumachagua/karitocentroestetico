@@ -22,6 +22,7 @@ import {
   isAgeConsistentWithBirthDate,
 } from "./birthDateAge";
 import ProtectedImage from "../common/ProtectedImage";
+import { createClinicalExamRow, getEditableClinicalExamRows, MAX_CLINICAL_EXAM_ROWS } from "./clinicalExamRows";
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  I. DATOS DE IDENTIFICACIÓN                                               */
@@ -803,6 +804,14 @@ export function StepEvaluacionClinica({ formData, updateField }) {
 /*  XII. EXÁMENES AUXILIARES                                                   */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 export function StepExamenesAuxiliares({ formData, updateField }) {
+  const rows = getEditableClinicalExamRows(formData);
+  const updateExam = (index, field, value) => {
+    updateField("examenesAuxiliares", rows.map((row, rowIndex) => rowIndex === index ? { ...row, [field]: value } : row));
+  };
+  const removeExam = (index) => {
+    if (rows.length <= 1) return;
+    updateField("examenesAuxiliares", rows.filter((_, rowIndex) => rowIndex !== index));
+  };
   return (
     <div className="space-y-5">
       <FormHeader section="XII" title="EXÁMENES AUXILIARES" />
@@ -813,38 +822,45 @@ export function StepExamenesAuxiliares({ formData, updateField }) {
         value={formData.fechaLaboratorio}
         onChange={(e) => updateField("fechaLaboratorio", e.target.value)}
       />
-      <div className="ui-table-wrap" role="region" aria-label="Exámenes auxiliares" tabIndex={0}>
-        <table className="ui-table ui-clinical-table text-sm">
+      <div data-form-field="examenesAuxiliares" className="ui-table-wrap" role="region" aria-label="Exámenes auxiliares" tabIndex={0}>
+        <table className="ui-table w-full min-w-[28rem] table-fixed text-sm">
+          <colgroup><col /><col /><col className="w-32" /></colgroup>
           <thead>
             <tr className="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-wider">
               <th scope="col" className="px-3 py-2.5 text-left">Examen</th>
               <th scope="col" className="px-3 py-2.5 text-left">Resultado</th>
-              <th scope="col" className="px-3 py-2.5 text-left">Examen</th>
-              <th scope="col" className="px-3 py-2.5 text-left">Resultado</th>
+              <th scope="col" className="px-3 py-2.5 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {[
-              ["Glucosa en ayunas", "glucosaAyunas", "HbA1c", "hba1c"],
-              ["Creatinina", "creatinina", "TFGe / eGFR", "tfge"],
-              ["TGO / AST", "tgoAst", "TGP / ALT", "tgpAlt"],
-              ["Colesterol total", "colesterolTotal", "LDL", "ldl"],
-              ["HDL", "hdl", "Triglicéridos", "trigliceridos"],
-              ["TSH", "tsh", "Otros", "otrosExamenes"],
-            ].map(([label1, key1, label2, key2], i) => (
-              <tr key={i} className="border-t border-slate-700/40">
-                <td className="px-3 py-2 text-slate-300 text-sm whitespace-nowrap">{label1}</td>
-                <td className="p-1.5">
-                  <input type="text" aria-label={label1} name={key1} value={formData[key1]} onChange={(e) => updateField(key1, e.target.value)} className="ui-control min-w-28 text-sm" />
+            {rows.map((row, index) => (
+              <tr key={index} className="border-t border-slate-700/40">
+                <td className="p-2 align-top">
+                  <textarea name={`examenesAuxiliares-${index}-examen`} data-form-field={`examenesAuxiliares-${index}-examen`} aria-label={`Examen de la fila ${index + 1}`} value={row.examen} onChange={(event) => updateExam(index, "examen", event.target.value)} maxLength={160} rows={2} placeholder="Nombre del examen" className="ui-control min-w-0 resize-y text-sm" />
                 </td>
-                <td className="px-3 py-2 text-slate-300 text-sm whitespace-nowrap">{label2}</td>
-                <td className="p-1.5">
-                  <input type="text" aria-label={label2} name={key2} value={formData[key2]} onChange={(e) => updateField(key2, e.target.value)} className="ui-control min-w-28 text-sm" />
+                <td className="p-2 align-top">
+                  <textarea name={`examenesAuxiliares-${index}-resultado`} data-form-field={`examenesAuxiliares-${index}-resultado`} aria-label={`Resultado de la fila ${index + 1}`} value={row.resultado} onChange={(event) => updateExam(index, "resultado", event.target.value)} maxLength={2000} rows={2} placeholder="Resultado y unidades" className="ui-control min-w-0 resize-y text-sm" />
+                </td>
+                <td className="p-2 text-right">
+                  <button
+                    type="button"
+                    onClick={() => removeExam(index)}
+                    aria-label={`Quitar examen de la fila ${index + 1}`}
+                    disabled={rows.length === 1}
+                    className="ui-button ui-button-danger whitespace-nowrap text-xs disabled:opacity-40"
+                    title={rows.length === 1 ? "Debe mantenerse al menos una fila" : "Eliminar fila"}
+                  >
+                    Quitar fila
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="ui-toolbar">
+        <button type="button" onClick={() => updateField("examenesAuxiliares", [...rows, createClinicalExamRow()])} disabled={rows.length >= MAX_CLINICAL_EXAM_ROWS} className="ui-button ui-button-secondary">Agregar fila</button>
+        <span className="ui-help">{rows.length}/{MAX_CLINICAL_EXAM_ROWS} filas · Se omiten las filas completamente vacías.</span>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import RegistrarTratamiento from "../pages/doctor/RegistrarTratamiento";
 import GestionPagos from "../pages/cosmiatra/GestionPagos";
 import HistorialClientes from "../pages/doctor/HistorialPacientes";
 import ReportesServiciosIngresos from "../pages/cosmiatra/ReportesServiciosIngresos";
+import PlanAlimentario from "../pages/cosmiatra/PlanAlimentario";
 import Perfil from "../pages/settings/Perfil";
 import Contrasena from "../pages/settings/Contrasena";
 
@@ -14,6 +15,7 @@ const ROUTE_MAP = {
   "registrar-tratamiento": "Registrar tratamiento",
   "gestion-de-pagos": "Gestión de pagos",
   "historial-de-clientes": "Historial de clientes",
+  plan: "Historial de clientes",
   "reportes-de-servicios-e-ingresos": "Reportes de servicios e ingresos",
   perfil: "Perfil",
   contrasena: "Contraseña",
@@ -24,6 +26,7 @@ const ROUTES = [
   { path: "registrar-tratamiento", element: RegistrarTratamiento },
   { path: "gestion-de-pagos", element: GestionPagos },
   { path: "historial-de-clientes", element: HistorialClientes },
+  { path: "historial-de-clientes/plan", element: PlanAlimentario },
   { path: "reportes-de-servicios-e-ingresos", element: ReportesServiciosIngresos },
   { path: "ajustes/perfil", element: Perfil, props: { needsUser: true } },
   { path: "ajustes/contrasena", element: Contrasena, props: { needsUser: true } },

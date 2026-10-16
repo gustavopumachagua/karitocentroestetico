@@ -3,6 +3,7 @@
  * Returns true if the step is valid and the user can proceed.
  */
 import { normalizeDiagnosisValues } from "./formConfig";
+import { getClinicalExamIssues, hasClinicalExamRows } from "./clinicalExamRows";
 import {
   isAdultAge,
   isAdultBirthDate,
@@ -169,6 +170,7 @@ export function validateEvaluacionClinica(d) {
 /** XII. Exámenes Auxiliares */
 export function validateExamenesAuxiliares(d) {
   if (!d.fechaLaboratorio) return false;
+  if (hasClinicalExamRows(d)) return getClinicalExamIssues(d).length === 0;
   const fields = [
     "glucosaAyunas", "hba1c", "creatinina", "tfge",
     "tgoAst", "tgpAlt", "colesterolTotal", "ldl",
@@ -559,6 +561,7 @@ export function getMissingQuestions(stepId, d) {
       if (isBlank(d.fechaLaboratorio)) {
         missing.push(requiredQuestion("fechaLaboratorio", "Fecha de laboratorio"));
       }
+      if (hasClinicalExamRows(d)) return [...missing, ...getClinicalExamIssues(d)];
       [
         ["glucosaAyunas", "Glucosa en ayunas"],
         ["hba1c", "HbA1c"],

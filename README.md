@@ -12,6 +12,7 @@ Este repositorio contiene el cliente **React**. La API, las reglas de autorizaci
 - [Arquitectura y estructura](#arquitectura-y-estructura)
 - [Flujos de datos y contratos](#flujos-de-datos-y-contratos)
 - [Historia clínica y PDF](#historia-clínica-y-pdf)
+- [Seguimiento y plan alimentario](#seguimiento-y-plan-alimentario)
 - [Código limpio, patrones y SOLID](#código-limpio-patrones-y-solid)
 - [Seguridad y privacidad](#seguridad-y-privacidad)
 - [Imágenes protegidas](#imágenes-protegidas)
@@ -26,7 +27,7 @@ Este repositorio contiene el cliente **React**. La API, las reglas de autorizaci
 | --- | --- |
 | Pública | Página de inicio, acceso, solicitud de recuperación y restablecimiento de contraseña. |
 | Doctor | Agenda asignada, historial de pacientes, registro de tratamientos, historia clínica para evaluación de manejo de peso, PDF, reportes y ajustes. |
-| Cosmiatra | Gestión de citas, registro de tratamientos, cobros y comprobantes, historial de clientes, reporte diario de servicios e ingresos y ajustes. |
+| Cosmiatra | Gestión de citas, registro de tratamientos, cobros y comprobantes, historial de clientes, seguimiento y plan alimentario derivados de nuevas historias finalizadas, reporte diario de servicios e ingresos y ajustes. |
 | Administrador | Panel general, usuarios y roles, clientes, inventario y servicios, facturación/pagos, reportes avanzados y ajustes. |
 
 El inventario y los servicios se seleccionan de acuerdo con la especialidad. CMP y firma del perfil se muestran únicamente al doctor. Los reportes diarios de cosmiatra y administración pueden mostrar servicios de ambas especialidades utilizando el conjunto de datos autorizado por la API.
@@ -37,7 +38,7 @@ El inventario y los servicios se seleccionan de acuerdo con la especialidad. CMP
 | --- | --- |
 | Pública | `/`, `/login`, `/reset-password`, `/new-password` |
 | Doctor | `/doctor/agenda-de-citas`, `/doctor/historial-de-pacientes`, `/doctor/historial-de-pacientes/formulario`, `/doctor/registrar-tratamiento`, `/doctor/mis-reportes`, `/doctor/ajustes/perfil`, `/doctor/ajustes/contrasena` |
-| Cosmiatra | `/cosmiatra/gestion-de-citas`, `/cosmiatra/registrar-tratamiento`, `/cosmiatra/gestion-de-pagos`, `/cosmiatra/historial-de-clientes`, `/cosmiatra/reportes-de-servicios-e-ingresos`, `/cosmiatra/ajustes/perfil`, `/cosmiatra/ajustes/contrasena` |
+| Cosmiatra | `/cosmiatra/gestion-de-citas`, `/cosmiatra/registrar-tratamiento`, `/cosmiatra/gestion-de-pagos`, `/cosmiatra/historial-de-clientes`, `/cosmiatra/historial-de-clientes/plan?historia=<id>`, `/cosmiatra/reportes-de-servicios-e-ingresos`, `/cosmiatra/ajustes/perfil`, `/cosmiatra/ajustes/contrasena` |
 | Administrador | `/administrador/dashboard-general`, `/administrador/gestion-de-usuarios-y-roles`, `/administrador/gestion-de-clientes`, `/administrador/gestion-de-inventario`, `/administrador/gestion-de-facturacion-y-pagos`, `/administrador/reportes-avanzados`, `/administrador/ajustes/perfil`, `/administrador/ajustes/contrasena` |
 
 Las rutas se declaran en [`src/App.jsx`](src/App.jsx) y en los layouts de cada rol. [`ProtectedRoute`](src/components/common/ProtectedRoute.jsx) redirige sesiones inexistentes o roles incorrectos; es una protección de navegación, no sustituye la autorización del servidor.
@@ -208,6 +209,16 @@ Eventos como `profesionalActualizado`, `pacienteActualizado` e `historiaClinicaF
 - En Registrar cita, seleccionar una sugerencia existente conserva `citaPacienteId`, una referencia a una cita. El servidor verifica acceso y reutiliza la identidad persistida. Un nombre escrito libremente no acredita que se trate del mismo cliente.
 - Los registros antiguos sin identidad necesitan evidencias verificables o una reparación interna revisada. No se deben unir homónimos ni reemplazar nombres masivamente desde el navegador.
 
+### Datos de ingreso compartidos entre Doctor y Cosmiatra
+
+`RegistrarTratamiento` es la misma pantalla para ambas especialidades. Al seleccionar una cita propia consulta `GET /api/tratamientos/paciente-por-cita/:citaId`, que devuelve únicamente nombre, identidad del paciente, sexo y celular. El servidor resuelve esos campos mediante el `pacienteId` ya vinculado a la cita, aunque la captura original haya sido realizada por el otro rol. No se consulta por nombre ni se comparten observaciones, imágenes, diagnósticos o historias privadas.
+
+En la primera atención los campos ausentes permanecen editables. En las siguientes, el celular se completa y el sexo registrado queda seleccionado; un sexo aún no informado puede completarse. En Gestión de citas se debe elegir al cliente existente desde las sugerencias para conservar su referencia, en lugar de registrarlo de nuevo como un nombre libre. Los homónimos no se fusionan automáticamente.
+
+`useTreatmentPatient` encapsula carga, errores y reintentos; cancela consultas y descarta respuestas de otra cita o sesión. Un error de conexión no convierte al cliente en nuevo ni habilita un registro sin verificar sus datos. El editor se identifica por sesión y cita (`_id` o `id`), evitando conservar sexo, teléfono, observaciones o imágenes del paciente anterior. El backend también recupera los datos guardados cuando un envío omite esos campos.
+
+Sin citas pendientes propias, Registrar tratamiento conserva todos los campos visibles y vacíos, sin consultar datos de otro paciente. Guardar permanece deshabilitado hasta disponer de una cita válida y verificar sus datos; mostrar el formulario vacío no habilita registros sin cita.
+
 ### Historial operativo y reportes
 
 | Fuente API | Consumidor y significado |
@@ -232,6 +243,7 @@ Una atención sin tratamiento se identifica explícitamente y no inventa observa
 | `components/FormularioPeptidos/FormFields.jsx` | Controles y contexto de navegación de pasos. |
 | `components/FormularioPeptidos/formValidations.js` | Validadores por paso y guía de preguntas faltantes. |
 | `components/FormularioPeptidos/birthDateAge.js` | Edad, mayoría de edad y coherencia de fecha de nacimiento. |
+| `components/FormularioPeptidos/clinicalExamRows.js` | Filas dinámicas de exámenes, adaptación de respuestas antiguas y validación compartida con la guía y el PDF. |
 | `utils/clinicalHistoryStorage.js` | Borradores aislados por cuenta, selección activa y notificaciones locales. |
 | `utils/clinicalHistoryRemote.js` | Adaptación entre el modelo local y el contrato de la API clínica. |
 | `utils/clinicalHistoryDoctorProfile.js` | Aplicación del nombre, CMP y firma vigente del doctor a la copia de presentación. |
@@ -245,6 +257,12 @@ El formulario conserva una copia local mientras se trabaja, incluso al cambiar d
 La sincronización remota utiliza `/api/historias-clinicas`. Sus peticiones se serializan para que una respuesta de Guardar anterior no sobrescriba una Finalización posterior. Si hay un problema de conexión, se muestra el estado de sincronización; conservar un borrador local **no equivale** a haberlo guardado en el servidor.
 
 Finalizar exige las respuestas requeridas y una confirmación del servidor. La edad debe ser adulta y coherente con la fecha de nacimiento; el DNI debe tener ocho dígitos. El sexo proviene del registro del paciente. Los antecedentes gineco-obstétricos aparecen únicamente cuando corresponde y la numeración visible sigue siendo consecutiva. Campos condicionales no seleccionados no deben convertirse en preguntas obligatorias ni en contenido vacío del documento.
+
+### Exámenes auxiliares editables
+
+La sección utiliza una tabla de dos columnas, **Examen** y **Resultado**, con una fila inicial y controles para agregar o quitar filas. El contrato es `formData.examenesAuxiliares: [{ examen, resultado }]`, con un máximo de 100 filas, 160 caracteres para cada nombre y 2000 para cada resultado. Guardar admite filas vacías o parciales; Finalizar requiere una fecha de laboratorio válida y al menos una fila completa, sin filas parcialmente contestadas. Las filas totalmente vacías no se imprimen.
+
+`clinicalExamRows.js` comparte la interpretación de las filas entre el editor, la guía de preguntas y el documento clínico. Al abrir un registro antiguo, sus resultados fijos —glucosa, HbA1c y los demás exámenes, incluido Otros— se convierten en filas sin perder sus respuestas. Si existe la lista nueva, incluso vacía, esta es autoritativa: no se recuperan resultados antiguos que el usuario ya quitó. El backend conserva la validación previa para historias que todavía no contienen esa lista y valida estrictamente el esquema nuevo al guardar.
 
 ### Documento y firma
 
@@ -261,6 +279,53 @@ html2pdf.js permanece como alternativa de compatibilidad si falla la exportació
 ### Próximos controles
 
 Los controles de historias finalizadas se combinan con la fuente remota mediante `clinicalControlNotifications.service` y `useClinicalControlNotifications`. El popup de la barra superior muestra paciente, servicio y fecha como un aviso informativo. Se monta con un portal para evitar quedar debajo de otras cards. Las fechas vencidas se excluyen de la vista; esto no elimina la historia clínica del servidor ni crea una cita automáticamente.
+
+## Seguimiento y plan alimentario
+
+### Derivación mínima desde una nueva historia finalizada
+
+Cuando el servidor confirma una **nueva finalización**, habilita un seguimiento alimentario vinculado al ID de esa historia. En `/cosmiatra/historial-de-clientes` aparece una ficha independiente con nombre, sexo, contacto, fecha e indicadores del paciente. No se copia ni se entrega al rol Cosmiatra el formulario privado del doctor: no incluye diagnósticos, exámenes, firma ni atenciones previas. Las historias que ya estaban finalizadas antes de esta funcionalidad no se incorporan retroactivamente. El historial operativo propio de Cosmiatra se conserva por separado; no se crean citas, tratamientos ni clientes duplicados para mostrar esta derivación.
+
+Los seguimientos aún sin plan pueden ser consultados por profesionales activos de Cosmiatra. **El primer guardado** asigna el plan al ID de esa profesional; abrir la ficha o la vista previa no lo asigna. Después, el servidor restringe la consulta y edición del plan a su propietaria. La identidad del paciente y la autorización se resuelven en el backend, nunca por coincidencia de nombres ni por un ID proporcionado libremente en el cuerpo.
+
+### Edición, guardado y finalización
+
+El botón **Generar plan** abre `/cosmiatra/historial-de-clientes/plan?historia=<id>`. La estructura toma como referencia visual [`plan.png`](plan.png): siete días ordenados de lunes a domingo y cinco tiempos de comida —desayuno, media mañana, almuerzo, media tarde y cena—, más edad, peso, talla, IMC e indicaciones. Las comidas empiezan vacías: el profesional redacta el contenido individualizado; no se genera una dieta ni recomendaciones médicas automáticamente.
+
+Los indicadores iniciales proceden de la ficha autorizada y pueden editarse. La edad admite 18–130 años; peso, talla e IMC requieren valores numéricos positivos. Cada comida permite hasta 1500 caracteres y las indicaciones, hasta 4000. **Guardar borrador** permite respuestas incompletas y persiste exclusivamente en el servidor; no se guarda el plan en `localStorage`, IndexedDB ni caché PWA. Los cambios pendientes sólo están en memoria: guarde antes de cambiar de sección, cerrar o recargar, y espere el mensaje de confirmación.
+
+Cada guardado envía una `revision`; el backend la compara y aumenta atómicamente. Una edición concurrente o un plan ya finalizado devuelve `409`: la pantalla conserva los cambios sin guardar y ofrece cargar la versión del servidor, previa confirmación para descartarlos. No se sobrescribe automáticamente la versión de otra sesión. Las solicitudes verifican token e ID de cuenta antes del despacho y al recibir la respuesta; los cambios de sesión cancelan solicitudes y descartan respuestas de la cuenta anterior.
+
+Durante la edición sólo aparece **Guardar borrador** mientras falten respuestas o existan valores inválidos. **Finalizar plan** aparece automáticamente cuando los cuatro indicadores, las 35 comidas y las indicaciones están completos y válidos; vuelve a ocultarse si se borra o invalida algún campo. Antes de confirmar se comprueba también que las fuentes del PDF estén disponibles y representen los caracteres escritos. Sólo una respuesta persistida del servidor cambia el estado a finalizado; un fallo de red no se presenta como una finalización exitosa.
+
+Una vez finalizado, se ocultan las acciones de edición y aparece **Vista previa**. El documento no se abre automáticamente: al seleccionar ese botón se muestra el plan concluido junto con **Descargar plan en PDF**, dentro de la misma sección. Al volver a abrir un plan finalizado, también se requiere seleccionar Vista previa. El plan finalizado permanece inmutable.
+
+**Finalizar plan** inicia el guardado directamente, sin una segunda confirmación. Un modal informativo sin botones muestra el progreso mientras se valida el PDF y se guarda; se bloquean los envíos duplicados y el cierre del diálogo. Sólo tras la confirmación del servidor aparece el aviso de éxito, que se cierra automáticamente a los 2,8 segundos, sin cambiar de página ni abrir el PDF. Si falla el proceso, el modal se cierra y el error queda visible en el editor, conservando el borrador para reintentar; las solicitudes tienen un tiempo límite de 30 segundos para no bloquear indefinidamente la pantalla. Los conflictos de revisión requieren cargar la versión del servidor. El modal gestiona el foco, la navegación por teclado y la restauración al botón Finalizar o Vista previa según corresponda.
+
+### Documento profesional y límites tipográficos
+
+La vista previa pertenece a la aplicación, sin visor PDF del navegador. La descarga utiliza jsPDF vectorial en **A4 horizontal**, con datos del paciente, indicadores, menú semanal, indicaciones y paginación. El modelo y el orden son compartidos por editor, vista previa y PDF. Los textos extensos se ajustan al ancho y se dividen entre páginas con cabeceras de tabla repetidas, sin recortar comidas ni indicaciones.
+
+El diseño documental sigue la referencia `plan.png`: título centrado en mayúsculas, paciente e indicadores compactos debajo, cabecera verde salvia con texto blanco, columna de días en tono claro y cuadrícula fina. La columna de almuerzo dispone de más ancho; las indicaciones comienzan junto a su etiqueta al pie de la tabla. La identidad institucional se presenta discretamente en el pie. `nutritionPlanPresentation.js` comparte proporciones, paleta y resumen entre vista previa y PDF. El diseño no introduce alimentos de ejemplo ni modifica las respuestas del profesional.
+
+El documento incorpora las fuentes Unicode locales DejaVu Sans normal y negrita desde `src/assets/fonts/`; no solicita tipografías a terceros. Su redistribución conserva el aviso y la [licencia incluida](src/assets/fonts/LICENSE-DejaVu.txt), publicada también en `public/licenses/DejaVu.txt` para incorporarla a `dist/licenses/DejaVu.txt`. La cobertura no es universal: el preflight revisa los glifos de ambas fuentes y bloquea la finalización/exportación con un mensaje explícito si detecta un carácter no compatible —por ejemplo ciertos emojis—, en lugar de eliminarlo o sustituirlo silenciosamente. Corrija ese carácter antes de finalizar. Un PDF descargado es una copia independiente; no se actualiza remotamente.
+
+### Arquitectura del módulo
+
+| Módulo | Responsabilidad |
+| --- | --- |
+| `api/planesAlimentarios.api.js` | Fachada de `GET /api/planes-alimentarios/seguimientos`, `GET /api/planes-alimentarios/:historiaId` y `PUT /api/planes-alimentarios/:historiaId`; sesión esperada y cancelación de solicitudes. |
+| `hooks/useNutritionFollowups.js` | Consulta la proyección mínima y refresca mediante eventos, foco y sondeo; limpia recursos y separa resultados por sesión. |
+| `components/HistorialPacientes/ClinicalNutritionFollowups.jsx` | Listado y selección de fichas, búsqueda y acceso a Generar/Continuar/Ver plan. |
+| `pages/cosmiatra/PlanAlimentario.jsx` | Coordina carga, editor, validación, revisión concurrente, finalización y exportación. |
+| `utils/nutritionPlan.js` | Orden canónico de días/comidas, borrador, validadores y modelos de API/documento mediante funciones puras. |
+| `components/PlanAlimentario/NutritionPlanDocument.jsx` y `nutritionPlan.css` | Vista previa accesible, clara y responsive, independiente del tema oscuro. |
+| `components/PlanAlimentario/NutritionPlanActions.jsx` | Acciones progresivas según completitud y estado persistido: borrador, finalización y apertura explícita de la vista previa. |
+| `components/PlanAlimentario/NutritionPlanFinalizationModal.jsx` | Avisos de progreso y éxito sin botones mediante React Modal, con foco, cierre automático coordinado por el editor y recuperación de la interacción; no realiza escrituras. |
+| `utils/nutritionPlanFonts.js` y `nutritionPlanPdf.js` | Carga local de fuentes, comprobación de glifos y distribución vectorial paginada. |
+| `utils/nutritionPlanPresentation.js` | Paleta, proporciones de columnas y resumen de indicadores compartidos por los dos renderizadores documentales. |
+
+La separación mantiene presentación, reglas, transporte y exportación en responsabilidades distintas; no comparte el agregado clínico privado del doctor con el nuevo módulo. Las pruebas de regresión cubren filas antiguas/nuevas, validación, contratos de sesión, orden del menú, caracteres compatibles/no compatibles, contenido y límites de página. La autorización, propiedad del primer guardado y persistencia por revisión se verifican además en las pruebas del backend; requieren desplegar ambos proyectos juntos.
 
 ## Código limpio, patrones y SOLID
 
@@ -358,7 +423,7 @@ Estas pruebas usan datos sintéticos y dobles de red/navegador. La revocación d
 ```bash
 npm run lint
 npm run build
-node --test src/utils/*.test.js src/hooks/*.test.js src/components/ReportesServiciosIngresos/calcularMonto.test.js src/components/FormularioPeptidos/*.test.js
+node --test
 npm audit --omit=dev
 ```
 
@@ -375,6 +440,10 @@ Las pruebas existentes utilizan `node:test` y `node:assert`; el hook probado emp
 | `src/components/ReportesServiciosIngresos/calcularMonto.test.js` | Relación de pagos y totales sin duplicación de comprobantes. |
 | `src/components/FormularioPeptidos/pdfTextFlow.test.js` | Etiqueta/respuesta en la misma línea, saltos explícitos, Unicode, palabras largas y límites de ancho. |
 | `src/components/FormularioPeptidos/ClinicalHistoryPdf.test.js` | PDF real y vista previa, orden clínico, campos vacíos/sexo, firma, cabecera inicial y contenido extenso sin recortes entre páginas. |
+| `src/components/FormularioPeptidos/clinicalExamRows.test.js` | Exámenes editables, adaptación de resultados antiguos, filas vacías/parciales, límites y lista nueva autoritativa. |
+| `src/api/planesAlimentarios.api.test.js` | Cancelación y cambio de sesión antes del despacho o al recibir respuestas, sin enviar datos de una cuenta con el token de otra. |
+| `src/utils/nutritionPlan.test.js` | Semana vacía inicial, orden canónico, indicadores, límites y payload sin identidad duplicada. |
+| `src/utils/nutritionPlanPdf.test.js` | PDF vectorial real, contenido íntegro entre páginas, vista previa segura, fuentes locales y comprobación de glifos. |
 
 ### Regresión manual mínima
 
@@ -389,6 +458,7 @@ Antes de entregar un cambio, compruebe:
 7. Corrección de nombres de cliente/profesional sin duplicar identidades ni perder historial, incluidos estados cancelado/aplazado.
 8. Vista previa y descarga PDF con texto largo, tablas, firma, varias páginas y cambios de perfil; comprobar también un fallo de exportación sin bloquear la UI.
 9. Layout móvil y escritorio, teclado, etiquetas, foco visible y lectura de mensajes.
+10. Nueva finalización clínica: ficha mínima en Cosmiatra sin historias médicas anteriores; primer guardado del plan, continuación del borrador, conflicto entre sesiones, validación de comidas/indicadores y descarga final Unicode multipágina. Comprobar que otro profesional no pueda abrir un plan ya asignado.
 
 Las regresiones del PDF compilan el JSX en memoria con esbuild, renderizan la vista previa con React y generan archivos reales con jsPDF. Registran posiciones de texto e imágenes para comprobar límites y paginación, usando solo datos sintéticos. No sustituyen una prueba del navegador con descargas, CORS y firmas remotas reales. Los tests actuales son focalizados: pasar lint/build no demuestra por sí solo que todos estos flujos estén correctos.
 

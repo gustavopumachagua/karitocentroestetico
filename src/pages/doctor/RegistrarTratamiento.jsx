@@ -1,8 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCitas } from "../../hooks/useCitas";
 import { useAuth } from "../../hooks/useAuth";
-import { getAuthToken } from "../../services/authStorage";
+import { useTreatmentPatient } from "../../hooks/useTreatmentPatient";
+import { getAuthSession } from "../../services/authStorage";
 import { belongsToProfessionalRole } from "../../utils/professionalOwnership";
+import {
+  fillTreatmentPatient,
+  getTreatmentAppointmentId,
+  normalizeTreatmentSex,
+  selectTreatmentAppointment,
+} from "../../utils/treatmentAppointment";
 import { useModal } from "../../hooks/useModal";
 import InputField from "../../components/RegistaTratamiento/InputField";
 import TextAreaField from "../../components/RegistaTratamiento/TextAreaField";
@@ -12,7 +19,6 @@ import FechaField from "../../components/RegistaTratamiento/FechaField";
 import ActionButtons from "../../components/RegistaTratamiento/ActionButtons";
 import ConfirmationModal from "../../components/Perfil/ConfirmationModal";
 import { getInventario, descontarInsumos } from "../../api/inventario.api";
-import { buscarPaciente } from "../../api/tratamientos.api";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import CustomChoice from "../../components/common/CustomChoice";
 
@@ -28,28 +34,117 @@ const INITIAL_FORM = {
   insumos: [],
 };
 
+function createInitialForm(cita) {
+  return {
+    ...INITIAL_FORM,
+    nombre: typeof cita?.cliente === "object" ? cita?.cliente?.nombre || "" : cita?.cliente || "",
+    servicio: cita?.servicio || "",
+    fecha: cita?.fecha || "",
+    insumos: [],
+  };
+}
+
 export default function RegistrarTratamiento() {
+  const { citas, citaSeleccionada, setCitaSeleccionada } = useCitas();
+  const { nombre, rol, user, token } = useAuth();
+  const sessionKey = `${token}:${user?.id || user?._id || ""}`;
+  const [submission, setSubmission] = useState(null);
+  const citasFiltradas = useMemo(
+    () => citas.filter((cita) => {
+      if (cita.estado?.toLowerCase() !== "pendiente") return false;
+      switch (rol) {
+        case "doctor":
+        case "cosmiatra":
+          return belongsToProfessionalRole(cita, user);
+        case "asistente":
+          return typeof cita.asistente === "string" &&
+            cita.asistente.toLowerCase() === nombre.toLowerCase();
+        case "recepcionista":
+          return true;
+        default:
+          return false;
+      }
+    }),
+    [citas, nombre, rol, user],
+  );
+  const suggestedAppointment = useMemo(
+    () => selectTreatmentAppointment(citasFiltradas, citaSeleccionada),
+    [citasFiltradas, citaSeleccionada],
+  );
+  // The server can publish "attended" before POST resolves. Keep that editor
+  // mounted until its own save/stock update/confirmation finishes; otherwise a
+  // realtime refresh could discard a successful registration's final steps.
+  const cita = submission?.sessionKey === sessionKey
+    ? submission.cita : suggestedAppointment;
+  const citaId = getTreatmentAppointmentId(cita);
+  const seleccionadaId = getTreatmentAppointmentId(citaSeleccionada);
+
+  const handleSubmissionChange = useCallback((appointment, inProgress) => {
+    setSubmission((previous) => {
+      if (inProgress) return { sessionKey, cita: appointment };
+      return previous?.sessionKey === sessionKey &&
+        getTreatmentAppointmentId(previous.cita) === getTreatmentAppointmentId(appointment)
+        ? null : previous;
+    });
+  }, [sessionKey]);
+
+  useEffect(() => {
+    if (citaId !== seleccionadaId) setCitaSeleccionada(cita);
+  }, [cita, citaId, seleccionadaId, setCitaSeleccionada]);
+
+  // A different appointment/account gets a fresh editor, including image URLs,
+  // observations and pending requests. No demographics survive across patients.
+  return (
+    <TreatmentEditor
+      key={`${sessionKey}:${citaId}`}
+      cita={cita}
+      onSubmissionChange={handleSubmissionChange}
+    />
+  );
+}
+
+function TreatmentEditor({ cita, onSubmissionChange }) {
   const {
-    citas,
-    citaSeleccionada,
     setCitaSeleccionada,
     socket,
     obtenerTratamientos,
   } = useCitas();
-  const { nombre: nombreDoctor, rol, user } = useAuth();
+  const { nombre: nombreDoctor, rol, token: sessionToken, user } = useAuth();
   const { modal, setModal, cerrarModal } = useModal();
+  const citaId = getTreatmentAppointmentId(cita);
+  const hasAppointment = Boolean(citaId);
+  const { status: patientStatus, patient, error: patientError, retry: retryPatient } =
+    useTreatmentPatient(citaId);
 
-  const [formBloqueado, setFormBloqueado] = useState(false);
+  const formBloqueado = !hasAppointment || cita?.estado?.toLowerCase() === "atendido";
   const [loading, setLoading] = useState(false);
   const [insumosDisponibles, setInsumosDisponibles] = useState([]);
   const [busquedaInsumo, setBusquedaInsumo] = useState("");
   const [imagenes, setImagenes] = useState([]);
-  const [pacienteExistente, setPacienteExistente] = useState(false);
-  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [formData, setFormData] = useState(() => createInitialForm(cita));
   const [enviando, setEnviando] = useState(false);
   const envioEnCursoRef = useRef(false);
   const obtenerTratamientosRef = useRef(obtenerTratamientos);
   const imagePreviewUrls = useRef(new Set());
+  const mountedRef = useRef(true);
+  const reloadTimersRef = useRef([]);
+  const actorId = String(user?.id || user?._id || "");
+
+  const isCurrentSession = useCallback(() => {
+    const session = getAuthSession();
+    return mountedRef.current && Boolean(sessionToken) &&
+      session.token === sessionToken &&
+      String(session.user?.id || session.user?._id || "") === actorId;
+  }, [actorId, sessionToken]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      reloadTimersRef.current.forEach(clearTimeout);
+      reloadTimersRef.current = [];
+    };
+  }, []);
 
   useEffect(() => () => {
     imagePreviewUrls.current.forEach((url) => URL.revokeObjectURL(url));
@@ -63,33 +158,6 @@ export default function RegistrarTratamiento() {
   const recargarTratamientos = useCallback(
     () => obtenerTratamientosRef.current(),
     [],
-  );
-
-  const citasFiltradas = useMemo(
-    () =>
-      citas.filter((cita) => {
-        const estadoPendiente = cita.estado?.toLowerCase() === "pendiente";
-        if (!estadoPendiente) return false;
-
-        switch (rol) {
-          case "doctor":
-          case "cosmiatra":
-            return belongsToProfessionalRole(cita, user);
-
-          case "asistente":
-            return (
-              typeof cita.asistente === "string" &&
-              cita.asistente.toLowerCase() === nombreDoctor.toLowerCase()
-            );
-
-          case "recepcionista":
-            return true;
-
-          default:
-            return false;
-        }
-      }),
-    [citas, nombreDoctor, rol, user],
   );
 
   const rolProfesional = useMemo(
@@ -106,54 +174,14 @@ export default function RegistrarTratamiento() {
   }, [busquedaInsumo, insumosDisponibles]);
 
   useEffect(() => {
-    if (citasFiltradas.length > 0) {
-      const ahora = new Date();
-      const citasOrdenadas = [...citasFiltradas].sort((a, b) => {
-        const fechaA = new Date(a.fecha.replace(" ", "T"));
-        const fechaB = new Date(b.fecha.replace(" ", "T"));
-        return Math.abs(fechaA - ahora) - Math.abs(fechaB - ahora);
-      });
-
-      const citaProxima = citasOrdenadas[0];
-      if (!citaSeleccionada || citaSeleccionada.id !== citaProxima.id) {
-        setCitaSeleccionada(citaProxima);
-        setFormData((prev) => ({
-          ...prev,
-          nombre: citaProxima.cliente || "",
-          servicio: citaProxima.servicio || "",
-          fecha: citaProxima.fecha || "",
-        }));
-      }
+    if (hasAppointment && patientStatus === "ready" && patient) {
+      setFormData((previous) => fillTreatmentPatient(previous, patient));
     }
-  }, [citaSeleccionada, citasFiltradas, setCitaSeleccionada]);
+  }, [hasAppointment, patient, patientStatus]);
 
-  useEffect(() => {
-    const buscarPacienteExistente = async () => {
-      if (!formData.nombre) return;
-
-      try {
-        const data = await buscarPaciente(formData.nombre);
-        setFormData((prev) => ({
-          ...prev,
-          sexo: data.sexo || "",
-          celular: data.celular || "",
-        }));
-        setPacienteExistente(true);
-      } catch {
-        setPacienteExistente(false);
-      }
-    };
-
-    buscarPacienteExistente();
-  }, [formData.nombre]);
-
-  useEffect(() => {
-    if (citaSeleccionada?.estado === "atendido") {
-      setFormBloqueado(true);
-    } else {
-      setFormBloqueado(false);
-    }
-  }, [citaSeleccionada]);
+  const patientReady = hasAppointment && patientStatus === "ready";
+  const sexoRegistrado = normalizeTreatmentSex(patient?.sexo);
+  const datosBloqueados = formBloqueado || !patientReady || enviando;
 
   useEffect(() => {
     let activo = true;
@@ -197,17 +225,14 @@ export default function RegistrarTratamiento() {
   }, [rolProfesional]);
 
   useEffect(() => {
-    if (!citaSeleccionada) return;
-
-    setFormData((prev) => {
-      return {
-        ...prev,
-        nombre: prev.nombre || citaSeleccionada.cliente || "",
-        servicio: prev.servicio || citaSeleccionada.servicio || "",
-        fecha: prev.fecha || citaSeleccionada.fecha || "",
-      };
-    });
-  }, [citaSeleccionada]);
+    setFormData((previous) => ({
+      ...previous,
+      nombre: (hasAppointment && patient?.nombre) || (typeof cita?.cliente === "object"
+        ? cita?.cliente?.nombre || "" : cita?.cliente || ""),
+      servicio: cita?.servicio || "",
+      fecha: cita?.fecha || "",
+    }));
+  }, [cita?.cliente, cita?.fecha, cita?.servicio, hasAppointment, patient?.nombre]);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -233,6 +258,7 @@ export default function RegistrarTratamiento() {
 
     const handleUpdate = () => {
       void recargarTratamientos();
+      if (envioEnCursoRef.current) return;
       setModal({
         show: true,
         message: "🔄 Nuevo tratamiento registrado por otro usuario.",
@@ -252,7 +278,7 @@ export default function RegistrarTratamiento() {
 
     // El ref se actualiza de forma síncrona para bloquear clics/Enter repetidos
     // antes de que React alcance a renderizar el botón deshabilitado.
-    if (envioEnCursoRef.current || formBloqueado) return;
+    if (!hasAppointment || envioEnCursoRef.current || formBloqueado || !patientReady || !isCurrentSession()) return;
 
     if (!formData.insumos || formData.insumos.length === 0) {
       setModal({
@@ -264,10 +290,10 @@ export default function RegistrarTratamiento() {
       return;
     }
 
-    if (!formData.sexo || !formData.celular) {
+    if (!normalizeTreatmentSex(formData.sexo) || !/^\d{9}$/.test(formData.celular)) {
       setModal({
         show: true,
-        message: "⚠️ Completa los datos del paciente antes de guardar.",
+        message: "⚠️ Completa el sexo y un celular válido de 9 dígitos antes de guardar.",
         type: "error",
       });
       return;
@@ -275,10 +301,10 @@ export default function RegistrarTratamiento() {
 
     envioEnCursoRef.current = true;
     setEnviando(true);
+    onSubmissionChange(cita, true);
     let tratamientoRegistrado = false;
 
     try {
-      const token = getAuthToken();
       const formDataToSend = new FormData();
 
       Object.entries(formData).forEach(([key, value]) => {
@@ -292,7 +318,6 @@ export default function RegistrarTratamiento() {
       formDataToSend.append("profesional", nombreDoctor);
       formDataToSend.append("rol", rol);
 
-      const citaId = citaSeleccionada?._id || citaSeleccionada?.id;
       if (citaId) {
         formDataToSend.append("citaId", citaId);
       }
@@ -305,10 +330,14 @@ export default function RegistrarTratamiento() {
         `${import.meta.env.VITE_API_URL}/api/tratamientos`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${sessionToken}` },
           body: formDataToSend,
         },
       );
+
+      // Do not let a request started by one account trigger refreshes or stock
+      // writes using a different account that signed in while it was pending.
+      if (!isCurrentSession()) return;
 
       if (res.ok) {
         // Una vez aceptado por el servidor el formulario permanece bloqueado.
@@ -327,10 +356,9 @@ export default function RegistrarTratamiento() {
         imagePreviewUrls.current.forEach((url) => URL.revokeObjectURL(url));
         imagePreviewUrls.current.clear();
         setImagenes([]);
-        setCitaSeleccionada(null);
-        setPacienteExistente(false);
-
         await obtenerTratamientos();
+
+        if (!isCurrentSession()) return;
 
         setModal({
           show: true,
@@ -339,6 +367,7 @@ export default function RegistrarTratamiento() {
         });
 
         try {
+          if (!isCurrentSession()) return;
           await descontarInsumos(rol, formData.insumos);
 
           if (socket) {
@@ -358,6 +387,7 @@ export default function RegistrarTratamiento() {
         });
       }
     } catch (error) {
+      if (!isCurrentSession()) return;
       console.error("Error al guardar tratamiento:", error);
       setModal({
         show: true,
@@ -369,6 +399,7 @@ export default function RegistrarTratamiento() {
       if (!tratamientoRegistrado) {
         envioEnCursoRef.current = false;
         setEnviando(false);
+        onSubmissionChange(cita, false);
       }
     }
   };
@@ -376,13 +407,14 @@ export default function RegistrarTratamiento() {
   const handleModalClose = () => {
     cerrarModal();
 
-    if (modal.type === "success") {
-      setTimeout(() => {
+    if (modal.type === "success" && isCurrentSession()) {
+      reloadTimersRef.current.push(setTimeout(() => {
+        if (!isCurrentSession()) return;
         setLoading(true);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      }, 400);
+        reloadTimersRef.current.push(setTimeout(() => {
+          if (isCurrentSession()) window.location.reload();
+        }, 1000));
+      }, 400));
     }
   };
 
@@ -406,6 +438,26 @@ export default function RegistrarTratamiento() {
           </div>
 
           <form className="space-y-6" onSubmit={handleGuardar}>
+            {hasAppointment && patientStatus === "loading" && (
+              <p role="status" className="rounded-xl border border-indigo-400/20 bg-indigo-400/5 px-4 py-3 text-sm text-slate-300">
+                Consultando los datos registrados del paciente…
+              </p>
+            )}
+            {hasAppointment && patientStatus === "error" && (
+              <div role="alert" className="rounded-xl border border-rose-400/30 bg-rose-400/5 px-4 py-3">
+                <p className="text-sm text-rose-200">
+                  {patientError || "No fue posible consultar los datos del paciente. Reintenta antes de guardar."}
+                </p>
+                <button type="button" onClick={retryPatient} className="ui-button ui-button-secondary mt-3">
+                  Reintentar consulta
+                </button>
+              </div>
+            )}
+            {patientReady && sexoRegistrado && formData.celular && (
+              <p className="text-xs text-slate-400">
+                Datos del paciente recuperados de sus registros. No es necesario registrarlo nuevamente.
+              </p>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <InputField
                 label="Nombre del paciente"
@@ -417,7 +469,7 @@ export default function RegistrarTratamiento() {
                 type="text"
                 placeholder="Ingrese número de celular"
                 value={formData.celular}
-                readOnly={formBloqueado}
+                readOnly={datosBloqueados}
                 maxLength={9}
                 error={
                   formData.celular !== "" && !/^\d{9}$/.test(formData.celular)
@@ -428,7 +480,7 @@ export default function RegistrarTratamiento() {
                   const value = e.target.value;
 
                   if (/^\d{0,9}$/.test(value)) {
-                    setFormData({ ...formData, celular: value });
+                    setFormData((previous) => ({ ...previous, celular: value }));
                   }
                 }}
               />
@@ -440,10 +492,10 @@ export default function RegistrarTratamiento() {
               options={["Masculino", "Femenino"]}
               value={formData.sexo}
               onChange={(e) =>
-                !pacienteExistente &&
-                setFormData({ ...formData, sexo: e.target.value })
+                !sexoRegistrado && !datosBloqueados &&
+                setFormData((previous) => ({ ...previous, sexo: e.target.value }))
               }
-              disabled={pacienteExistente || formBloqueado}
+              disabled={Boolean(sexoRegistrado) || datosBloqueados}
             />
 
             <InputField
@@ -536,20 +588,13 @@ export default function RegistrarTratamiento() {
 
             <ActionButtons
               onCancel={() => {
-                setFormData({
-                  nombre: "",
-                  celular: "",
-                  sexo: "",
-                  servicio: "",
-                  fecha: "",
-                  observacion: "",
-                  insumos: [],
-                });
+                setFormData(fillTreatmentPatient(createInitialForm(cita), patientReady ? patient : null));
+                imagePreviewUrls.current.forEach((url) => URL.revokeObjectURL(url));
+                imagePreviewUrls.current.clear();
                 setImagenes([]);
                 setCitaSeleccionada(null);
-                setPacienteExistente(false);
               }}
-              disabled={formBloqueado}
+              disabled={formBloqueado || !patientReady}
               isSubmitting={enviando}
             />
           </form>

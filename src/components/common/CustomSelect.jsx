@@ -1,6 +1,7 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { FaCheck, FaChevronDown } from "react-icons/fa";
+import { getSelectMenuPosition } from "../../utils/selectMenuPosition";
 
 const accentStyles = {
   cyan: {
@@ -106,31 +107,28 @@ export default function CustomSelect({
   const isPlaceholder =
     !selectedOption || value === "" || value === null || value === undefined;
 
-  const updateMenuPosition = () => {
+  const updateMenuPosition = useCallback(() => {
     const button = buttonRef.current;
-    if (!button || typeof window === "undefined") return;
+    const menu = menuRef.current;
+    if (!button || !menu || typeof window === "undefined") return;
 
-    const rect = button.getBoundingClientRect();
-    const viewportPadding = 12;
-    const gap = 8;
-    const availableBelow = window.innerHeight - rect.bottom - viewportPadding;
-    const availableAbove = rect.top - viewportPadding;
-    const openUp = availableBelow < 220 && availableAbove > availableBelow;
-    const availableSpace = openUp ? availableAbove : availableBelow;
-    const maxHeight = Math.max(160, Math.min(288, availableSpace - gap));
-    const width = Math.min(rect.width, window.innerWidth - viewportPadding * 2);
-    const left = Math.min(
-      Math.max(viewportPadding, rect.left),
-      window.innerWidth - width - viewportPadding
-    );
-
-    setMenuStyle({
-      left,
-      top: openUp ? Math.max(viewportPadding, rect.top - maxHeight - gap) : rect.bottom + gap,
-      width,
-      maxHeight,
+    const nextStyle = getSelectMenuPosition({
+      rect: button.getBoundingClientRect(),
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+      contentHeight: menu.scrollHeight + menu.offsetHeight - menu.clientHeight,
     });
-  };
+    setMenuStyle((current) =>
+      Object.keys(nextStyle).length === Object.keys(current).length &&
+      Object.entries(nextStyle).every(([key, position]) => current[key] === position)
+        ? current
+        : nextStyle
+    );
+  }, []);
+
+  useLayoutEffect(() => {
+    if (open) updateMenuPosition();
+  }, [open, normalizedOptions, updateMenuPosition]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -143,8 +141,6 @@ export default function CustomSelect({
         ? currentIndex
         : getNextEnabledIndex(normalizedOptions, -1, 1)
     );
-    updateMenuPosition();
-
     const handlePointerDown = (event) => {
       if (
         buttonRef.current?.contains(event.target) ||
@@ -167,7 +163,7 @@ export default function CustomSelect({
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("touchstart", handlePointerDown);
     };
-  }, [open, normalizedOptions, value]);
+  }, [open, normalizedOptions, value, updateMenuPosition]);
 
   // Some consumers (such as react-datepicker's custom time input) render this
   // menu in a portal while listening for outside clicks on `document`. Keep a

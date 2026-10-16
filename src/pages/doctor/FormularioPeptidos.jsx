@@ -25,6 +25,7 @@ import {
   getMissingQuestions,
   STEP_VALIDATORS,
 } from "../../components/FormularioPeptidos/formValidations";
+import { getEditableClinicalExamRows } from "../../components/FormularioPeptidos/clinicalExamRows";
 import {
   ClinicalHistoryPdfDocument,
   downloadClinicalHistoryPdf,
@@ -173,6 +174,9 @@ function initialFormData(patient, saved, user, nombre) {
 
   return {
     ...withLegacyDiagnosisFields(profileAwareData),
+    // Convert saved legacy answers before the new default collection can
+    // shadow them. A saved new array remains authoritative after removals.
+    examenesAuxiliares: getEditableClinicalExamRows(saved.formData),
     tratamientosPreviosPeso: normalizeTreatmentRows(
       profileAwareData.tratamientosPreviosPeso,
     ),

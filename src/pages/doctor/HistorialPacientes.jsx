@@ -7,6 +7,7 @@ import { getHistorialAtenciones } from "../../api/tratamientos.api";
 import BuscadorPacientes from "../../components/HistorialPacientes/BuscadorPacientes";
 import ListaTratamientos from "../../components/HistorialPacientes/ListaTratamientos";
 import DetallePaciente from "../../components/HistorialPacientes/DetallePaciente";
+import ClinicalNutritionFollowups from "../../components/HistorialPacientes/ClinicalNutritionFollowups";
 import { FaSearch } from "react-icons/fa";
 import { belongsToProfessionalRole } from "../../utils/professionalOwnership";
 import { usePatientUpdates } from "../../hooks/usePatientUpdates";
@@ -76,6 +77,7 @@ export default function HistorialPacientes() {
   const atencionesRequestRef = useRef(0);
 
   const [busqueda, setBusqueda] = useState("");
+  const [nutritionSelection, setNutritionSelection] = useState(() => location.state?.seguimientoId || "");
   // The clinical form returns the same patient snapshot in route state. This
   // keeps the clinician in the selected-patient view instead of dropping
   // them back into the entire list after pressing "Volver".
@@ -275,7 +277,7 @@ export default function HistorialPacientes() {
   return (
     <section className="page-section ui-page">
       <div className="page-stack">
-        {!pacienteSeleccionado && (
+        {!pacienteSeleccionado && !nutritionSelection && (
           <div className="ui-panel px-4 py-4 sm:px-6">
             <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-400">
               <FaSearch className="text-indigo-300/80" /> Busca por nombre para abrir una historia específica.
@@ -292,7 +294,10 @@ export default function HistorialPacientes() {
           </div>
         )}
 
-        {pacienteSeleccionado ? (
+        {esHistorialCosmiatra && !pacienteSeleccionado && (
+          <ClinicalNutritionFollowups selectedId={nutritionSelection} onSelect={setNutritionSelection} search={busqueda} socket={socket} />
+        )}
+        {!nutritionSelection && (pacienteSeleccionado ? (
           <DetallePaciente
             paciente={pacienteSeleccionado}
             tratamientos={tratamientosFiltrados}
@@ -306,7 +311,7 @@ export default function HistorialPacientes() {
             onSeleccionar={setPacienteSeleccionado}
             mostrarAtenciones={esHistorialCosmiatra}
           />
-        )}
+        ))}
       </div>
     </section>
   );

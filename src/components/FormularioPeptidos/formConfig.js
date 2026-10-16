@@ -330,6 +330,7 @@ export const INITIAL_FORM_DATA = {
 
   // XII. Exámenes Auxiliares
   fechaLaboratorio: "",
+  examenesAuxiliares: [{ examen: "", resultado: "" }],
   glucosaAyunas: "",
   hba1c: "",
   creatinina: "",

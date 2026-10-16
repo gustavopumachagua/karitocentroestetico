@@ -268,6 +268,30 @@ test("giant treatment cells are continued on later pages with repeated clear tab
   assertClinicalBounds(capture);
 });
 
+test("custom auxiliary exams use two columns, retain all results and replace legacy fields", async () => {
+  const result = "Resultado personalizado de laboratorio. ".repeat(220) + "FIN_EXAMEN_PERSONALIZADO";
+  const record = { patient: { sexo: "Masculino" }, formData: {
+    fechaLaboratorio: "2026-10-15", glucosaAyunas: "VALOR_ANTIGUO_NO_MOSTRAR",
+    examenesAuxiliares: [{ examen: "Examen personalizado", resultado: result }, { examen: "", resultado: "" }],
+  } };
+  const html = markup(record);
+  assert.equal((html.match(/<th\b/gu) || []).length, 2);
+  assert.ok(!html.includes("VALOR_ANTIGUO_NO_MOSTRAR"));
+  assert.ok(html.includes("Examen personalizado"));
+  const { capture } = await generate(record);
+  const text = allLines(capture).map((line) => line.text).join("\n");
+  assert.ok(!text.includes("VALOR_ANTIGUO_NO_MOSTRAR"));
+  const resultLines = allLines(capture).filter((line) => line.fontSize === 8.5 && line.fontStyle === "normal" && Math.abs(line.x - 87) < 0.01);
+  assert.equal(compactText(resultLines.map((line) => line.text).join("\n")), compactText(result));
+  assertClinicalBounds(capture);
+});
+
+test("empty custom exam rows do not resurrect old labs in the document", () => {
+  const html = markup({ patient: { sexo: "Masculino" }, formData: { examenesAuxiliares: [], glucosaAyunas: "OLD_LAB_HIDDEN" } });
+  assert.ok(!html.includes("OLD_LAB_HIDDEN"));
+  assert.ok(!html.includes("EXÁMENES AUXILIARES"));
+});
+
 const withProtectedSignatureBrowser = async (callback, fetchImpl) => {
   const previousWindow = globalThis.window;
   const previousFetch = globalThis.fetch;
