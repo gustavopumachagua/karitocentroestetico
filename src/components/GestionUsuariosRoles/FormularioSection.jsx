@@ -11,13 +11,13 @@ export default function FormularioSection({
 }) {
   return (
     <>
-      <Buscador busqueda={busqueda} setBusqueda={setBusqueda} />
       <FormularioUsuario
         nuevoUsuario={nuevoUsuario}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         formularioValido={formularioValido}
       />
+      <Buscador busqueda={busqueda} setBusqueda={setBusqueda} />
     </>
   );
 }

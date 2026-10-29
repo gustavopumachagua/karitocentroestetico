@@ -3,7 +3,6 @@ import { CitaRow } from "../TablaCitas/CitaRow";
 import { CitaCard } from "../TablaCitas/CitaCard";
 import Paginacion from "../HistorialPacientes/Paginacion";
 import { obtenerTimestampCita } from "../../utils/citasFecha";
-import { FaCalendarCheck } from "react-icons/fa";
 import { useProfessionalDirectory } from "../../hooks/useProfessionalDirectory";
 
 export default function CitaTable({
@@ -33,23 +32,20 @@ export default function CitaTable({
   const cambiarPagina = (num) => setPaginaActual(num);
 
   return (
-    <>
-      <div className="ui-panel hidden lg:block">
-        <div className="ui-toolbar mb-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
-              <FaCalendarCheck className="text-indigo-300" />
-            </div>
-            <h3 className="text-lg font-semibold text-white">
+    <div className="ui-panel">
+        <div className="ui-toolbar mb-4">
+          <div>
+            <h3 className="text-base font-semibold text-white">
               Citas registradas
             </h3>
+            <p className="mt-1 text-sm text-slate-400">Listado ordenado desde la fecha más reciente.</p>
           </div>
           <span className="ui-status">
             {citasOrdenadas.length} citas
           </span>
         </div>
 
-        <div role="region" tabIndex={0} aria-label="Citas registradas: desplazamiento horizontal disponible" className="ui-table-wrap">
+        <div role="region" tabIndex={0} aria-label="Citas registradas: desplazamiento horizontal disponible" className="ui-table-wrap hidden lg:block">
           <table aria-label="Citas registradas" className="ui-table min-w-[920px]">
             <thead>
               <tr>
@@ -76,8 +72,6 @@ export default function CitaTable({
             </tbody>
           </table>
         </div>
-      </div>
-
       <div className="lg:hidden space-y-3">
         {citasPaginadas.map((cita) => (
           <CitaCard
@@ -93,7 +87,7 @@ export default function CitaTable({
 
       {citasOrdenadas.length === 0 && (
         <div className="ui-empty-state">
-          <p className="text-slate-400 text-lg">No hay citas registradas</p>
+          <p className="text-slate-400 text-sm">No hay citas registradas</p>
         </div>
       )}
       {totalPaginas > 1 && (
@@ -105,6 +99,6 @@ export default function CitaTable({
           />
         </div>
       )}
-    </>
+    </div>
   );
 }

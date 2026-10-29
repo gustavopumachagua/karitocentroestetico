@@ -1,4 +1,3 @@
-import { FaUser } from "react-icons/fa";
 import TablaUsuarios from "../../components/GestionUsuariosRoles/TablaUsuarios";
 import UsuarioCard from "../../components/GestionUsuariosRoles/UsuarioCard";
 import { normalizarTexto } from "./utils";
@@ -23,15 +22,12 @@ export default function UsuariosSection({
     <section className="ui-panel">
       <div className="ui-toolbar mb-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
-            <FaUser className="text-indigo-300" />
-          </div>
-          <h3 className="text-lg font-semibold text-white">
-            Usuarios Registrados
+          <h3 className="text-base font-semibold text-white">
+            Usuarios registrados
           </h3>
         </div>
 
-        <span className="ui-status">
+        <span className="text-xs tabular-nums text-slate-400">
           {usuariosFiltrados.length} usuarios
         </span>
       </div>
@@ -56,7 +52,7 @@ export default function UsuariosSection({
       </div>
 
       {usuariosFiltrados.length === 0 && (
-        <p className="rounded-xl border border-slate-700/60 bg-slate-950/25 p-5 text-center text-sm italic text-slate-400">
+        <p className="ui-empty-state text-sm">
           No hay usuarios registrados con esos criterios.
         </p>
       )}

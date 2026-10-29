@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaClipboardList, FaUtensils } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import { useNutritionFollowups } from "../../hooks/useNutritionFollowups";
 import Paginacion from "./Paginacion";
 
@@ -37,7 +37,7 @@ export default function ClinicalNutritionFollowups({ selectedId, onSelect, searc
       <header className="ui-toolbar">
         <div className="min-w-0">
           <p className="ui-eyebrow">Seguimiento alimentario</p>
-          <h2 className="text-xl font-semibold text-slate-100">{selected ? selected.paciente.nombre : "Historias derivadas para plan alimentario"}</h2>
+          <h2 className="text-base font-semibold text-slate-100">{selected ? selected.paciente.nombre : "Historias derivadas para plan alimentario"}</h2>
           <p className="mt-2 max-w-3xl text-sm text-slate-400">Ficha de seguimiento creada al finalizar la historia clínica. No incluye atenciones previas ni documentos privados del doctor.</p>
         </div>
         {selectedId && <button type="button" onClick={() => onSelect("")} className="ui-button ui-button-secondary"><FaArrowLeft /> Volver al listado</button>}
@@ -48,10 +48,10 @@ export default function ClinicalNutritionFollowups({ selectedId, onSelect, searc
         <div className="space-y-5">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {[ ["Sexo", selected.paciente.sexo], ["Edad", selected.indicadores.edad ? `${selected.indicadores.edad} años` : ""], ["Peso", selected.indicadores.peso ? `${selected.indicadores.peso} kg` : ""], ["Talla", selected.indicadores.talla ? `${selected.indicadores.talla} m` : ""], ["IMC", selected.indicadores.imc], ["Celular", selected.paciente.celular], ["Historia finalizada", dateLabel(selected.fechaFinalizacion)], ["Estado del plan", STATUS_LABELS[selected.planEstado] || "Plan pendiente"] ].map(([label, value]) => (
-              <div key={label} className="min-w-0 rounded-xl border border-slate-700 bg-slate-950/30 p-4"><p className="text-xs text-slate-400">{label}</p><p className="mt-1 break-words font-medium text-slate-100">{value || "No registrado"}</p></div>
+              <div key={label} className="min-w-0 border-b border-slate-700/50 py-3"><p className="text-xs text-slate-400">{label}</p><p className="mt-1 break-words font-medium text-slate-100">{value || "No registrado"}</p></div>
             ))}
           </div>
-          <button type="button" onClick={() => openPlan(selected)} className="ui-button ui-button-primary"><FaUtensils />{selected.planEstado === "finalizado" ? "Ver plan alimentario" : selected.planEstado === "borrador" ? "Continuar plan" : "Generar plan"}</button>
+          <button type="button" onClick={() => openPlan(selected)} className="ui-button ui-button-primary">{selected.planEstado === "finalizado" ? "Ver plan alimentario" : selected.planEstado === "borrador" ? "Continuar plan" : "Generar plan"}</button>
         </div>
       ) : !loading && selectedId ? (
         <p role="status" className="text-sm text-slate-400">Este seguimiento no está disponible para tu cuenta o fue asignado a otro profesional.</p>
@@ -59,10 +59,10 @@ export default function ClinicalNutritionFollowups({ selectedId, onSelect, searc
         <p className="ui-empty-state text-sm">Los nuevos seguimientos aparecerán aquí al finalizar una historia clínica. Tus atenciones de Cosmiatra se conservan debajo.</p>
       ) : (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {visibleEntries.map((entry) => (
-              <button type="button" key={entry.id} onClick={() => onSelect(entry.id)} className="ui-card ui-card-interactive min-w-0 space-y-3 text-left focus-visible:outline-indigo-300">
-                <span className="flex items-start gap-3"><FaClipboardList className="mt-1 shrink-0 text-indigo-300" /><span className="min-w-0 break-words font-semibold text-slate-100">{entry.paciente.nombre}</span></span>
+              <button type="button" key={entry.id} onClick={() => onSelect(entry.id)} className="ui-card-interactive min-w-0 space-y-3 rounded-lg border border-slate-700/60 p-4 text-left transition-colors hover:bg-[var(--surface-hover)] focus-visible:outline-indigo-300">
+                <span className="block min-w-0 break-words font-semibold text-slate-100">{entry.paciente.nombre}</span>
                 <span className="block text-xs text-slate-400">Finalizada el {dateLabel(entry.fechaFinalizacion)}</span>
                 <span className="ui-status">{STATUS_LABELS[entry.planEstado] || "Plan pendiente"}</span>
                 <span className="block text-sm font-medium text-indigo-300">Abrir seguimiento →</span>

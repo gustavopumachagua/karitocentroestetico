@@ -8,8 +8,9 @@ export default function FormInput({
 }) {
   return (
     <div className="ui-field min-w-0">
-      <label className="ui-label">{label}</label>
+      <label className="ui-label" htmlFor={`appointment-${name}`}>{label}</label>
       <input
+        id={`appointment-${name}`}
         type="text"
         name={name}
         value={value}

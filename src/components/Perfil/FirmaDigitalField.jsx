@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  FaSignature,
   FaPen,
-  FaCheck,
-  FaTimes,
   FaCloudUploadAlt,
   FaTrashAlt,
 } from "react-icons/fa";
@@ -137,7 +134,6 @@ export default function FirmaDigitalField({
         <div className="min-w-0 rounded-xl border border-slate-700 bg-slate-950/40 p-3 sm:p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2">
-              <FaSignature className="shrink-0 text-indigo-300" aria-hidden="true" />
               <span className="text-slate-300 text-sm font-medium">
                 Firma registrada
               </span>
@@ -193,7 +189,7 @@ export default function FirmaDigitalField({
             >
               <FaTrashAlt size={14} />
             </button>
-            <p className="mt-3 text-center text-xs leading-relaxed text-slate-600">
+            <p className="mt-3 text-center text-xs leading-relaxed text-[#52565e]">
               Retira esta vista para seleccionar una nueva firma. La firma
               actual se conserva hasta que aceptes el reemplazo.
             </p>
@@ -225,9 +221,9 @@ export default function FirmaDigitalField({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="group flex min-h-40 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-600 bg-slate-900/40 p-5 text-center transition-colors hover:border-indigo-300/60 hover:bg-indigo-400/5"
+            className="group flex min-h-36 w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-slate-600 bg-slate-900/40 p-5 text-center transition-colors hover:border-indigo-300/60 hover:bg-indigo-400/5"
           >
-            <FaCloudUploadAlt className="text-3xl text-slate-400 transition-colors group-hover:text-indigo-300" aria-hidden="true" />
+            <FaCloudUploadAlt className="text-xl text-slate-400 transition-colors group-hover:text-indigo-300" aria-hidden="true" />
             <span className="text-sm text-slate-400 group-hover:text-slate-300 transition">
               Haz clic para subir tu firma digital
             </span>
@@ -250,7 +246,7 @@ export default function FirmaDigitalField({
         )}
 
         {uploading && (
-          <p className="text-xs text-slate-400 animate-pulse text-center">
+          <p role="status" className="text-xs text-slate-400 text-center">
             Subiendo firma digital...
           </p>
         )}
@@ -262,7 +258,6 @@ export default function FirmaDigitalField({
             disabled={uploading}
             className="ui-button ui-button-secondary min-h-11"
           >
-            <FaTimes className="inline mr-1.5" size={12} />
             Cancelar
           </button>
           <button
@@ -275,7 +270,6 @@ export default function FirmaDigitalField({
                 : "ui-button-primary"
             }`}
           >
-            <FaCheck className="inline mr-1.5" size={12} />
             {uploading ? "Subiendo..." : "Aceptar"}
           </button>
         </div>

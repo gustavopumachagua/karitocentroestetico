@@ -64,7 +64,7 @@ export default function ResetPassword() {
   return (
     <AuthPageLayout
       subtitle="Recuperación de acceso"
-      title="Recupera tu contraseña sin perder el ritmo del trabajo."
+      title="Recupera el acceso a tu cuenta."
       description="Te enviaremos un enlace seguro al correo asociado a tu cuenta para que puedas crear una nueva contraseña."
       highlights={HIGHLIGHTS}
       cardSubtitle="Recuperar acceso"

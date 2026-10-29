@@ -5,28 +5,28 @@ import { getSelectMenuPosition } from "../../utils/selectMenuPosition";
 
 const accentStyles = {
   cyan: {
-    focus: "focus:border-indigo-400/60 focus:ring-indigo-400/15",
-    hover: "hover:bg-indigo-400/10 hover:text-white",
-    active: "bg-indigo-400/15 text-white",
-    icon: "text-indigo-300",
+    focus: "focus:border-[var(--accent)] focus:ring-[var(--accent-soft)]",
+    hover: "hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]",
+    active: "bg-[var(--accent-soft)] text-[var(--text-primary)]",
+    icon: "text-[var(--accent)]",
   },
   emerald: {
-    focus: "focus:border-indigo-400/60 focus:ring-indigo-400/15",
-    hover: "hover:bg-indigo-400/10 hover:text-white",
-    active: "bg-indigo-400/15 text-white",
-    icon: "text-indigo-300",
+    focus: "focus:border-[var(--accent)] focus:ring-[var(--accent-soft)]",
+    hover: "hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]",
+    active: "bg-[var(--accent-soft)] text-[var(--text-primary)]",
+    icon: "text-[var(--accent)]",
   },
   violet: {
-    focus: "focus:border-indigo-400/60 focus:ring-indigo-400/15",
-    hover: "hover:bg-indigo-400/10 hover:text-white",
-    active: "bg-indigo-400/15 text-white",
-    icon: "text-indigo-300",
+    focus: "focus:border-[var(--accent)] focus:ring-[var(--accent-soft)]",
+    hover: "hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]",
+    active: "bg-[var(--accent-soft)] text-[var(--text-primary)]",
+    icon: "text-[var(--accent)]",
   },
   indigo: {
-    focus: "focus:border-indigo-400/60 focus:ring-indigo-400/15",
-    hover: "hover:bg-indigo-400/10 hover:text-white",
-    active: "bg-indigo-400/15 text-white",
-    icon: "text-indigo-300",
+    focus: "focus:border-[var(--accent)] focus:ring-[var(--accent-soft)]",
+    hover: "hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]",
+    active: "bg-[var(--accent-soft)] text-[var(--text-primary)]",
+    icon: "text-[var(--accent)]",
   },
 };
 
@@ -247,7 +247,7 @@ export default function CustomSelect({
             role="listbox"
             aria-labelledby={selectId}
             style={menuStyle}
-            className={`react-datepicker-ignore-onclickoutside fixed z-[var(--z-select)] overflow-y-auto rounded-xl border border-slate-600 bg-[var(--surface-raised)] p-1 shadow-xl animate-fade-in ${menuClassName}`}
+            className={`react-datepicker-ignore-onclickoutside fixed z-[var(--z-select)] overflow-y-auto rounded-lg border border-[var(--line-strong)] bg-[var(--surface-raised)] p-1 shadow-[var(--shadow-float)] animate-fade-in ${menuClassName}`}
           >
             {normalizedOptions.length > 0 ? (
               normalizedOptions.map((option, index) => {
@@ -264,7 +264,7 @@ export default function CustomSelect({
                     disabled={option.disabled}
                     onMouseEnter={() => setHighlightedIndex(index)}
                     onClick={() => handleSelect(option)}
-                    className={`react-datepicker-ignore-onclickoutside flex w-full items-center justify-between gap-3 min-h-11 rounded-lg px-3 py-2.5 text-left text-sm transition ${
+                    className={`react-datepicker-ignore-onclickoutside flex w-full items-center justify-between gap-3 min-h-11 rounded-md px-3 py-2.5 text-left text-sm transition ${
                       selected || highlighted ? styles.active : "text-slate-300"
                     } ${styles.hover} ${
                       option.disabled
@@ -302,7 +302,7 @@ export default function CustomSelect({
         disabled={disabled}
         onClick={() => setOpen((current) => !current)}
         onKeyDown={handleKeyDown}
-        className={`flex w-full min-w-0 items-center justify-between gap-3 rounded-lg border border-slate-600 bg-[var(--surface-input)] text-left outline-none transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={`flex w-full min-w-0 items-center justify-between gap-3 rounded-md border border-[var(--line-strong)] bg-[var(--surface-input)] hover:border-slate-500 text-left outline-none transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 ${
           sizeStyles[size] || sizeStyles.md
         } ${styles.focus} ${buttonClassName}`}
       >
@@ -316,7 +316,7 @@ export default function CustomSelect({
         <FaChevronDown
           className={`shrink-0 text-xs transition-transform ${
             open ? "rotate-180" : ""
-          } ${disabled ? "text-slate-400" : styles.icon}`}
+          } ${disabled ? "text-slate-500" : "text-slate-400"}`}
         />
       </button>
       {menu}

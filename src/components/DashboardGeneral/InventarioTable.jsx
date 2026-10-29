@@ -7,11 +7,7 @@ export default function InventarioTable({ data, mostrarSoloBajos, loading }) {
     : data;
 
   return (
-    <section className="ui-panel min-w-0">
-      <h3 className="text-base sm:text-lg font-semibold text-slate-100 mb-6 tracking-tight">
-        Estado de Stock de Insumos
-      </h3>
-
+    <div className="min-w-0">
       {loading ? (
         <div className="ui-table-shell overflow-x-auto rounded-xl">
           <table className="min-w-[360px] w-full">
@@ -39,15 +35,15 @@ export default function InventarioTable({ data, mostrarSoloBajos, loading }) {
             : "No hay insumos registrados en el inventario."}
         </p>
       ) : (
-        <div className="ui-table-shell overflow-auto max-h-[420px] rounded-xl custom-scroll">
-          <table className="min-w-[360px] w-full border-collapse text-slate-200 text-sm">
+        <div role="region" tabIndex={0} aria-label="Estado del inventario: tabla desplazable" className="ui-table-wrap overflow-auto max-h-[420px] custom-scroll">
+          <table aria-label="Estado de stock de insumos" className="ui-table min-w-[360px]">
             <thead>
               <tr className="text-slate-300 text-xs sticky top-0 z-10"
-                style={{ background: 'var(--surface-raised, #1E293B)', borderBottom: '1px solid var(--line-soft, #2B3648)' }}
+                style={{ background: 'var(--surface-raised, #22252A)', borderBottom: '1px solid var(--line-soft, #303238)' }}
               >
-                <th className="p-3 text-left font-semibold">Insumo</th>
-                <th className="p-3 text-center font-semibold">Cantidad</th>
-                <th className="p-3 text-center font-semibold">Estado</th>
+                <th scope="col" className="p-3 text-left font-semibold">Insumo</th>
+                <th scope="col" className="p-3 text-center font-semibold">Cantidad</th>
+                <th scope="col" className="p-3 text-center font-semibold">Estado</th>
               </tr>
             </thead>
             <tbody>
@@ -55,22 +51,18 @@ export default function InventarioTable({ data, mostrarSoloBajos, loading }) {
                 <tr
                   key={i}
                   className="transition-colors hover:bg-white/[0.03]"
-                  style={{ borderBottom: '1px solid var(--line-soft, #2B3648)' }}
+                  style={{ borderBottom: '1px solid var(--line-soft, #303238)' }}
                 >
                   <td className="p-3 font-medium">{item.insumo}</td>
                   <td className="p-3 text-center tabular-nums">{item.cantidad}</td>
                   <td className="p-3 text-center">
                     {item.cantidad < item.umbral ? (
-                      <span className="inline-flex items-center whitespace-nowrap gap-1.5 text-amber-300 font-semibold text-xs px-2.5 py-1 rounded-lg"
-                        style={{ background: 'rgba(251, 191, 36, 0.08)', border: '1px solid rgba(251, 191, 36, 0.2)' }}
-                      >
+                      <span className="inline-flex items-center whitespace-nowrap gap-1.5 text-amber-300 font-medium text-xs">
                         <FaExclamationTriangle className="text-[10px]" /> Bajo
                       </span>
                     ) : (
-                      <span className="inline-flex items-center whitespace-nowrap gap-1.5 text-emerald-300 font-semibold text-xs px-2.5 py-1 rounded-lg"
-                        style={{ background: 'rgba(52, 211, 153, 0.08)', border: '1px solid rgba(52, 211, 153, 0.15)' }}
-                      >
-                        <FaCheckCircle className="text-[10px]" /> OK
+                      <span className="inline-flex items-center whitespace-nowrap gap-1.5 text-slate-300 font-medium text-xs">
+                        <FaCheckCircle className="text-[10px] text-emerald-300" /> Suficiente
                       </span>
                     )}
                   </td>
@@ -80,6 +72,6 @@ export default function InventarioTable({ data, mostrarSoloBajos, loading }) {
           </table>
         </div>
       )}
-    </section>
+    </div>
   );
 }

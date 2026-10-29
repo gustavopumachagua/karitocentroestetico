@@ -2,15 +2,15 @@ import { FaCheck } from "react-icons/fa";
 
 const accentStyles = {
   cyan: {
-    checked: "border-indigo-400/70 bg-indigo-400/18 text-indigo-100 shadow-indigo-500/15",
-    hover: "group-hover:border-indigo-400/45 group-hover:bg-indigo-400/10",
-    dot: "bg-indigo-200",
+    checked: "border-[var(--accent)] bg-[var(--accent)] text-[var(--surface-canvas)]",
+    hover: "group-hover:border-[var(--accent)] group-hover:bg-[var(--accent-soft)]",
+    dot: "bg-[var(--surface-canvas)]",
   },
   violet: {
     checked:
-      "border-indigo-400/70 bg-indigo-400/18 text-indigo-100 shadow-indigo-500/15",
-    hover: "group-hover:border-indigo-400/45 group-hover:bg-indigo-400/10",
-    dot: "bg-indigo-200",
+      "border-[var(--accent)] bg-[var(--accent)] text-[var(--surface-canvas)]",
+    hover: "group-hover:border-[var(--accent)] group-hover:bg-[var(--accent-soft)]",
+    dot: "bg-[var(--surface-canvas)]",
   },
 };
 
@@ -42,11 +42,11 @@ export default function CustomChoice({
       <span
         aria-hidden="true"
         className={`flex h-5 w-5 items-center justify-center border transition peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-indigo-300 ${
-          isRadio ? "rounded-full" : "rounded-md"
+          isRadio ? "rounded-full" : "rounded-sm"
         } ${
           checked
             ? styles.checked
-            : `border-slate-600 bg-slate-950/65 ${styles.hover}`
+            : `border-[var(--line-strong)] bg-[var(--surface-input)] ${styles.hover}`
         } ${disabled ? "opacity-55" : ""}`}
       >
         {checked &&

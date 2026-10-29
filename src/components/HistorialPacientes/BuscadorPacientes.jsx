@@ -10,7 +10,7 @@ export default function BuscadorPacientes({
   onSeleccionar,
 }) {
   return (
-    <div className="relative mx-auto max-w-2xl">
+    <div className="relative w-full max-w-2xl">
       <div className="search-field">
         <FaSearch className="search-icon" />
         <input aria-label="Buscar paciente por nombre"

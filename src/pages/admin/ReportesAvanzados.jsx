@@ -351,7 +351,16 @@ export default function ReportesAvanzados() {
           setFiltroMes={setFiltroMes}
         />
 
-        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
+        <GraficoIngresosComparativos
+          data={ingresosComparativos}
+          anio={filtroAnio}
+        />
+
+        <div className="border-b border-slate-700/60 pb-3">
+          <h2 className="text-base font-semibold text-slate-100">Actividad por profesional</h2>
+          <p className="mt-1 text-sm text-slate-400">Citas atendidas y distribución de servicios por área.</p>
+        </div>
+        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2">
           <GraficoCitasPorRol
             rol="doctor"
             data={citasPorRol.doctor}
@@ -370,12 +379,7 @@ export default function ReportesAvanzados() {
           />
         </div>
 
-        <GraficoIngresosComparativos
-          data={ingresosComparativos}
-          anio={filtroAnio}
-        />
-
-        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
+        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2">
           <GraficoServiciosRentables
             rol="doctor"
             data={serviciosRentables.doctor}

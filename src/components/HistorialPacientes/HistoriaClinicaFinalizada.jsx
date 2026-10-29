@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaCheckCircle, FaDownload, FaFileMedical } from "react-icons/fa";
+import { FaCheckCircle, FaDownload } from "react-icons/fa";
 import { useAuth } from "../../hooks/useAuth";
 import {
   ClinicalHistoryPdfDocument,
@@ -110,15 +110,12 @@ export default function HistoriaClinicaFinalizada({ paciente }) {
 
   return (
     <>
-      <div className="glass-card p-5 sm:p-6">
+      <div className="ui-card p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-400/10">
-              <FaFileMedical className="text-emerald-300" />
-            </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-semibold text-white">Historia clínica finalizada</h2>
+                <h2 className="text-base font-semibold text-white">Historia clínica finalizada</h2>
                 <FaCheckCircle className="text-emerald-300" />
               </div>
               <p className="mt-1 text-sm text-slate-400">
@@ -130,7 +127,7 @@ export default function HistoriaClinicaFinalizada({ paciente }) {
             type="button"
             onClick={handleDownload}
             disabled={downloading}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100 transition hover:border-emerald-300/50 hover:bg-emerald-400/15 disabled:opacity-60"
+            className="ui-button ui-button-secondary"
           >
             <FaDownload /> {downloading ? "Generando…" : "Descargar PDF"}
           </button>

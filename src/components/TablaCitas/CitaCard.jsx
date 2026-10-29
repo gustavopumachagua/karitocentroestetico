@@ -2,7 +2,6 @@ import { EstadoBadge } from "./EstadoBadge";
 import { AccionButtons } from "./AccionButtons";
 import FechaCita from "./FechaCita";
 import DetalleCita from "./DetalleCita";
-import { FaUserMd } from "react-icons/fa";
 import { getProfessionalDisplayName } from "../../utils/professionalDirectory";
 
 export function CitaCard({
@@ -18,16 +17,15 @@ export function CitaCard({
   );
 
   return (
-    <div className="ui-card ui-card-interactive">
-      <div className="mb-4 flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
+    <div className="rounded-lg border border-slate-700/60 p-4">
+      <div className="mb-3 flex min-w-0 flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 space-y-1">
-          <h3 className="text-lg font-semibold leading-relaxed text-slate-100 break-words">
+          <h3 className="text-base font-semibold leading-relaxed text-slate-100 break-words">
             {typeof cita.cliente === "object"
               ? cita.cliente?.nombre
               : cita.cliente}
           </h3>
           <p className="flex items-start gap-2 text-sm text-slate-400 break-words">
-            <FaUserMd className="mt-0.5 shrink-0 text-indigo-300" />
             {nombreProfesional || "Sin asignar"}
           </p>
         </div>
@@ -48,7 +46,7 @@ export function CitaCard({
                   {cita.servicio.map((serv, i) => (
                     <span
                       key={i}
-                      className="rounded-lg border border-slate-700/60 bg-[var(--surface-raised)] px-2 py-1 text-xs font-medium text-slate-200 break-words"
+                      className="rounded-md bg-[var(--surface-raised)] px-2 py-1 text-xs text-slate-200 break-words"
                     >
                       {serv}
                     </span>

@@ -245,6 +245,13 @@ export default function GestionCitas() {
   return (
     <section className="page-section ui-page">
       <div className="page-stack">
+        <header className="ui-page-header mb-0">
+          <div>
+            <p className="ui-eyebrow">Agenda</p>
+            <h1 className="ui-title">Gestión de citas</h1>
+            <p className="ui-description">Organiza las próximas atenciones y consulta el estado de cada reserva.</p>
+          </div>
+        </header>
         <CitaForm
           usuarios={usuarios}
           onRegistrarCita={registrarCita}

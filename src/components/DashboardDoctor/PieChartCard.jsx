@@ -34,7 +34,6 @@ const CustomTooltip = ({ active, payload }) => {
 
 export default function PieChartCard({
   title,
-  icon: Icon,
   data,
   dataKey,
   nameKey,
@@ -45,14 +44,7 @@ export default function PieChartCard({
     <div className="ui-panel ui-chart-card">
       <div className="ui-chart-header">
         <div className="flex min-w-0 items-start gap-3">
-          {Icon && (
-            <div
-              className="ui-chart-icon"
-            >
-              <Icon className="text-lg" />
-            </div>
-          )}
-          <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight">
+          <h3 className="text-base font-semibold text-white tracking-tight">
             {title}
           </h3>
         </div>
@@ -67,11 +59,11 @@ export default function PieChartCard({
               nameKey={nameKey}
               cx="50%"
               cy="50%"
-              outerRadius="75%"
-              innerRadius="45%"
-              paddingAngle={3}
+              outerRadius="70%"
+              innerRadius="49%"
+              paddingAngle={2}
               blendStroke
-              stroke="var(--surface-default, #161D29)"
+              stroke="var(--surface-default, #1A1C20)"
               strokeWidth={2}
               isAnimationActive={false}
             >

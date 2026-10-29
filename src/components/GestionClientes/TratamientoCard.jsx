@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { FaCalendarAlt, FaCamera, FaImages, FaUserMd } from "react-icons/fa";
+import { FaCamera, FaImages } from "react-icons/fa";
 import { formatearFechaCita } from "../../utils/citasFecha";
 import { getProfessionalDisplayName } from "../../utils/professionalDirectory";
 import { getAttentionDate, isPendingTreatmentRecord } from "../../utils/attentionHistory";
@@ -27,7 +27,7 @@ export default function TratamientoCard({
   );
 
   return (
-    <div className="ui-card ui-card-interactive flex min-w-0 flex-col overflow-hidden p-0">
+    <div className="ui-card flex min-w-0 flex-col overflow-hidden p-0">
       {totalImagenes > 0 ? (
         <button
           type="button"
@@ -38,7 +38,7 @@ export default function TratamientoCard({
           <ProtectedImage
             src={imagenes[0].thumbnailUrl || imagenes[0].url}
             alt="Tratamiento"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-opacity duration-150 group-hover:opacity-90"
             loading="lazy"
           />
           <span className="pointer-events-none absolute inset-0 bg-slate-950/0 transition group-hover:bg-slate-950/20" />
@@ -51,28 +51,29 @@ export default function TratamientoCard({
         </button>
       ) : (
         <div
-          className="flex h-44 w-full items-center justify-center bg-[var(--surface-subtle)] sm:h-52"
+          className="flex h-20 w-full items-center justify-center gap-2 border-b border-slate-700/60 bg-[var(--surface-subtle)]"
         >
-          <FaCamera className="text-3xl text-slate-600" />
+          <FaCamera className="text-sm text-slate-500" />
+          <span className="text-xs text-slate-400">Sin imágenes registradas</span>
         </div>
       )}
 
       <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
         <div>
           <p className="text-slate-400 flex items-center gap-2 text-sm">
-            <FaCalendarAlt className="text-indigo-400/70 text-xs" />{" "}
+
             {fechaFormateada}
           </p>
 
           <AtencionPendienteBadge record={tratamiento} className="mt-3" />
 
           <p className="mt-2 text-sm leading-relaxed text-slate-200 break-words">
-            <span className="font-semibold text-indigo-300">Servicio:</span>{" "}
+            <span className="font-medium text-slate-300">Servicio:</span>{" "}
             {servicioFormateado}
           </p>
 
-          <p className="text-slate-400 mt-2 flex items-center gap-2 text-sm flex-wrap">
-            <FaUserMd className="text-indigo-400/70 text-xs" />
+          <p className="text-slate-400 mt-3 flex items-center gap-2 text-xs flex-wrap">
+
             {nombreProfesional || "No registrado"}
             {tratamiento.rol && (
               <span
@@ -84,7 +85,7 @@ export default function TratamientoCard({
           </p>
 
           {!esAtencionPendiente && (
-            <p className="mt-3 text-sm leading-relaxed text-slate-400 break-words">
+            <p className="mt-4 border-t border-slate-700/60 pt-3 text-sm leading-relaxed text-slate-400 break-words">
               <span className="text-slate-300 font-medium">Observaciones:</span>{" "}
               {tratamiento.observacion || "Sin observaciones"}
             </p>

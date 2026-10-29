@@ -2,7 +2,7 @@ import { FaSearch, FaTimes } from "react-icons/fa";
 
 export default function Buscador({ busqueda, setBusqueda }) {
   return (
-    <div className="search-field mb-6">
+    <div className="search-field">
       <FaSearch className="search-icon" />
       <input aria-label="Buscar usuario por nombre, correo o rol"
         type="text"

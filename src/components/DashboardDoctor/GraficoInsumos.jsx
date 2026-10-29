@@ -1,4 +1,3 @@
-import { FaClipboardList } from "react-icons/fa";
 import {
   ResponsiveContainer,
   BarChart,
@@ -35,10 +34,7 @@ export default function GraficoInsumos({ data }) {
     <div className="ui-panel ui-chart-card">
       <div className="ui-chart-header">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="ui-chart-icon">
-            <FaClipboardList className="text-lg" />
-          </div>
-          <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight">
+          <h3 className="text-base font-semibold text-white tracking-tight">
             Insumos más usados
           </h3>
         </div>
@@ -52,23 +48,23 @@ export default function GraficoInsumos({ data }) {
               margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
             >
               <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="var(--line-soft, #2B3648)"
+                strokeDasharray="2 5"
+                stroke="var(--line-soft, #303238)"
                 horizontal={false}
               />
 
               <XAxis
                 type="number"
-                stroke="var(--text-secondary, #94A3B8)"
-                tick={{ fontSize: 12, fill: "var(--text-secondary, #94A3B8)" }}
+                stroke="var(--text-secondary, #A1A4AB)"
+                tick={{ fontSize: 12, fill: "var(--text-secondary, #A1A4AB)" }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 dataKey="name"
                 type="category"
-                stroke="var(--text-secondary, #94A3B8)"
-                tick={{ fontSize: 12, fill: "var(--text-secondary, #94A3B8)", fontWeight: 500 }}
+                stroke="var(--text-secondary, #A1A4AB)"
+                tick={{ fontSize: 12, fill: "var(--text-secondary, #A1A4AB)", fontWeight: 500 }}
                 width={145}
                 axisLine={false}
                 tickLine={false}
@@ -79,17 +75,10 @@ export default function GraficoInsumos({ data }) {
                 cursor={{ fill: "var(--bg-hover)" }}
               />
 
-              <defs>
-                <linearGradient id="barGradientInsumos" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="var(--chart-indigo, #818CF8)" />
-                  <stop offset="100%" stopColor="var(--chart-indigo, #818CF8)" />
-                </linearGradient>
-              </defs>
-
               <Bar
                 dataKey="value"
-                fill="url(#barGradientInsumos)"
-                radius={[8, 8, 8, 8]}
+                fill="var(--chart-indigo, #A8B8A4)"
+                radius={[0, 3, 3, 0]}
                 barSize={20}
                 isAnimationActive={false}
               />

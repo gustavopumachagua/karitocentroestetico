@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import logo from "../../assets/Logo.jpg";
-import { FaSpa } from "react-icons/fa";
 
 export default function Logo() {
   return (
@@ -13,14 +12,13 @@ export default function Logo() {
         <img
           src={logo}
           alt="Karito Centro Estético"
-          className="h-11 w-11 shrink-0 rounded-xl border border-slate-700 object-cover transition-colors group-hover:border-indigo-300/50"
+          className="h-10 w-10 shrink-0 rounded-lg border border-slate-700 object-cover transition-colors group-hover:border-slate-500"
         />
-        <div className="hidden leading-tight sm:block">
-          <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-100">
-            <FaSpa className="text-indigo-300" aria-hidden="true" />
+        <div className="leading-tight">
+          <div className="text-sm font-semibold text-slate-100">
             Karito
           </div>
-          <p className="text-sm text-slate-400">Centro Estético</p>
+          <p className="mt-0.5 text-xs text-slate-400">Centro Estético</p>
         </div>
       </Link>
     </div>

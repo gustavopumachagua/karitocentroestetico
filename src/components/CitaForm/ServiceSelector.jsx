@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaSearch, FaSpa } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import CustomChoice from "../common/CustomChoice";
 
 export default function ServiceSelector({
@@ -23,13 +23,12 @@ export default function ServiceSelector({
 
   return (
     <div className="min-w-0 col-span-1 md:col-span-2">
-      <label className="ui-label mb-3 flex items-center gap-2 font-semibold">
-        <FaSpa className="text-indigo-300" />
+      <label className="ui-label mb-3 block">
         Servicio(s)
       </label>
 
       <div
-        className={`min-w-0 max-h-72 overflow-y-auto rounded-xl border border-slate-700 bg-slate-950/25 p-3 custom-scroll sm:p-4 ${
+        className={`min-w-0 max-h-72 overflow-y-auto rounded-lg border border-slate-700 bg-[var(--surface-subtle)] p-3 custom-scroll sm:p-4 ${
           disabled ? "pointer-events-none" : ""
         }`}
       >
@@ -55,6 +54,7 @@ export default function ServiceSelector({
               <FaSearch className="search-icon" />
               <input
                 type="text"
+                aria-label="Buscar servicio"
                 placeholder="Buscar servicio..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
@@ -62,7 +62,7 @@ export default function ServiceSelector({
               />
             </div>
 
-            <div className="grid min-w-0 grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {serviciosFiltrados.length === 0 ? (
                 <p className="text-slate-400 text-sm col-span-full text-center">
                   No se encontraron servicios

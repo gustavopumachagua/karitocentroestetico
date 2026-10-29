@@ -5,5 +5,5 @@ export default function FechaCita({ fecha }) {
 
   const fechaFormateada = formatearFechaCita(fecha);
 
-  return <span>{fechaFormateada}</span>;
+  return <span className="tabular-nums">{fechaFormateada}</span>;
 }

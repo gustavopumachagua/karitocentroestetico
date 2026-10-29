@@ -21,9 +21,9 @@ export default function BuscadorPagos({ busqueda, setBusqueda, citas }) {
   }, [busqueda, citas]);
 
   return (
-    <div className="ui-panel relative mx-auto w-full max-w-xl">
+    <div className="ui-panel relative w-full">
       <p className="mb-3 text-sm font-semibold text-slate-200">Buscar cita atendida</p>
-      <div className="search-field">
+      <div className="search-field max-w-2xl">
         <FaSearch className="search-icon" />
         <input aria-label="Buscar cita atendida por cliente"
           type="text"

@@ -91,6 +91,13 @@ export default function CitasDoctor() {
   return (
     <section className="page-section ui-page">
       <div className="page-stack">
+        <header className="ui-page-header mb-0">
+          <div>
+            <p className="ui-eyebrow">Consulta médica</p>
+            <h1 className="ui-title">Agenda de citas</h1>
+            <p className="ui-description">Consulta tus pacientes, servicios y horarios de atención.</p>
+          </div>
+        </header>
         <div className="relative">
           <CitaTable
             citas={citas}

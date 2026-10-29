@@ -1,7 +1,7 @@
 import TextInput from "./TextInput";
 import PasswordInput from "./PasswordInput";
 import { Link } from "react-router-dom";
-import { FaExclamationCircle, FaSignInAlt } from "react-icons/fa";
+import { FaExclamationCircle } from "react-icons/fa";
 
 const LoginForm = ({
   form,
@@ -50,12 +50,11 @@ const LoginForm = ({
                 : "ui-button-secondary cursor-not-allowed"
             }`}
         >
-          <FaSignInAlt />
           Ingresar
         </button>
       </form>
 
-      <div className="mt-5 text-center text-sm text-slate-400">
+      <div className="mt-4 text-center text-sm text-slate-400">
         <Link
           to="/reset-password"
           className="inline-flex min-h-11 items-center rounded-lg px-2 font-medium text-indigo-300 transition-colors hover:text-indigo-200 hover:underline"

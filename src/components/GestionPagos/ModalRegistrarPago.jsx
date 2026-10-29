@@ -1,4 +1,4 @@
-import { FaTimes, FaMoneyBillWave } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import CustomSelect from "../common/CustomSelect";
 
 export default function ModalRegistrarPago({
@@ -25,9 +25,10 @@ export default function ModalRegistrarPago({
           <FaTimes size={18} />
         </button>
 
-        <h3 className="mb-6 pr-12 text-xl font-semibold text-slate-100 break-words sm:text-2xl">
-          Registrar Pago de {citaSeleccionada.cliente}
+        <h3 className="pr-12 text-lg font-semibold text-slate-100">
+          Registrar pago
         </h3>
+        <p className="mb-6 mt-1 pr-12 text-sm text-slate-400 break-words">{citaSeleccionada.cliente}</p>
 
         <div className="space-y-4 mb-6">
           <p className="text-slate-300 text-sm sm:text-base font-medium border-b border-slate-700/70 pb-2">
@@ -36,7 +37,7 @@ export default function ModalRegistrarPago({
           {serviciosConPrecio.map((serv, index) => (
             <div
               key={index}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 rounded-lg border border-slate-700/70 bg-slate-950/30 p-3"
+              className="flex flex-col gap-2 border-b border-slate-700/50 pb-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
             >
               <span className="text-white text-sm sm:text-base font-medium leading-relaxed break-words">
                 {serv.nombre}
@@ -74,12 +75,11 @@ export default function ModalRegistrarPago({
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-8 text-center sm:text-left">
-          <span className="font-semibold text-slate-200 text-lg sm:text-xl">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-[var(--surface-raised)] p-4">
+          <span className="font-medium text-slate-300 text-sm">
             Monto Total:
           </span>
-          <span className="flex flex-wrap items-center justify-center gap-2 text-2xl font-semibold tabular-nums text-emerald-300 sm:text-3xl">
-            <FaMoneyBillWave />
+          <span className="text-2xl font-semibold tabular-nums text-slate-100">
             S/ {Number(total || 0).toFixed(2)}
           </span>
         </div>

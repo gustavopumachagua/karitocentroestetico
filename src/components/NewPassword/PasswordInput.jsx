@@ -1,4 +1,4 @@
-import { FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const PasswordInput = ({
   label,
@@ -11,17 +11,13 @@ const PasswordInput = ({
 }) => {
   return (
     <div className="min-w-0">
-      <label
+      <p
         className={`mb-2 flex items-center gap-2 text-sm font-medium ${
           error ? "text-rose-300" : "text-slate-300"
         }`}
       >
-        <FaLock
-          className={error ? "text-rose-300" : "text-indigo-300"}
-          aria-hidden="true"
-        />
         {label}
-      </label>
+      </p>
 
       <div className="relative">
         <input

@@ -208,6 +208,13 @@ export default function PagosCitas() {
   return (
     <section className="page-section ui-page">
       <div className="page-stack">
+        <header className="ui-page-header mb-0">
+          <div>
+            <p className="ui-eyebrow">Administración de atenciones</p>
+            <h1 className="ui-title">Gestión de pagos</h1>
+            <p className="ui-description">Registra el cobro de los servicios realizados y consulta sus comprobantes.</p>
+          </div>
+        </header>
         <BuscadorPagos
           busqueda={busqueda}
           setBusqueda={manejarBusqueda}

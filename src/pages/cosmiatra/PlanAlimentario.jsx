@@ -205,8 +205,8 @@ function PlanEditor({ historiaId, expectedSession }) {
   };
 
   return (
-    <section className="ui-page nutrition-plan-page" aria-busy={loading || busy} aria-label="Plan alimentario del paciente">
-      <header className="ui-page-header">
+    <section className="page-section ui-page nutrition-plan-page" aria-busy={loading || busy} aria-label="Plan alimentario del paciente">
+      <header className="ui-page-header mb-0">
         <div><p className="ui-eyebrow">Seguimiento del paciente</p><h1 className="ui-title">Plan alimentario</h1><p className="ui-description">Edita las comidas de la semana, los indicadores y las indicaciones antes de finalizar.</p></div>
         <button type="button" className="ui-button ui-button-secondary" onClick={goBack} disabled={busy}><FaArrowLeft aria-hidden="true" /> Volver al historial</button>
       </header>
@@ -220,14 +220,14 @@ function PlanEditor({ historiaId, expectedSession }) {
         {showValidation && errors.length > 0 && <section className="ui-card" aria-labelledby="nutrition-pending-title"><h2 id="nutrition-pending-title" className="font-semibold">{errors.length} campos pendientes</h2><p className="ui-help">Selecciona un campo para completarlo sin recorrer todas las secciones.</p><div className="nutrition-pending-list">{errors.map(({ id, label }) => <button type="button" className="ui-button ui-button-ghost" key={id} onClick={() => jumpTo(id)}>{label}</button>)}</div></section>}
         {!isFinal && <form onSubmit={(event) => { event.preventDefault(); save("borrador"); }} className="grid gap-5" noValidate>
           <section className="ui-card" aria-labelledby="nutrition-indicators-title">
-            <h2 id="nutrition-indicators-title" className="text-lg font-semibold mb-4">Indicadores del paciente</h2>
+            <h2 id="nutrition-indicators-title" className="mb-5 text-base font-semibold">Indicadores del paciente</h2>
             <div className="nutrition-indicator-grid">{NUTRITION_INDICATORS.map(({ key, label }) => <label className="ui-field" key={key} htmlFor={`nutrition-${key}`}><span className="ui-label">{label}</span><input id={`nutrition-${key}`} className="ui-control" value={draft.indicadores[key]} onChange={(event) => updateIndicator(key, event.target.value)} inputMode={key === "edad" ? "numeric" : "decimal"} maxLength={key === "edad" ? 3 : 12} disabled={busy} aria-invalid={errorIds.has(`nutrition-${key}`)} aria-describedby={key === "edad" ? "nutrition-age-help" : undefined} /></label>)}</div>
             <p id="nutrition-age-help" className="ui-help mt-3">Edad: de 18 a 130 años. Peso, talla e IMC admiten decimales y deben ser mayores que cero.</p>
           </section>
-          <section className="ui-card" aria-labelledby="nutrition-week-title"><h2 id="nutrition-week-title" className="text-lg font-semibold mb-4">Menú semanal</h2>
+          <section className="ui-card" aria-labelledby="nutrition-week-title"><h2 id="nutrition-week-title" className="mb-5 text-base font-semibold">Menú semanal</h2>
             {NUTRITION_DAYS.map((dia, index) => <fieldset key={dia} className="ui-clinical-group nutrition-day-card" disabled={busy}><legend>{dia}</legend><div className="nutrition-day-grid">{NUTRITION_MEALS.map(({ key, label }) => <label className="ui-field" key={key} htmlFor={`nutrition-${index}-${key}`}><span className="ui-label">{label}</span><textarea id={`nutrition-${index}-${key}`} className="ui-control ui-textarea" rows={4} maxLength={1500} value={draft.semana[index][key]} onChange={(event) => updateMeal(index, key, event.target.value)} aria-invalid={errorIds.has(`nutrition-${index}-${key}`)} placeholder="Escribe alimentos, porciones y preparación" /></label>)}</div></fieldset>)}
           </section>
-          <section className="ui-card"><label className="ui-field" htmlFor="nutrition-indicaciones"><span className="ui-label text-lg">Indicaciones</span><textarea id="nutrition-indicaciones" className="ui-control ui-textarea" rows={5} maxLength={4000} value={draft.indicaciones} disabled={busy} onChange={(event) => setDraft((current) => ({ ...current, indicaciones: event.target.value }))} aria-invalid={errorIds.has("nutrition-indicaciones")} placeholder="Escribe las indicaciones individualizadas del plan" /><span className="ui-help">{draft.indicaciones.length}/4000 caracteres</span></label></section>
+          <section className="ui-card"><label className="ui-field" htmlFor="nutrition-indicaciones"><span className="ui-label text-base">Indicaciones</span><textarea id="nutrition-indicaciones" className="ui-control ui-textarea" rows={5} maxLength={4000} value={draft.indicaciones} disabled={busy} onChange={(event) => setDraft((current) => ({ ...current, indicaciones: event.target.value }))} aria-invalid={errorIds.has("nutrition-indicaciones")} placeholder="Escribe las indicaciones individualizadas del plan" /><span className="ui-help">{draft.indicaciones.length}/4000 caracteres</span></label></section>
           <NutritionPlanActions isFinal={false} isComplete={isComplete} busy={busy} conflict={conflict} dirty={dirty} hasSavedPlan={Boolean(plan)} onFinalize={() => save("finalizado")} primaryActionRef={primaryActionRef} />
         </form>}
         {isFinal && <NutritionPlanActions isFinal showPreview={showPreview} onPreview={() => setShowPreview((shown) => !shown)} primaryActionRef={primaryActionRef} />}
@@ -261,6 +261,6 @@ export default function PlanAlimentario() {
   const actorId = String(user?.id || user?._id || "");
   const expectedSession = useMemo(() => ({ token, actorId }), [token, actorId]);
   const historiaId = new URLSearchParams(location.search).get("historia") || location.state?.historiaId || "";
-  if (!isClinicalHistoryId(historiaId)) return <section className="ui-page nutrition-plan-page" aria-label="Plan alimentario"><h1 className="ui-title">Plan alimentario</h1><div className="ui-empty-state"><p>Selecciona un seguimiento desde el historial de clientes para generar su plan.</p><button type="button" className="ui-button ui-button-secondary" onClick={() => navigate(HISTORY_PATH)}>Volver al historial</button></div></section>;
+  if (!isClinicalHistoryId(historiaId)) return <section className="page-section ui-page nutrition-plan-page" aria-label="Plan alimentario"><h1 className="ui-title">Plan alimentario</h1><div className="ui-empty-state"><p>Selecciona un seguimiento desde el historial de clientes para generar su plan.</p><button type="button" className="ui-button ui-button-secondary" onClick={() => navigate(HISTORY_PATH)}>Volver al historial</button></div></section>;
   return <PlanEditor key={`${expectedSession.actorId}:${token}:${historiaId}`} historiaId={historiaId} expectedSession={expectedSession} />;
 }

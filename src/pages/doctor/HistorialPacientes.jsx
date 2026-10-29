@@ -8,7 +8,6 @@ import BuscadorPacientes from "../../components/HistorialPacientes/BuscadorPacie
 import ListaTratamientos from "../../components/HistorialPacientes/ListaTratamientos";
 import DetallePaciente from "../../components/HistorialPacientes/DetallePaciente";
 import ClinicalNutritionFollowups from "../../components/HistorialPacientes/ClinicalNutritionFollowups";
-import { FaSearch } from "react-icons/fa";
 import { belongsToProfessionalRole } from "../../utils/professionalOwnership";
 import { usePatientUpdates } from "../../hooks/usePatientUpdates";
 import { findSelectedAttention } from "../../utils/attentionHistory";
@@ -278,9 +277,18 @@ export default function HistorialPacientes() {
     <section className="page-section ui-page">
       <div className="page-stack">
         {!pacienteSeleccionado && !nutritionSelection && (
+          <header className="ui-page-header mb-0">
+            <div>
+              <p className="ui-eyebrow">Seguimiento clínico</p>
+              <h1 className="ui-title">{esHistorialCosmiatra ? "Historial de clientes" : "Historial de pacientes"}</h1>
+              <p className="ui-description">Consulta las atenciones, los tratamientos y la información de cada paciente.</p>
+            </div>
+          </header>
+        )}
+        {!pacienteSeleccionado && !nutritionSelection && (
           <div className="ui-panel px-4 py-4 sm:px-6">
-            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-400">
-              <FaSearch className="text-indigo-300/80" /> Busca por nombre para abrir una historia específica.
+            <div className="mb-3 text-sm font-medium text-slate-300">
+              Buscar por nombre
             </div>
             <BuscadorPacientes
               busqueda={busqueda}

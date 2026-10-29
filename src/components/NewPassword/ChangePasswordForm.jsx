@@ -1,5 +1,4 @@
 import PasswordInput from "./PasswordInput";
-import { FaCheckCircle, FaKey } from "react-icons/fa";
 
 const ChangePasswordForm = ({
   password,
@@ -58,7 +57,7 @@ const ChangePasswordForm = ({
         error={passwordsDoNotMatch}
       />
 
-      <div className="ui-card p-3">
+      <div className="border-t border-slate-700 pt-4">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs">
           <span className="font-semibold text-slate-300">{strengthLabel}</span>
           <span className={hasSpaces ? "text-rose-300" : "text-indigo-200"}>
@@ -76,7 +75,6 @@ const ChangePasswordForm = ({
           ))}
         </div>
         <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-slate-400">
-          <FaCheckCircle className="mt-0.5 flex-shrink-0 text-indigo-300" aria-hidden="true" />
           Utiliza al menos 6 caracteres. Puedes mezclar mayúsculas, números y
           símbolos para mejorarla.
         </p>
@@ -91,7 +89,6 @@ const ChangePasswordForm = ({
             : "ui-button-secondary cursor-not-allowed"
         }`}
       >
-        <FaKey />
         Cambiar contraseña
       </button>
     </form>

@@ -1,0 +1,67 @@
+Validación final · 2026-10-29
+
+npm run lint
+> web-estetico@0.0.0 lint
+> eslint .
+
+node --test
+✔ src/api/media.api.test.js (712.911703ms)
+✔ src/api/planesAlimentarios.api.test.js (1520.26494ms)
+✔ src/api/tratamientos.api.test.js (1478.294042ms)
+✔ src/components/FormularioPeptidos/ClinicalHistoryPdf.test.js (3110.44162ms)
+✔ src/components/FormularioPeptidos/FormSteps.test.js (972.554248ms)
+✔ src/components/FormularioPeptidos/clinicalExamRows.test.js (632.079264ms)
+✔ src/components/FormularioPeptidos/pdfTextFlow.test.js (644.867638ms)
+✔ src/components/HistorialPacientes/ClinicalNutritionFollowups.test.js (1329.385873ms)
+✔ src/components/PlanAlimentario/NutritionPlanActions.test.js (1276.316613ms)
+✔ src/components/PlanAlimentario/NutritionPlanFinalizationModal.test.js (1444.454751ms)
+✔ src/components/ReportesServiciosIngresos/calcularMonto.test.js (640.157529ms)
+✔ src/hooks/usePatientUpdates.test.js (649.523125ms)
+✔ src/hooks/useProtectedImage.test.js (866.900809ms)
+✔ src/hooks/useTreatmentPatient.test.js (1262.079415ms)
+✔ src/pages/doctor/RegistrarTratamiento.test.js (1500.247273ms)
+✔ src/utils/appointmentPatientSuggestions.test.js (609.815819ms)
+✔ src/utils/attentionHistory.test.js (736.859808ms)
+✔ src/utils/clinicalHistoryStorage.test.js (571.041487ms)
+✔ src/utils/nutritionPlan.test.js (597.383779ms)
+✔ src/utils/nutritionPlanPdf.test.js (3860.075985ms)
+✔ src/utils/nutritionPlanPresentation.test.js (469.49088ms)
+✔ src/utils/patientIdentity.test.js (455.345677ms)
+✔ src/utils/protectedMediaReference.test.js (238.929299ms)
+✔ src/utils/selectMenuPosition.test.js (270.347738ms)
+✔ src/utils/serviceReport.test.js (243.595786ms)
+✔ src/utils/treatmentAppointment.test.js (213.681325ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4700.461541
+
+npm run build
+dist/assets/index-CCwRK4kR.css                     110.83 kB │ gzip:  19.55 kB
+dist/assets/html2canvas-BrA6os6A.js                  0.07 kB │ gzip:   0.08 kB
+dist/assets/nutritionPlanPdf-CqUTYSFP.js             4.75 kB │ gzip:   2.44 kB
+dist/assets/workbox-window.prod.es5-DKa8HaJ0.js      5.74 kB │ gzip:   2.36 kB
+dist/assets/purify.es-D1xr8fGK.js                   30.36 kB │ gzip:  11.80 kB
+dist/assets/index.es-w7gcdoeo.js                   162.72 kB │ gzip:  52.66 kB
+dist/assets/index-BkuhqbGo.js                    3,071.79 kB │ gzip: 926.58 kB
+✓ built in 3.87s
+[plugin builtin:reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+PWA v1.3.0
+mode      generateSW
+precache  16 entries (4375.72 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-e5929aca.js
+
+git diff --check: aprobado
+Backend_Estetico: git status --porcelain=v1 sin entradas
+Rutas, permisos, APIs, servicios, hooks, contexto, utilidades, dependencias y pruebas: sin cambios

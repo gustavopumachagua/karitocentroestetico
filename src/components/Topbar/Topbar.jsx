@@ -28,17 +28,13 @@ export default function Topbar({
 
   return (
     <header
-      className="mb-5 flex min-w-0 items-center justify-between gap-3 rounded-2xl px-3.5 py-4 sm:mb-6 sm:gap-4 sm:px-5"
-      style={{
-        background: 'var(--bg-card)',
-        border: '1px solid var(--border-subtle)',
-      }}
+      className="workspace-topbar flex min-w-0 items-center justify-between gap-3 sm:gap-4"
     >
       <div className="min-w-0">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-slate-400 sm:text-[11px]">
+        <p className="text-[11px] font-medium text-slate-400">
           Panel de gestión
         </p>
-        <h1 className="mt-1 break-words text-lg font-semibold leading-snug tracking-tight text-slate-100 sm:text-xl md:text-2xl">
+        <h1 className="mt-1 break-words font-semibold leading-snug text-slate-100">
           {active}
         </h1>
       </div>
@@ -47,20 +43,15 @@ export default function Topbar({
         {/* Fecha/hora */}
         <div className="hidden lg:flex flex-col items-end text-right mr-2">
           <span className="text-xs text-slate-400 capitalize">{formattedDate}</span>
-          <span className="text-sm font-semibold text-slate-300">{formattedTime}</span>
+          <span className="mt-0.5 text-xs tabular-nums text-slate-300">{formattedTime}</span>
         </div>
 
         {/* Separador */}
-        <div className="hidden lg:block w-px h-8" style={{ background: 'rgba(148, 163, 184, 0.1)' }} />
+        <div className="hidden lg:block w-px h-7" style={{ background: 'var(--line-soft)' }} />
 
         {/* Badge en línea */}
-        <div className="hidden sm:flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium text-emerald-300"
-          style={{
-            background: 'rgba(52, 211, 153, 0.08)',
-            border: '1px solid rgba(52, 211, 153, 0.15)',
-          }}
-        >
-          <span className="pulse-dot" />
+        <div className="workspace-online hidden sm:flex items-center gap-2 px-2 py-2">
+          <span className="workspace-online-dot" aria-hidden="true" />
           En línea
         </div>
 

@@ -2,6 +2,7 @@ import { createElement, useState, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Topbar from "../components/Topbar/Topbar";
+import "../styles/shell.css";
 import {
   AUTH_SESSION_EVENT,
   getAuthUser,
@@ -84,7 +85,7 @@ export default function DashboardLayout({
         />
       )}
 
-      <main className="app-dashboard-main min-w-0 w-full flex-1 overflow-x-hidden overflow-y-auto p-3 sm:p-5 lg:p-6 xl:p-8">
+      <main className="app-dashboard-main min-w-0 w-full flex-1 overflow-x-hidden overflow-y-auto px-4 py-5 sm:px-6 lg:px-8 lg:py-6 xl:px-10">
         <Topbar
           active={active}
           sidebarOpen={sidebarOpen}

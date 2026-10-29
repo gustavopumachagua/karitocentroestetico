@@ -7,11 +7,11 @@ export default function BuscadorClientes({
   manejarSeleccion,
 }) {
   return (
-    <div className="ui-panel relative">
-      <p className="mb-3 text-sm font-semibold text-slate-200">Buscar cliente</p>
+    <div className="relative min-w-0">
+      <label htmlFor="admin-client-search" className="ui-label mb-2 block">Buscar cliente</label>
       <div className="search-field">
         <FaSearch className="search-icon" />
-        <input aria-label="Buscar cliente por nombre"
+        <input id="admin-client-search" aria-label="Buscar cliente por nombre"
           type="text"
           placeholder="Buscar cliente..."
           value={busqueda}

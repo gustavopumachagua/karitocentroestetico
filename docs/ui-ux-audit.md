@@ -1,5 +1,7 @@
 # Auditoría UI/UX · Minimalist Dark
 
+> Registro histórico del 11 de octubre. La paleta y las validaciones actuales se documentan en el [rediseño del 29 de octubre de 2026](ui-redesign-2026-10-29.md). Los resultados de este documento corresponden a su ejecución original.
+
 Fecha: 11 de octubre de 2026 · America/Lima.
 
 ## 1. Resumen y alcance

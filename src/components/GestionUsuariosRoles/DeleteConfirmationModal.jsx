@@ -17,10 +17,7 @@ export default function DeleteConfirmationModal({
       <div role="dialog" aria-modal="true" aria-label={title} className="ui-modal max-w-md">
         <div className="flex items-start justify-between gap-3 border-b border-slate-700/60 p-4 sm:p-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl border border-rose-400/20 bg-rose-500/12 flex items-center justify-center">
-              <FaExclamationTriangle className="text-rose-300 text-xl" />
-            </div>
-            <h3 className="text-xl font-bold text-white">{title}</h3>
+            <h3 className="text-lg font-semibold text-white">{title}</h3>
           </div>
           <button
             onClick={onCancel}
@@ -32,7 +29,7 @@ export default function DeleteConfirmationModal({
         </div>
 
         <div className="space-y-4 p-4 sm:p-6">
-          <p className="text-slate-300 text-base leading-relaxed">
+          <p className="text-slate-300 text-sm leading-relaxed">
             {message || (
               <>
                 ¿Estás seguro de que deseas eliminar a{" "}
@@ -40,7 +37,7 @@ export default function DeleteConfirmationModal({
               </>
             )}
           </p>
-          <div className="bg-rose-500/10 border border-rose-500/30 rounded-lg p-4">
+          <div className="bg-rose-400/5 border border-rose-400/20 rounded-lg p-4">
             <p className="text-rose-300 text-sm flex items-start gap-2">
               <FaExclamationTriangle className="mt-0.5 flex-shrink-0" />
               <span>
@@ -66,36 +63,6 @@ export default function DeleteConfirmationModal({
           </button>
         </div>
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
-        }
-
-        .animate-scaleIn {
-          animation: scaleIn 0.2s ease-out;
-        }
-      `}</style>
     </div>
   );
 }

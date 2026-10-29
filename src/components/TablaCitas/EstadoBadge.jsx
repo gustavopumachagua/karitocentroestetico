@@ -1,6 +1,6 @@
 export function EstadoBadge({ estado }) {
   const baseClasses =
-    "px-3 py-1 rounded-full border text-xs font-semibold inline-block";
+    "px-2.5 py-1 rounded-md border text-xs font-medium inline-block whitespace-nowrap";
 
   const estadoClasses = {
     pendiente: "border-amber-400/20 bg-amber-400/10 text-amber-300",

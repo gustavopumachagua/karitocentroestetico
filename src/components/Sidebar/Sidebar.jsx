@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import LogoutButton from "../LogoutButton/LogoutButton";
 import logo from "../../assets/Logo.jpg";
-import { FaChevronDown, FaChevronRight, FaUserCircle } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import ProtectedImage from "../common/ProtectedImage";
 import { resolveProtectedImageSource } from "../../api/media.api";
 
@@ -77,45 +77,31 @@ export default function Sidebar({
   return (
     <aside
       aria-label="Navegación principal"
-      className={`fixed md:static inset-y-0 left-0 z-30 flex w-[17.5rem] max-w-[88vw] shrink-0 transform flex-col text-slate-100 ${
+      className={`workspace-sidebar fixed md:static inset-y-0 left-0 z-30 flex w-[16.5rem] max-w-[88vw] shrink-0 transform flex-col text-slate-100 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:translate-x-0`}
-      style={{
-        background: "var(--bg-surface)",
-        borderRight: "1px solid var(--border-subtle)",
-      }}
+      } transition-transform duration-200 ease-out md:translate-x-0`}
     >
       {/* ─── Branding ─── */}
-      <div className="flex-shrink-0 px-3.5 pb-2 pt-4 sm:px-4 sm:pt-5">
-        <div
-          className="relative overflow-hidden rounded-2xl p-3"
-          style={{
-            background: "var(--bg-card)",
-            border: "1px solid var(--border-subtle)",
-          }}
-        >
-          <div className="flex items-center gap-3 relative z-10">
+      <div className="workspace-brand flex-shrink-0">
             <img
               src={logo}
               alt="Karito Centro Estético"
-              className="h-10 w-10 shrink-0 rounded-xl object-cover"
-              style={{ border: "1px solid var(--border-subtle)" }}
+              className="shrink-0"
             />
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-slate-400">
+              <p className="text-[13px] font-semibold leading-snug text-slate-100">
                 Karito Centro Estético
               </p>
-              <h2 className="mt-0.5 text-sm font-semibold text-white">
+              <p className="mt-1 text-xs text-slate-400">
                 {user?.rol || "Usuario"}
-              </h2>
+              </p>
             </div>
-          </div>
-        </div>
       </div>
 
       {/* ─── Navigation (scrollable) ─── */}
-      <nav className="sidebar-scroll flex-1 overflow-x-hidden overflow-y-auto px-3.5 py-2 sm:px-4">
-        <div className="flex flex-col gap-0.5">
+      <nav className="workspace-nav sidebar-scroll flex-1 overflow-x-hidden overflow-y-auto">
+        <p className="workspace-nav-label">Espacio de trabajo</p>
+        <div className="flex flex-col gap-1">
           {menuItems.map((item) => {
             const isExpanded = openSubmenu === item.key;
             const isActive =
@@ -128,25 +114,10 @@ export default function Sidebar({
                   onClick={() => handleClick(item)}
                   aria-expanded={item.subItems ? isExpanded : undefined}
                   aria-current={isActive ? "page" : undefined}
-                  className={`group flex min-h-12 min-w-0 w-full items-center justify-between gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-colors duration-150 ${
-                    isActive
-                      ? "bg-indigo-400/10 text-indigo-100"
-                      : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/60"
-                  }`}
-                  style={
-                    isActive
-                      ? { border: "1px solid rgba(129, 140, 248, 0.28)" }
-                      : { border: "1px solid transparent" }
-                  }
+                  className="workspace-nav-item group flex min-w-0 w-full items-center justify-between gap-2.5 px-2.5 py-2.5 text-[13px] font-medium transition-colors duration-150"
                 >
-                  <div className="flex min-w-0 flex-1 items-center gap-2.5">
-                    <span
-                      className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-all duration-200 text-xs ${
-                        isActive
-                          ? "bg-indigo-400/15 text-indigo-300"
-                          : "bg-slate-800/70 text-slate-400 group-hover:text-slate-200"
-                      }`}
-                    >
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <span className="workspace-nav-icon" aria-hidden="true">
                       {item.icon}
                     </span>
                     <span className="min-w-0 flex-1 break-words text-left leading-snug">
@@ -175,17 +146,13 @@ export default function Sidebar({
                       opacity: isExpanded ? 1 : 0,
                     }}
                   >
-                    <ul className="ml-10 mt-1 flex flex-col border-l border-slate-700/80 pl-3">
+                    <ul className="workspace-subnav flex flex-col">
                       {item.subItems.map((sub) => (
                         <li key={sub.key}>
                           <button
                             onClick={() => handleSubClick(sub)}
                             aria-current={active === sub.key ? "page" : undefined}
-                            className={`flex min-h-11 min-w-0 w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[13px] transition-colors duration-150 ${
-                              active === sub.key
-                                ? "bg-indigo-400/10 text-indigo-200"
-                                : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
-                            }`}
+                            className="workspace-subnav-item flex min-h-11 min-w-0 w-full items-center gap-2 rounded-md px-3 py-2 text-left text-[13px] transition-colors duration-150"
                           >
                             {sub.icon && (
                               <span className="text-xs">{sub.icon}</span>
@@ -207,8 +174,7 @@ export default function Sidebar({
 
       {/* ─── User Profile ─── */}
       <div
-        className="flex-shrink-0 px-3.5 py-3.5 sm:px-4 sm:py-4"
-        style={{ borderTop: "1px solid var(--border-subtle)" }}
+        className="workspace-profile flex-shrink-0"
       >
         <div className="flex items-center gap-3 mb-3">
           <div className="relative">
@@ -219,14 +185,12 @@ export default function Sidebar({
               className="h-10 w-10 rounded-full object-cover"
               style={{ border: "1px solid var(--border-subtle)" }}
             />
-            <span className="absolute -bottom-0.5 -right-0.5 pulse-dot" />
           </div>
           <div className="min-w-0">
             <p className="truncate font-semibold text-white text-sm">
               {user?.nombre || "Usuario"}
             </p>
-            <p className="flex items-center gap-1.5 text-xs text-slate-400">
-              <FaUserCircle className="text-slate-400" />
+            <p className="mt-0.5 text-xs text-slate-400">
               {user?.rol || "Rol"}
             </p>
           </div>

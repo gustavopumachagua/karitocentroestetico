@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useId, useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
@@ -9,12 +9,12 @@ registerLocale("es", es);
 
 const accentStyles = {
   cyan: {
-    focus: "focus:border-indigo-300 focus:ring-indigo-400/20",
-    icon: "text-indigo-300",
+    focus: "focus:border-[var(--accent)] focus:ring-[var(--accent-soft)]",
+    icon: "text-[var(--text-muted)]",
   },
   emerald: {
-    focus: "focus:border-indigo-300 focus:ring-indigo-400/20",
-    icon: "text-indigo-300",
+    focus: "focus:border-[var(--accent)] focus:ring-[var(--accent-soft)]",
+    icon: "text-[var(--text-muted)]",
   },
 };
 
@@ -137,7 +137,7 @@ function TimeInput({ value = "", onChange, onTimeSelectionComplete }) {
           options={hourOptions}
           size="sm"
           className="min-w-0 w-full"
-          buttonClassName="min-h-11 rounded-xl border-slate-700 bg-slate-950/55"
+          buttonClassName="min-h-11 rounded-md border-[var(--line-strong)] bg-[var(--surface-input)]"
           menuClassName="max-h-56"
           ariaLabel="Seleccionar hora"
           preventParentOutsideClick
@@ -151,7 +151,7 @@ function TimeInput({ value = "", onChange, onTimeSelectionComplete }) {
           options={minuteOptions}
           size="sm"
           className="min-w-0 w-full"
-          buttonClassName="min-h-11 rounded-xl border-slate-700 bg-slate-950/55"
+          buttonClassName="min-h-11 rounded-md border-[var(--line-strong)] bg-[var(--surface-input)]"
           menuClassName="max-h-56"
           ariaLabel="Seleccionar minuto"
           preventParentOutsideClick
@@ -173,6 +173,7 @@ export default function DatePickerField({
   accent = "cyan",
   className = "",
 }) {
+  const fieldId = useId();
   const isDateTime = mode === "datetime";
   const [isDateTimePickerOpen, setIsDateTimePickerOpen] = useState(false);
   const selected = isDateTime
@@ -195,8 +196,9 @@ export default function DatePickerField({
 
   return (
     <div className={`ui-field min-w-0 flex flex-col ${className}`}>
-      {label && <label className="ui-label mb-2">{label}</label>}
+      {label && <label htmlFor={fieldId} className="ui-label">{label}</label>}
       <DatePicker
+        id={fieldId}
         selected={selected}
         onChange={handleDateChange}
         showTimeInput={isDateTime}
@@ -221,7 +223,7 @@ export default function DatePickerField({
         onInputClick={isDateTime ? openDateTimePicker : undefined}
         onClickOutside={isDateTime ? closeDateTimePicker : undefined}
         onCalendarClose={isDateTime ? closeDateTimePicker : undefined}
-        customInput={<DateInput placeholder={placeholder} accent={accent} />}
+        customInput={<DateInput id={fieldId} placeholder={placeholder} accent={accent} />}
       />
     </div>
   );

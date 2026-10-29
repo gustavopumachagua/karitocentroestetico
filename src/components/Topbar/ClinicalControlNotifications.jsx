@@ -100,7 +100,7 @@ export default function ClinicalControlNotifications({ targetPath }) {
             id={popupId}
             role="dialog"
             aria-label="Notificaciones de próximos controles"
-            className="ui-notification-popup fixed flex max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl shadow-black/30"
+            className="ui-notification-popup fixed flex max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-lg border border-slate-700 bg-slate-900 shadow-lg shadow-black/20"
             style={{
               top: popupPosition.top,
               right: `clamp(1rem, ${popupPosition.right}px, max(1rem, calc(100vw - 24rem - 1rem)))`,
@@ -111,7 +111,7 @@ export default function ClinicalControlNotifications({ targetPath }) {
           >
             <header className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-700 px-4 py-3">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-indigo-300/20 bg-indigo-400/10 text-indigo-200">
+              <span className="shrink-0 text-slate-400">
                 <FiBell aria-hidden="true" />
               </span>
               <div>
@@ -133,14 +133,14 @@ export default function ClinicalControlNotifications({ targetPath }) {
             </button>
             </header>
 
-            <div className="min-h-0 max-h-[min(26rem,calc(100dvh-11rem))] overflow-y-auto overscroll-contain p-2">
+            <div className="min-h-0 max-h-[min(26rem,calc(100dvh-11rem))] overflow-y-auto overscroll-contain px-4">
             {isLoading && notificationCount === 0 ? (
               <p className="px-3 py-6 text-center text-sm text-slate-400">
                 Cargando controles…
               </p>
             ) : notificationCount === 0 ? (
               <div className="px-5 py-8 text-center">
-                <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-400">
+                <span className="mx-auto flex h-9 w-9 items-center justify-center text-slate-400">
                   <FiCalendar aria-hidden="true" />
                 </span>
                 <p className="mt-3 text-sm font-medium text-slate-200">
@@ -151,11 +151,11 @@ export default function ClinicalControlNotifications({ targetPath }) {
                 </p>
               </div>
             ) : (
-              <ul className="space-y-1">
+              <ul className="divide-y divide-slate-700">
                 {notifications.map((notification) => (
                   <li key={notification.id}>
-                    <article className="flex w-full items-start gap-3 rounded-xl border border-slate-700/60 px-3 py-3 text-left">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-indigo-300/15 bg-indigo-400/10 text-indigo-200">
+                    <article className="flex w-full items-start gap-3 py-4 text-left">
+                      <span className="mt-0.5 shrink-0 text-slate-400">
                         <FiCalendar aria-hidden="true" />
                       </span>
                       <span className="min-w-0 flex-1">

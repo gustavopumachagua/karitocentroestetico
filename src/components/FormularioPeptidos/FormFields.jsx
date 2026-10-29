@@ -43,17 +43,17 @@ export function FormHeader({ section, title }) {
   const activeSection = useContext(FormStepContext);
 
   return (
-    <div className="mb-6 space-y-1 border-b border-slate-700 pb-5 text-left">
-      <p className="ui-eyebrow">Formulario clínico</p>
-      <h1 className="text-sm font-medium text-slate-300">
+    <div className="mb-6 space-y-1 border-b border-slate-700/60 pb-5 text-left">
+      <p className="ui-eyebrow">Sección {activeSection || section}</p>
+      <h2 className="text-lg font-semibold tracking-tight text-slate-100 sm:text-xl">
+        {title}
+      </h2>
+      <p className="pt-2 text-xs font-medium text-slate-400">
         {FORM_TITLE}
-      </h1>
+      </p>
       <p className="text-xs text-slate-400">
         {FORM_SUBTITLE}
       </p>
-      <h2 className="pt-3 text-lg font-semibold tracking-tight text-slate-100 sm:text-xl">
-        {activeSection || section}. {title}
-      </h2>
     </div>
   );
 }
@@ -74,11 +74,12 @@ export function TextField({
 }) {
   return (
     <div className={`ui-field space-y-1 ${className}`} data-form-field={name}>
-      <label className="ui-label block text-sm font-medium text-slate-300">
+      <label className="ui-label" htmlFor={`clinical-${name}`}>
         {label}
         {required && <span className="text-rose-400 ml-1">*</span>}
       </label>
       <input
+        id={`clinical-${name}`}
         aria-label={label}
         type={type}
         name={name}
@@ -107,17 +108,18 @@ export function TextAreaField({
 }) {
   return (
     <div className={`ui-field space-y-1 ${className}`} data-form-field={name}>
-      <label className="ui-label block text-sm font-medium text-slate-300">
+      <label className="ui-label" htmlFor={`clinical-${name}`}>
         {label}
       </label>
       <textarea
+        id={`clinical-${name}`}
         aria-label={label}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
         rows={rows}
-        className="ui-control w-full resize-none rounded-lg bg-slate-950/50 border border-slate-700 px-3 py-2.5 text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-indigo-400/60"
+        className="ui-control ui-textarea"
       />
     </div>
   );
@@ -326,7 +328,7 @@ export function RadioGroup({
         {options.map((opt) => (
           <label
             key={opt}
-          className={`ui-choice-label inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
+          className={`ui-choice-label inline-flex min-w-20 items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${
               value === opt
                 ? "border-indigo-400/50 bg-indigo-400/10 text-indigo-100"
                 : "border-slate-700 bg-slate-950/30 text-slate-300 hover:border-slate-600"
@@ -397,7 +399,7 @@ export function CheckboxGroup({
         {options.map((opt) => (
           <label
             key={opt}
-          className={`ui-choice-label inline-flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
+          className={`ui-choice-label inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${
               values.includes(opt)
                 ? "border-indigo-400/50 bg-indigo-400/10 text-indigo-100"
                 : "border-slate-700 bg-slate-950/30 text-slate-300 hover:border-slate-600"
@@ -451,7 +453,7 @@ export function YesNoField({ label, name, value, onChange, className = "" }) {
         {["No", "Sí"].map((opt) => (
           <label
             key={opt}
-            className={`ui-choice-label inline-flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer transition text-sm ${
+            className={`ui-choice-label inline-flex min-w-20 items-center gap-2 px-4 py-2 rounded-md border cursor-pointer transition-colors text-sm ${
               value === opt
                 ? "border-indigo-400/50 bg-indigo-400/10 text-indigo-100"
                 : "border-slate-700 bg-slate-950/30 text-slate-300 hover:border-slate-600"
@@ -504,7 +506,7 @@ export function FormNavigation({
           </span>
         )}
       </div>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3 [&>.ui-button]:flex-1 sm:[&>.ui-button]:flex-none">
         {!isFirst && (
           <button
             type="button"
@@ -534,16 +536,16 @@ export function FormNavigation({
 /** Step progress bar */
 export function StepProgress({ currentStep, totalSteps, steps }) {
   return (
-    <div className="ui-card w-full px-3 py-3 sm:px-4">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-slate-400">
-          Sección {steps[currentStep].section}
+    <div className="w-full rounded-lg border border-slate-700/60 bg-[var(--surface-subtle)] px-4 py-4">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <span className="text-sm font-medium text-slate-200">
+          {steps[currentStep].section}. {steps[currentStep].title}
         </span>
         <span className="text-xs text-slate-400">
           {currentStep + 1}/{totalSteps}
         </span>
       </div>
-      <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+      <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full bg-indigo-400 transition-[width] duration-200 ease-out"
           style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}

@@ -8,7 +8,6 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { FaChartBar } from "react-icons/fa";
 import Skeleton from "../common/Skeleton";
 import { CHART_LABEL_STYLE, CHART_LEGEND_STYLE, CHART_TOOLTIP_STYLE } from "../DashboardDoctor/chartTheme";
 
@@ -31,17 +30,14 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
     <section className="ui-panel ui-chart-card">
       <div className="ui-chart-header flex flex-col gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="ui-chart-icon">
-            <FaChartBar className="text-lg" />
-          </div>
-          <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight">
+          <h3 className="text-base font-semibold text-white tracking-tight">
             Ingresos por servicios mensuales
           </h3>
         </div>
         <p className="text-slate-400 text-sm">
           Comparativa{" "}
-          <span className="font-medium" style={{ color: "var(--chart-slate, #93A7BF)" }}>{filtroAnio - 1}</span> vs{" "}
-          <span className="font-medium" style={{ color: "var(--chart-indigo, #818CF8)" }}>{filtroAnio}</span>
+          <span className="font-medium" style={{ color: "var(--chart-slate, #8D9CA9)" }}>{filtroAnio - 1}</span> vs{" "}
+          <span className="font-medium" style={{ color: "var(--chart-indigo, #A8B8A4)" }}>{filtroAnio}</span>
         </p>
       </div>
 
@@ -57,15 +53,15 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
                 margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
               >
                 <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="var(--line-soft, #2B3648)"
+                  strokeDasharray="2 5"
+                  stroke="var(--line-soft, #303238)"
                   vertical={false}
                 />
 
                 <XAxis
                   dataKey="mes"
-                  stroke="var(--text-secondary, #94A3B8)"
-                  tick={{ fontSize: 12, fill: 'var(--text-secondary, #94A3B8)' }}
+                  stroke="var(--text-secondary, #A1A4AB)"
+                  tick={{ fontSize: 12, fill: 'var(--text-secondary, #A1A4AB)' }}
                   angle={-25}
                   textAnchor="end"
                   height={60}
@@ -73,8 +69,8 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
                   tickLine={false}
                 />
                 <YAxis
-                  stroke="var(--text-secondary, #94A3B8)"
-                  tick={{ fontSize: 12, fill: 'var(--text-secondary, #94A3B8)' }}
+                  stroke="var(--text-secondary, #A1A4AB)"
+                  tick={{ fontSize: 12, fill: 'var(--text-secondary, #A1A4AB)' }}
                   width={65}
                   tickLine={false}
                   axisLine={false}
@@ -99,31 +95,20 @@ export default function IngresosMensuales({ data, filtroAnio, filtroMes, loading
 
                 <Bar
                   dataKey="anterior"
-                  fill="url(#barBlue)"
+                  fill="var(--chart-slate, #8D9CA9)"
                   name={`Año ${filtroAnio - 1}`}
-                  radius={[6, 6, 0, 0]}
+                  radius={[3, 3, 0, 0]}
                   maxBarSize={20}
                   isAnimationActive={false}
                 />
                 <Bar
                   dataKey="actual"
-                  fill="url(#barGreen)"
+                  fill="var(--chart-indigo, #A8B8A4)"
                   name={`Año ${filtroAnio}`}
-                  radius={[6, 6, 0, 0]}
+                  radius={[3, 3, 0, 0]}
                   maxBarSize={20}
                   isAnimationActive={false}
                 />
-
-                <defs>
-                  <linearGradient id="barGreen" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--chart-indigo, #818CF8)" />
-                    <stop offset="100%" stopColor="var(--chart-indigo, #818CF8)" />
-                  </linearGradient>
-                  <linearGradient id="barBlue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--chart-slate, #93A7BF)" />
-                    <stop offset="100%" stopColor="var(--chart-slate, #93A7BF)" />
-                  </linearGradient>
-                </defs>
               </BarChart>
             </ResponsiveContainer>
           </div>
