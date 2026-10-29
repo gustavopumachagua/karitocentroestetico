@@ -181,29 +181,31 @@ export default function DashboardGeneral() {
           setFiltroMes={setFiltroMes}
         />
 
-        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
-          <ResumenCitas data={resumenCitas} />
-          <IngresosMensuales
-            data={ingresosFacturacion}
-            filtroAnio={filtroAnio}
-            filtroMes={filtroMes}
-          />
+        <ResumenCitas data={resumenCitas} />
 
-          <div className="grid min-w-0 grid-cols-1 gap-5 xl:col-span-2 xl:grid-cols-2 xl:gap-6">
+        <div className="grid min-w-0 grid-cols-1 items-start gap-5 xl:grid-cols-12">
+          <div className="min-w-0 xl:col-span-8">
+            <IngresosMensuales
+              data={ingresosFacturacion}
+              filtroAnio={filtroAnio}
+              filtroMes={filtroMes}
+            />
+          </div>
+          <div className="min-w-0 xl:col-span-4">
             <MetodosPagoChart data={metodosPago} />
-
-            <div className="flex min-w-0 flex-col gap-5 xl:gap-6">
-              <FiltrosInventario
-                mostrarSoloBajos={mostrarSoloBajos}
-                setMostrarSoloBajos={setMostrarSoloBajos}
-              />
-              <InventarioTable
-                data={stockInventario}
-                mostrarSoloBajos={mostrarSoloBajos}
-              />
-            </div>
           </div>
         </div>
+
+        <section className="ui-panel">
+          <FiltrosInventario
+            mostrarSoloBajos={mostrarSoloBajos}
+            setMostrarSoloBajos={setMostrarSoloBajos}
+          />
+          <InventarioTable
+            data={stockInventario}
+            mostrarSoloBajos={mostrarSoloBajos}
+          />
+        </section>
       </div>
     </section>
   );

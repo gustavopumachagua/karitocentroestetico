@@ -17,8 +17,8 @@ const OfflineAlert = () => {
   }, []);
   return (
     isOffline && (
-      <div role="status" className="fixed left-0 top-0 z-[var(--z-toast)] flex w-full items-center justify-center gap-2 border-b border-amber-400/40 bg-slate-900 px-4 py-3 text-center text-sm font-medium text-amber-200 shadow-lg">
-        <FaWifi />
+      <div role="status" className="fixed left-0 top-0 z-[var(--z-toast)] flex w-full items-center justify-center gap-2 border-b border-amber-400/25 bg-[var(--surface-raised)] px-4 py-3 text-center text-sm font-medium text-amber-200">
+        <FaWifi aria-hidden="true" className="shrink-0" />
         Sin conexión. Por favor, revisa tu conexión a Internet.
       </div>
     )

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { FaUser } from "react-icons/fa";
 
 export default function ProfileForm({
   nombre,
@@ -41,16 +40,9 @@ export default function ProfileForm({
           Nombre del perfil
         </label>
         <div
-          className={`flex min-h-12 min-w-0 items-center rounded-xl border bg-slate-950/40 px-3 py-2 transition-colors focus-within:ring-2 ${
-            error
-              ? "border-rose-400 focus-within:ring-rose-400/20"
-              : "border-slate-700 focus-within:border-indigo-300 focus-within:ring-indigo-300/20"
-          }`}
+          className="auth-input-shell"
+          data-invalid={Boolean(error)}
         >
-          <FaUser
-            className={`mr-3 shrink-0 ${error ? "text-rose-300" : "text-slate-400"}`}
-            aria-hidden="true"
-          />
           <input
             id="profile-name"
             type="text"

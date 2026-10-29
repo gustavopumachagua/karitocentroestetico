@@ -1,4 +1,3 @@
-import { FaUserPlus, FaUser, FaEnvelope, FaUserShield } from "react-icons/fa";
 import CustomSelect from "../common/CustomSelect";
 
 export default function FormularioUsuario({
@@ -12,22 +11,20 @@ export default function FormularioUsuario({
       onSubmit={handleSubmit}
       className="ui-panel"
     >
-      <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
-          <FaUserPlus className="text-indigo-300" />
-        </div>
-        <h3 className="text-lg sm:text-xl font-semibold text-white">
-          Registrar Nuevo Trabajador
+      <div className="mb-5">
+        <h3 className="text-base font-semibold text-white">
+          Registrar trabajador
         </h3>
+        <p className="mt-1 text-sm text-slate-400">Añade un profesional y asigna su rol de acceso.</p>
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,.8fr)_auto] xl:items-end">
         <div className="ui-field">
           <label
             htmlFor="nombre"
             className="ui-label flex items-center gap-2"
           >
-            <FaUser className="text-indigo-300" /> Nombre
+            Nombre
           </label>
           <input
             id="nombre"
@@ -46,7 +43,7 @@ export default function FormularioUsuario({
             htmlFor="email"
             className="ui-label flex items-center gap-2"
           >
-            <FaEnvelope className="text-indigo-300" /> Correo
+            Correo
           </label>
           <input
             id="email"
@@ -65,7 +62,7 @@ export default function FormularioUsuario({
             htmlFor="rol"
             className="ui-label flex items-center gap-2"
           >
-            <FaUserShield className="text-indigo-300" /> Rol
+            Rol
           </label>
           <CustomSelect
             id="rol"
@@ -81,21 +78,19 @@ export default function FormularioUsuario({
             ]}
           />
         </div>
-      </div>
-
-      <div>
+      <div className="flex items-end">
         <button
           type="submit"
           disabled={!formularioValido}
-          className={`ui-button w-full min-h-12 ${
+          className={`ui-button w-full ${
             formularioValido
               ? "ui-button-primary"
               : "ui-button-secondary cursor-not-allowed"
           }`}
         >
-          <FaUserPlus />
-          Registrar Trabajador
+          Registrar trabajador
         </button>
+      </div>
       </div>
     </form>
   );

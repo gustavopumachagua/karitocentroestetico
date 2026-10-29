@@ -216,14 +216,22 @@ export default function MisReportes() {
           />
         </div>
 
-        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-6">
-          <GraficoCitasEvolucion data={citasEvolucion} anio={filtroAnio} />
-          <GraficoTratamientos
-            data={tratamientosDistribucion}
-            colors={COLORS}
-          />
-          <GraficoCitasPorEstado data={citasPorEstado} />
-          <GraficoInsumos data={insumosMasUsados} />
+        <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-12">
+          <div className="min-w-0 xl:col-span-8 [&>.ui-panel]:h-full">
+            <GraficoCitasEvolucion data={citasEvolucion} anio={filtroAnio} />
+          </div>
+          <div className="min-w-0 xl:col-span-4 [&>.ui-panel]:h-full">
+            <GraficoTratamientos
+              data={tratamientosDistribucion}
+              colors={COLORS}
+            />
+          </div>
+          <div className="min-w-0 xl:col-span-4 [&>.ui-panel]:h-full">
+            <GraficoCitasPorEstado data={citasPorEstado} />
+          </div>
+          <div className="min-w-0 xl:col-span-8 [&>.ui-panel]:h-full">
+            <GraficoInsumos data={insumosMasUsados} />
+          </div>
         </div>
       </div>
     </section>

@@ -1,0 +1,66 @@
+/* Navigation, access and account screens share the application tokens. */
+.workspace-sidebar { background: var(--surface-subtle); border-right: 1px solid var(--line-soft); }
+.workspace-brand { display: flex; align-items: center; gap: 0.75rem; padding: 1.625rem 1.25rem 1.75rem; }
+.workspace-brand img { width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; object-fit: cover; border: 1px solid var(--line-soft); }
+.workspace-nav { padding: 0 0.875rem 1rem; }
+.workspace-nav-label { margin: 0 0.625rem 0.75rem; font-size: 0.6875rem; font-weight: 550; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.workspace-nav-item { position: relative; min-height: 2.875rem; border: 1px solid transparent; border-radius: 0.5rem; color: var(--text-secondary); }
+.workspace-nav-item:hover { background: var(--surface-default); color: var(--text-primary); }
+.workspace-nav-item[aria-current="page"] { background: var(--surface-raised); color: var(--text-primary); }
+.workspace-nav-item[aria-current="page"]::before { content: ""; position: absolute; left: -0.875rem; top: 0.75rem; bottom: 0.75rem; width: 2px; border-radius: 0 2px 2px 0; background: var(--accent); }
+.workspace-nav-icon { display: flex; align-items: center; justify-content: center; width: 1.125rem; height: 1.125rem; flex-shrink: 0; font-size: 0.9375rem; color: var(--text-muted); }
+.workspace-nav-item[aria-current="page"] .workspace-nav-icon { color: var(--accent); }
+.workspace-subnav { margin-left: 1.25rem; padding-left: 0.75rem; border-left: 1px solid var(--line-soft); }
+.workspace-subnav-item { color: var(--text-secondary); }
+.workspace-subnav-item:hover { background: var(--surface-default); color: var(--text-primary); }
+.workspace-subnav-item[aria-current="page"] { color: var(--accent-hover); background: var(--accent-soft); }
+.workspace-profile { padding: 1rem 1.125rem; border-top: 1px solid var(--line-soft); }
+.workspace-profile .ui-button { justify-content: flex-start; padding-left: 0.625rem; border-color: transparent; font-weight: 500; }
+.workspace-topbar { min-height: 5.5rem; margin-bottom: 1.75rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--line-soft); }
+.workspace-topbar h1 { font-size: clamp(1.125rem, 1.7vw, 1.5rem); letter-spacing: -0.025em; }
+.workspace-online { color: var(--text-secondary); font-size: 0.75rem; }
+.workspace-online-dot { width: 0.375rem; height: 0.375rem; border-radius: 50%; background: var(--accent); }
+.public-navbar { background: var(--surface-subtle); border-bottom: 1px solid var(--line-soft); }
+.public-footer { border-top: 1px solid var(--line-soft); color: var(--text-secondary); }
+.public-hero { min-height: calc(100dvh - 10rem); }
+.public-hero-image { overflow: hidden; border: 1px solid var(--line-soft); border-radius: var(--radius-md); background: var(--surface-default); }
+.public-capabilities { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line-soft); margin-top: 2.5rem; padding-top: 1.25rem; gap: 1rem; }
+.public-capabilities > div + div { border-left: 1px solid var(--line-soft); padding-left: 1.25rem; }
+.auth-screen { padding: clamp(2rem, 6vw, 5rem) 1.25rem; }
+.auth-grid { max-width: 68rem; gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+.auth-visual { padding: 0; background: none; border: 0; border-radius: 0; box-shadow: none; }
+.auth-visual h1 { font-size: clamp(1.875rem, 2.7vw, 2.5rem); line-height: 1.25; letter-spacing: -0.035em; }
+.auth-highlights { display: grid; gap: 1.125rem; margin-top: 2rem; padding-top: 1.75rem; border-top: 1px solid var(--line-soft); }
+.auth-highlight { display: flex; gap: 0.75rem; align-items: flex-start; }
+.auth-highlight-icon { display: flex; width: 1.125rem; flex-shrink: 0; padding-top: 0.25rem; color: var(--accent); font-size: 0.875rem; }
+.auth-card { max-width: 29rem; padding: clamp(1.5rem, 3vw, 2.5rem); box-shadow: none; border-radius: var(--radius-md); }
+.auth-card h2 { font-size: 1.625rem; line-height: 1.25; letter-spacing: -0.025em; }
+.auth-card-brand { display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1.5rem; margin-bottom: 1.75rem; border-bottom: 1px solid var(--line-soft); }
+.auth-input-shell { display: flex; align-items: stretch; min-height: 2.875rem; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface-input); transition: border-color var(--transition-fast) ease, box-shadow var(--transition-fast) ease; }
+.auth-input-shell:hover { border-color: var(--text-muted); }
+.auth-input-shell:focus-within { border-color: var(--accent); box-shadow: var(--focus-ring); }
+.auth-input-shell[data-invalid="true"] { border-color: var(--danger); }
+.auth-input-shell input { min-width: 0; width: 100%; background: transparent; border: 0; outline: 0; padding: 0.75rem; color: var(--text-primary); font-size: 0.875rem; }
+.auth-input-shell input:focus-visible { outline: 0; }
+.auth-input-shell input::placeholder { color: var(--text-muted); }
+.account-settings { max-width: 66rem; }
+.account-section { display: grid; gap: 1.5rem; }
+.account-section-copy h2 { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+.account-section-copy p { margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.8125rem; line-height: 1.65; }
+.account-identity { display: flex; align-items: center; gap: 1.25rem; padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--line-soft); }
+.account-identity > * { min-width: 0; }
+.account-identity .account-avatar { width: 5rem; height: 5rem; }
+.account-password-note { border-top: 1px solid var(--line-soft); padding-top: 1.25rem; }
+@media (min-width: 768px) {
+  .account-section { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr); gap: 2rem; }
+}
+@media (min-width: 1024px) {
+  .auth-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 639px) {
+  .workspace-topbar { margin-bottom: 1.25rem; min-height: 4.75rem; padding-bottom: 1rem; align-items: flex-start; }
+  .public-capabilities { gap: 0.75rem; }
+  .public-capabilities > div + div { padding-left: 0.75rem; }
+  .account-identity { align-items: flex-start; }
+  .auth-card h2 { font-size: 1.5rem; }
+}

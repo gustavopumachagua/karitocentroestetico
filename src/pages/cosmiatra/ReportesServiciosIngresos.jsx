@@ -187,6 +187,13 @@ export default function ReportesServiciosIngresos() {
   return (
     <section className="page-section ui-page">
       <div className="page-stack">
+        <header className="ui-page-header mb-0">
+          <div>
+            <p className="ui-eyebrow">Actividad del centro</p>
+            <h1 className="ui-title">Servicios e ingresos</h1>
+            <p className="ui-description">Revisa las atenciones por fecha y el historial de cada cliente.</p>
+          </div>
+        </header>
         <BuscadorClientes
           busqueda={busqueda}
           setBusqueda={setBusqueda}

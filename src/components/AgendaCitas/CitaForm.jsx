@@ -3,7 +3,7 @@ import FormSelect from "../CitaForm/FormSelect";
 import FormDateTime from "../CitaForm/FormDateTime";
 import ServiceSelector from "../CitaForm/ServiceSelector";
 import SubmitButton from "../CitaForm/SubmitButton";
-import { FaCalendarAlt, FaSearch, FaTimes, FaTrash } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { formatearFechaCitaParaInput } from "../../utils/citasFecha";
 import { getInventario } from "../../api/inventario.api";
 import { buscarCitas } from "../../api/citas.api";
@@ -251,18 +251,15 @@ export default function CitaForm({
     <form
       onSubmit={handleSubmit}
       autoComplete="off"
-      className="ui-panel relative mx-auto grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-2"
+      className="ui-panel relative grid w-full grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2"
     >
       <div className="ui-toolbar md:col-span-2 border-b border-slate-700/50 pb-5">
-        <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
-          <FaCalendarAlt className="text-indigo-300 text-lg" />
-        </div>
+        <div className="min-w-0">
           <div>
-            <h2 className="text-xl font-semibold text-white">
+            <h2 className="text-base font-semibold text-white">
               {estaEditando ? "Editar cita" : "Registrar cita"}
             </h2>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-sm text-slate-400">
               {estaEditando
                 ? "Actualiza los datos y conserva la agenda al día."
                 : "Completa los datos para reservar una nueva atención."}
@@ -272,7 +269,7 @@ export default function CitaForm({
       </div>
 
       <div className="ui-field relative">
-        <label className="ui-label">Cliente</label>
+        <label className="ui-label" htmlFor="appointment-client">Cliente</label>
         <div
           className={`search-field ${
             errorCliente ? "border-rose-400/70" : ""
@@ -280,6 +277,7 @@ export default function CitaForm({
         >
           <FaSearch className="search-icon" />
           <input aria-label="Nombre del cliente"
+            id="appointment-client"
             type="text"
             name="cliente"
             value={nuevaCita.cliente}
@@ -364,21 +362,19 @@ export default function CitaForm({
       </SubmitButton>
 
       {estaEditando && (
-        <div className="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="col-span-1 flex flex-col gap-3 border-t border-slate-700/50 pt-4 sm:flex-row sm:justify-end md:col-span-2">
           <button
             type="button"
             onClick={onCancelarEdicion}
-            className="ui-button ui-button-secondary w-full"
+            className="ui-button ui-button-secondary w-full sm:w-auto"
           >
-            <FaTimes />
             Cancelar edición
           </button>
           <button
             type="button"
             onClick={onEliminarCita}
-            className="ui-button ui-button-danger w-full"
+            className="ui-button ui-button-danger w-full sm:w-auto"
           >
-            <FaTrash />
             Eliminar cita
           </button>
         </div>

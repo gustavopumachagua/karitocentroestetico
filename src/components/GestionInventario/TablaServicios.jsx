@@ -1,4 +1,4 @@
-import { FaSpa, FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit } from "react-icons/fa";
 
 export default function TablaServicios({
   servicios,
@@ -9,18 +9,15 @@ export default function TablaServicios({
   if (servicios.length === 0) return null;
 
   return (
-    <section className="ui-panel mb-6">
+    <section className="ui-panel">
       <div className="ui-toolbar mb-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
-            <FaSpa className="text-indigo-300" />
-          </div>
-          <h3 className="text-lg sm:text-xl font-semibold text-white">
+          <h3 className="text-base font-semibold text-white">
             Servicios – {rolSeleccionado}
           </h3>
         </div>
 
-        <span className="ui-status">
+        <span className="text-xs tabular-nums text-slate-400">
           {servicios.length} registros
         </span>
       </div>
@@ -48,15 +45,17 @@ export default function TablaServicios({
                       onClick={() => onEditar(item)}
                       className="ui-icon-button"
                       title="Editar"
+                      aria-label={`Editar ${item.nombre}`}
                     >
-                      <FaEdit size={18} />
+                      <FaEdit size={15} />
                     </button>
                     <button
                       onClick={() => onEliminar(item)}
                       className="ui-icon-button ui-button-danger"
                       title="Eliminar"
+                      aria-label={`Eliminar ${item.nombre}`}
                     >
-                      <FaTrash size={18} />
+                      <FaTrash size={14} />
                     </button>
                   </div>
                 </td>
@@ -70,7 +69,7 @@ export default function TablaServicios({
         {servicios.map((item) => (
           <div
             key={item._id}
-            className="ui-card ui-card-interactive flex min-w-0 flex-col items-start gap-3"
+            className="ui-card flex min-w-0 flex-col items-start gap-3"
           >
             <div className="min-w-0 flex flex-col">
               <span className="font-medium text-slate-100 break-words">{item.nombre}</span>

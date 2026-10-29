@@ -20,21 +20,21 @@ export default function LineChartCard({
   return (
     <div className="ui-panel ui-chart-card flex flex-col">
       <div className="ui-chart-header flex min-w-0 items-start gap-3">
-        <div className="ui-chart-icon">
-          {icon && createElement(icon, { className: "text-lg" })}
+        <div className="pt-0.5 text-slate-400">
+          {icon && createElement(icon, { className: "text-base" })}
         </div>
-        <span className="text-lg font-medium text-white">{title}</span>
+        <span className="text-base font-semibold text-white">{title}</span>
       </div>
       <div className="ui-chart-body min-w-0 w-full h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="var(--line-soft, #2B3648)"
+              strokeDasharray="2 5"
+              stroke="var(--line-soft, #303238)"
               vertical={false}
             />
-            <XAxis dataKey="mes" stroke="var(--text-secondary, #94A3B8)" axisLine={false} tickLine={false} />
-            <YAxis stroke="var(--text-secondary, #94A3B8)" axisLine={false} tickLine={false} />
+            <XAxis dataKey="mes" stroke="var(--text-secondary, #A1A4AB)" axisLine={false} tickLine={false} />
+            <YAxis stroke="var(--text-secondary, #A1A4AB)" axisLine={false} tickLine={false} />
             <Tooltip
               contentStyle={CHART_TOOLTIP_STYLE}
               labelStyle={CHART_LABEL_STYLE}
@@ -43,8 +43,8 @@ export default function LineChartCard({
               type="monotone"
               dataKey={dataKey}
               stroke={color}
-              strokeWidth={3}
-              dot={{ r: 5 }}
+              strokeWidth={2.5}
+              dot={{ r: 3 }}
               isAnimationActive={false}
             />
           </LineChart>

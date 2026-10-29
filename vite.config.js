@@ -21,8 +21,8 @@ export default defineConfig(({ mode }) => ({
         name: "Karito Centro Estético",
         short_name: "Karito",
         description: "Centro Estético Karito",
-        theme_color: "#ffffff",
-        background_color: "#ffffff",
+        theme_color: "#101114",
+        background_color: "#101114",
         display: "standalone",
         start_url: "/",
         icons: [

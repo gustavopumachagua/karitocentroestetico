@@ -22,7 +22,7 @@ import { getInventario, descontarInsumos } from "../../api/inventario.api";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import CustomChoice from "../../components/common/CustomChoice";
 
-import { FaListUl, FaNotesMedical, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 
 const INITIAL_FORM = {
   nombre: "",
@@ -421,23 +421,24 @@ function TreatmentEditor({ cita, onSubmissionChange }) {
   return (
     <section className="page-section ui-page">
       <div className="page-stack page-stack-narrow">
-        <div className="ui-panel">
-          <div className="mb-6 flex min-w-0 items-start gap-3 border-b border-slate-700/60 pb-5">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10">
-              <FaNotesMedical className="text-indigo-300 text-lg" />
-            </div>
+          <header className="ui-page-header mb-0">
             <div className="min-w-0">
               <p className="ui-eyebrow mb-1">Registro de atención</p>
-              <h2 className="text-xl font-semibold text-white">
+              <h1 className="ui-title">
                 Registrar tratamiento
-              </h2>
-              <p className="mt-1 text-xs text-slate-400">
+              </h1>
+              <p className="ui-description">
                 Completa el registro de atención y los insumos utilizados.
               </p>
             </div>
-          </div>
+          </header>
 
+        <div className="ui-panel">
           <form className="space-y-6" onSubmit={handleGuardar}>
+            <div className="border-b border-slate-700/50 pb-4">
+              <h2 className="text-base font-semibold text-slate-100">Datos de la atención</h2>
+              <p className="mt-1 text-sm text-slate-400">Información del paciente y del servicio asociado a la cita.</p>
+            </div>
             {hasAppointment && patientStatus === "loading" && (
               <p role="status" className="rounded-xl border border-indigo-400/20 bg-indigo-400/5 px-4 py-3 text-sm text-slate-300">
                 Consultando los datos registrados del paciente…
@@ -513,9 +514,8 @@ function TreatmentEditor({ cita, onSubmissionChange }) {
               readOnly
             />
 
-            <div className="rounded-xl border border-slate-700/60 bg-[var(--surface-subtle)] p-3 sm:p-5">
-              <label className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                <FaListUl className="text-indigo-300" />
+            <div className="rounded-lg border border-slate-700/60 bg-[var(--surface-subtle)] p-4 sm:p-5">
+              <label className="mb-4 block text-base font-semibold text-white">
                 Insumos utilizados
               </label>
 
@@ -523,6 +523,7 @@ function TreatmentEditor({ cita, onSubmissionChange }) {
                 <FaSearch className="search-icon" />
                 <input
                   type="text"
+                  aria-label="Buscar insumo"
                   placeholder="Buscar insumo..."
                   className="search-input"
                   value={busquedaInsumo}
@@ -571,6 +572,10 @@ function TreatmentEditor({ cita, onSubmissionChange }) {
               </div>
             </div>
 
+            <div className="border-t border-slate-700/50 pt-5">
+              <h2 className="text-base font-semibold text-slate-100">Registro del tratamiento</h2>
+              <p className="mt-1 text-sm text-slate-400">Observaciones, fecha e imágenes de la atención.</p>
+            </div>
             <TextAreaField
               label="Observaciones"
               value={formData.observacion}

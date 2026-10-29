@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-29",
+  "backend": {
+    "workingTreeClean": true,
+    "head": "9d8d9a1f7d88391d7df5810c1c31aec99dbf8ff6"
+  },
+  "unchangedFunctionalPaths": [
+    "src/api",
+    "src/services",
+    "src/hooks",
+    "src/utils",
+    "src/context",
+    "src/App.jsx",
+    "src/layout/AdminLayout.jsx",
+    "src/layout/DoctorLayout.jsx",
+    "src/layout/CosmiatraLayout.jsx",
+    "src/layout/MenuItemsAdmin.jsx",
+    "src/layout/MenuItemsDoctor.jsx",
+    "src/layout/MenuItemsCosmiatra.jsx",
+    "package.json",
+    "package-lock.json"
+  ],
+  "unexpectedChangedFunctionalPaths": [],
+  "preexistingChangePreserved": "plan.png (deleted before redesign)",
+  "testFilesChanged": []
+}

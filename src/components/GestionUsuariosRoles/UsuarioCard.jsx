@@ -1,4 +1,4 @@
-import { FaBan, FaTrash, FaSpinner, FaUserCircle } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 
 export default function UsuarioCard({
   usuario,
@@ -6,23 +6,20 @@ export default function UsuarioCard({
   eliminarUsuario,
   loading,
 }) {
-  const estadoColor = usuario.activo ? "text-green-400" : "text-red-400";
+  const estadoColor = usuario.activo ? "text-emerald-300" : "text-rose-300";
   const estadoTexto = usuario.activo ? "Activo" : "Suspendido";
 
   return (
-    <div className="ui-card ui-card-interactive flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="ui-card flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4 w-full sm:w-auto">
-        <div className="hidden h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10 sm:flex">
-          <FaUserCircle className="text-2xl text-indigo-300" />
-        </div>
         <div className="min-w-0">
-          <p className="text-lg font-semibold text-slate-100 break-words">{usuario.nombre}</p>
+          <p className="text-base font-semibold text-slate-100 break-words">{usuario.nombre}</p>
           <p className="break-all text-slate-400 text-sm">{usuario.email}</p>
 
           <div className="mt-1 flex flex-col sm:flex-row sm:items-center sm:gap-4 text-sm">
             <p>
               <span className="font-semibold text-slate-300">Rol: </span>
-              <span className="capitalize text-indigo-100">{usuario.rol}</span>
+              <span className="capitalize text-slate-300">{usuario.rol}</span>
             </p>
             <p>
               <span className="font-semibold text-slate-300">Estado: </span>
@@ -34,20 +31,14 @@ export default function UsuarioCard({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+      <div className="flex flex-wrap gap-2 w-full sm:w-auto">
         <button
           onClick={() => suspenderUsuario(usuario._id)}
           disabled={loading}
-          className={`ui-button flex-1 sm:flex-none ${
-            usuario.activo
-              ? "border border-amber-400/20 bg-amber-500/15 text-amber-100 hover:bg-amber-500/25"
-              : "border border-emerald-400/20 bg-emerald-500/15 text-emerald-100 hover:bg-emerald-500/25"
-          } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer "}`}
+          className={`ui-button ui-button-secondary flex-1 sm:flex-none ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer "}`}
         >
-          {loading ? (
+          {loading && (
             <FaSpinner className="animate-spin" />
-          ) : (
-            <FaBan className="text-sm" />
           )}
           {usuario.activo ? "Suspender" : "Activar"}
         </button>
@@ -59,10 +50,8 @@ export default function UsuarioCard({
             loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer "
           }`}
         >
-          {loading ? (
+          {loading && (
             <FaSpinner className="animate-spin" />
-          ) : (
-            <FaTrash className="text-sm" />
           )}
           Eliminar
         </button>

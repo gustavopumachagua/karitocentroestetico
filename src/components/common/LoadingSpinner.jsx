@@ -4,10 +4,9 @@ export default function LoadingSpinner() {
   return (
     <div role="status" aria-label="Cargando aplicación" className="app-shell fixed inset-0 z-[var(--z-toast)] flex items-center justify-center text-white">
       <div className="flex flex-col items-center gap-6">
-        {/* Animated logo */}
-        <div className="relative">
+        <div>
           <div
-            className="flex h-24 w-24 items-center justify-center rounded-2xl overflow-hidden"
+            className="flex h-16 w-16 items-center justify-center rounded-lg overflow-hidden"
             style={{
               background: "var(--surface-default)",
               border: "1px solid var(--line-soft)",
@@ -16,25 +15,15 @@ export default function LoadingSpinner() {
             <img
               src={logo}
               alt="Karito Centro Estético"
-              className="h-20 w-20 rounded-xl object-cover"
+              className="h-14 w-14 rounded-md object-cover"
             />
           </div>
 
-          {/* Orbital ring */}
-          <div
-            className="absolute inset-[-10px] rounded-3xl"
-            style={{
-              border: "2px solid transparent",
-              borderTopColor: "var(--accent)",
-              borderRightColor: "var(--line-soft)",
-              animation: "spin 1.5s linear infinite",
-            }}
-          />
         </div>
 
         {/* Text */}
         <div className="text-center">
-          <p className="text-sm font-semibold text-white/80 tracking-wide">
+          <p className="text-sm font-medium text-[var(--text-primary)]">
             Karito Centro Estético
           </p>
           <p className="mt-1 text-xs text-slate-400">

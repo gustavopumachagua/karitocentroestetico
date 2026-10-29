@@ -1,4 +1,3 @@
-import { FaPlus } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import CustomSelect from "../common/CustomSelect";
 
@@ -31,17 +30,15 @@ export default function AgregarItemForm({
 
   return (
     <section className="ui-panel">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10">
-          <FaPlus className="text-indigo-300" />
-        </div>
-        <h3 className="text-lg sm:text-xl font-semibold text-white">
-          Agregar Insumo o Servicio
+      <div className="mb-5">
+        <h3 className="text-base font-semibold text-white">
+          Agregar al catálogo
         </h3>
+        <p className="mt-1 text-sm text-slate-400">Registra un servicio o actualiza las existencias de un insumo.</p>
       </div>
 
-      <div className="relative grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="ui-field">
+      <div className="relative grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-12">
+        <div className="ui-field xl:col-span-2">
           <label className="ui-label">Tipo</label>
           <CustomSelect
             value={nuevo.tipo}
@@ -62,7 +59,7 @@ export default function AgregarItemForm({
           />
         </div>
 
-        <div className="ui-field relative col-span-1 sm:col-span-2">
+        <div className="ui-field relative sm:col-span-2 xl:col-span-4">
           <label className="ui-label">Nombre</label>
           <input
             type="text"
@@ -99,7 +96,7 @@ export default function AgregarItemForm({
 
         {nuevo.tipo === "insumo" && (
           <>
-            <div className="ui-field">
+            <div className="ui-field xl:col-span-2">
               <label className="ui-label">Stock</label>
               <input
                 type="number"
@@ -130,7 +127,7 @@ export default function AgregarItemForm({
               )}
             </div>
 
-            <div className="ui-field">
+            <div className="ui-field xl:col-span-2">
               <label className="ui-label">Umbral</label>
               <input
                 type="number"
@@ -145,7 +142,7 @@ export default function AgregarItemForm({
           </>
         )}
 
-        <div className="flex flex-col justify-end sm:col-span-2 lg:col-span-1">
+        <div className="flex flex-col justify-end sm:col-span-2 xl:self-start xl:pt-7">
           <button
             disabled={deshabilitar}
             onClick={handleAgregar}

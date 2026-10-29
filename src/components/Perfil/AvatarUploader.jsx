@@ -58,20 +58,20 @@ export default function AvatarUploader({ avatar, setAvatar, userId }) {
   };
 
   return (
-    <div className="flex max-w-full flex-col items-center">
+    <div className="flex max-w-full shrink-0 flex-col items-center">
       <div className="relative">
         <ProtectedImage
           src={resolveProtectedImageSource(avatar, { kind: "avatars", userId })}
           fallbackSrc="/avatar-default.svg"
           alt="Foto de perfil"
-          className="h-28 w-28 rounded-full border-2 border-slate-600 object-cover"
+          className="account-avatar h-24 w-24 rounded-full border border-slate-600 object-cover"
         />
         <button
           type="button"
           onClick={handleCameraClick}
           disabled={uploading}
           aria-label="Cambiar foto de perfil"
-          className={`absolute -bottom-1 -right-1 inline-flex h-11 w-11 items-center justify-center rounded-full border-4 border-slate-800 bg-indigo-300 text-slate-950 transition-colors hover:bg-indigo-200 ${
+          className={`absolute -bottom-1 -right-2 inline-flex h-11 w-11 items-center justify-center rounded-full border-[3px] border-slate-800 bg-slate-700 text-slate-100 transition-colors hover:bg-slate-600 ${
             uploading ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
@@ -87,7 +87,7 @@ export default function AvatarUploader({ avatar, setAvatar, userId }) {
       />
 
       {uploading && (
-        <p className="text-xs text-slate-400 mt-2 animate-pulse">
+        <p role="status" className="text-xs text-slate-400 mt-2">
           Subiendo imagen...
         </p>
       )}

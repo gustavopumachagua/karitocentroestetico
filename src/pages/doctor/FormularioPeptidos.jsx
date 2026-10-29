@@ -707,10 +707,10 @@ export default function FormularioPeptidos() {
   return (
     <section className="page-section ui-page">
       <div className="page-stack page-stack-narrow">
-        <header className="ui-page-header ui-panel flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <header className="ui-page-header mb-0 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="ui-eyebrow">Historia clínica</p>
-            <h3 className="ui-title mt-1 text-xl sm:text-2xl">{paciente.nombre}</h3>
+            <h1 className="ui-title mt-1">{paciente.nombre}</h1>
             <p className="ui-description mt-1 text-xs">
               {syncMessage || (savedAt ? "Borrador guardado" : "Los cambios se guardan automáticamente")}
             </p>
@@ -809,7 +809,7 @@ export default function FormularioPeptidos() {
             </p>
           </div>
         ) : (
-          <div className="ui-panel ui-clinical-step animate-fade-in" key={activeStep.id}>
+          <div className="ui-panel ui-clinical-step" key={activeStep.id}>
             <FormStepProvider section={activeStep.section}>
               <StepComponent formData={formData} updateField={updateField} patientSex={patientSex} firmaDigitalUrl={user?.firmaDigital || ""} />
             </FormStepProvider>
@@ -929,7 +929,7 @@ export default function FormularioPeptidos() {
 
       {showPreview && completedRecordForPresentation && (
         <div role="dialog" aria-modal="true" aria-label="Vista previa de historia clínica" className="ui-modal-backdrop p-3 sm:p-6">
-          <div className="flex h-[calc(100dvh-1.5rem)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-slate-600 bg-[var(--surface-default)] shadow-2xl sm:h-[calc(100dvh-3rem)]">
+          <div className="flex h-[calc(100dvh-1.5rem)] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-slate-600 bg-[var(--surface-default)] sm:h-[calc(100dvh-3rem)]">
             <div className="ui-clinical-preview-toolbar flex items-center justify-between gap-3 border-b border-slate-700 px-4 py-3 sm:px-6">
               <div>
                 <h2 className="text-base font-semibold text-white">Historia clínica finalizada</h2>

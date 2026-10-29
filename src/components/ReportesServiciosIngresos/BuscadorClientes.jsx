@@ -10,7 +10,7 @@ export default function BuscadorClientes({
   return (
     <div className="ui-panel relative">
       <p className="mb-3 text-sm font-semibold text-slate-200">Buscar historial de cliente</p>
-      <div className="search-field">
+      <div className="search-field max-w-2xl">
         <FaSearch className="search-icon" />
         <input aria-label="Buscar cliente por nombre"
           type="text"

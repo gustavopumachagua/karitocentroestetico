@@ -1,0 +1,114 @@
+{
+  "checks": [
+    {
+      "width": 390,
+      "dimensions": {
+        "window": 390,
+        "document": 390,
+        "charts": [
+          {
+            "width": 308,
+            "height": 256,
+            "svg": true
+          },
+          {
+            "width": 308,
+            "height": 280,
+            "svg": true
+          }
+        ]
+      }
+    },
+    {
+      "width": 768,
+      "dimensions": {
+        "window": 768,
+        "document": 768,
+        "charts": [
+          {
+            "width": 314,
+            "height": 256,
+            "svg": true
+          },
+          {
+            "width": 314,
+            "height": 360,
+            "svg": true
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dimensions": {
+        "window": 1440,
+        "document": 1440,
+        "charts": [
+          {
+            "width": 318,
+            "height": 256,
+            "svg": true
+          },
+          {
+            "width": 318,
+            "height": 360,
+            "svg": true
+          }
+        ]
+      }
+    },
+    {
+      "keyboardSelect": "b",
+      "focusReturned": true
+    },
+    {
+      "selectBounds": {
+        "x": 45,
+        "y": 186.0625,
+        "width": 300,
+        "height": 142
+      }
+    },
+    {
+      "dateLabelCount": 1,
+      "calendarBounds": {
+        "x": 53,
+        "y": 297,
+        "width": 284,
+        "height": 279
+      }
+    },
+    {
+      "date": "2026-10-15"
+    },
+    {
+      "calendarOpenAfterHour": true
+    },
+    {
+      "datetime": "2026-10-29T10:30",
+      "calendarClosedAfterMinute": true
+    },
+    {
+      "radioFocusStyle": "solid"
+    },
+    {
+      "secondRadioChecked": true
+    },
+    {
+      "checkboxChecked": true
+    },
+    {
+      "modal": {
+        "client": 810,
+        "scroll": 3951,
+        "top": 16,
+        "bottom": 828,
+        "overflow": "auto"
+      }
+    },
+    {
+      "modalClosed": true
+    }
+  ],
+  "issues": []
+}

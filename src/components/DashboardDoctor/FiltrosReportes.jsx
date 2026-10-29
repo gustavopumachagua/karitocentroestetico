@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FaFilter, FaCalendarAlt } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import es from "date-fns/locale/es";
@@ -29,34 +28,30 @@ export default function FiltrosReportes({
 
   return (
     <div
-      className={`ui-panel ui-report-filters min-w-0 w-full ${
+      className={`ui-panel ui-report-filters flex min-w-0 w-full flex-col gap-4 lg:flex-row lg:items-end lg:justify-between ${
         calendarioAbierto ? "relative z-20" : ""
       }`}
     >
-      <div className="flex min-w-0 items-center gap-3 mb-5">
-        <div
-          className="ui-chart-icon"
-        >
-          <FaFilter className="text-sm" />
-        </div>
-        <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight">
-          Filtros de Reporte
+      <div className="min-w-0 lg:pb-1">
+        <h3 className="text-base font-semibold text-white tracking-tight">
+          Período del reporte
         </h3>
+        <p className="mt-1 text-sm text-slate-400">Consulta la actividad y compara tus resultados.</p>
       </div>
 
-      <div className="grid min-w-0 grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-4 items-end">
+      <div className="grid min-w-0 grid-cols-1 gap-3 items-end sm:grid-cols-[minmax(0,1fr)_auto] lg:w-[26rem] lg:shrink-0">
         <div className="min-w-0 flex flex-col">
-          <label className="ui-label mb-2 flex items-center gap-2">
-            <FaCalendarAlt className="text-indigo-300 text-xs" /> Seleccionar
-            Mes / Año
+          <label htmlFor="report-period" className="ui-label mb-2">
+            Mes y año
           </label>
           <DatePicker
+            id="report-period"
             selected={filtroMes ? new Date(filtroAnio, filtroMes - 1) : null}
             onChange={handleDateChange}
             dateFormat="MMMM yyyy"
             showMonthYearPicker
             locale="es"
-            placeholderText="Seleccionar una fecha"
+            placeholderText={`Todo el año ${filtroAnio}`}
             onCalendarOpen={() => setCalendarioAbierto(true)}
             onCalendarClose={() => setCalendarioAbierto(false)}
             popperPlacement="bottom-start"
@@ -70,7 +65,7 @@ export default function FiltrosReportes({
           onClick={handleClear}
           className="ui-button ui-button-secondary min-h-11 w-full sm:w-auto"
         >
-          Limpiar Filtros
+          Limpiar filtros
         </button>
       </div>
     </div>

@@ -1,0 +1,220 @@
+{
+  "results": [
+    {
+      "route": "/",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/login",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/login",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/login",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/login",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "overflow": false,
+      "background": "rgb(16, 17, 20)"
+    }
+  ],
+  "errors": [],
+  "interactions": [
+    {
+      "check": "Login vacío deshabilitado",
+      "pass": true
+    },
+    {
+      "check": "Login válido habilitado sin enviar",
+      "pass": true
+    },
+    {
+      "check": "Mostrar contraseña",
+      "pass": true
+    },
+    {
+      "check": "Navegación de correo a contraseña con Tab",
+      "pass": true
+    },
+    {
+      "check": "Enlace de recuperación conserva ruta",
+      "pass": true
+    },
+    {
+      "check": "Movimiento reducido respetado",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /administrador/dashboard-general",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /administrador/gestion-de-usuarios-y-roles",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /administrador/gestion-de-clientes",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /administrador/gestion-de-inventario",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /administrador/gestion-de-facturacion-y-pagos",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /administrador/reportes-avanzados",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /administrador/ajustes/perfil",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /administrador/ajustes/contrasena",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /cosmiatra/gestion-de-citas",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /cosmiatra/registrar-tratamiento",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /cosmiatra/gestion-de-pagos",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /cosmiatra/historial-de-clientes",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /cosmiatra/historial-de-clientes/plan",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /cosmiatra/reportes-de-servicios-e-ingresos",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /cosmiatra/ajustes/perfil",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /cosmiatra/ajustes/contrasena",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /doctor/agenda-de-citas",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /doctor/historial-de-pacientes",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /doctor/historial-de-pacientes/formulario",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /doctor/registrar-tratamiento",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /doctor/mis-reportes",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /doctor/ajustes/perfil",
+      "pass": true
+    },
+    {
+      "check": "Protección sin sesión /doctor/ajustes/contrasena",
+      "pass": true
+    }
+  ],
+  "blockedWrites": []
+}

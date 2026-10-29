@@ -1,9 +1,7 @@
 import { useState } from "react";
 import {
-  FaCalendarAlt,
   FaFemale,
   FaMale,
-  FaStethoscope,
   FaUser,
 } from "react-icons/fa";
 import Paginacion from "./Paginacion";
@@ -58,8 +56,12 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar, mostrar
     );
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:gap-5 2xl:grid-cols-4">
+    <div className="ui-panel space-y-4">
+      <div className="ui-toolbar">
+        <h2 className="text-base font-semibold text-slate-100">{mostrarAtenciones ? "Atenciones registradas" : "Tratamientos registrados"}</h2>
+        <span className="text-sm tabular-nums text-slate-400">{tratamientos.length} registros</span>
+      </div>
+      <div className="divide-y divide-slate-700/50">
         {tratamientosPaginados.map((t, index) => {
           const { Icono, color, bg, border } = obtenerIconoPaciente(t.sexo);
 
@@ -67,21 +69,20 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar, mostrar
             <div
               key={t._id || index}
               onClick={() => onSeleccionar(t)}
-              className="ui-card ui-card-interactive flex min-h-[210px] cursor-pointer flex-col justify-between gap-5 p-5 sm:p-6 group"
+              className="group flex cursor-pointer flex-col gap-3 rounded-md px-2 py-4 transition-colors hover:bg-[var(--surface-hover)] md:flex-row md:items-center md:gap-5"
             >
-              <div className="flex items-start gap-4">
+              <div className="flex min-w-0 flex-1 items-start gap-3">
                 <div
-                  className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border ${border} ${bg}`}
+                  className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md border ${border} ${bg}`}
                 >
-                  <Icono className={`${color} text-2xl`} />
+                  <Icono className={`${color} text-base`} />
                 </div>
 
                 <div className="min-w-0">
-                  <h4 className="font-semibold text-white text-lg leading-snug break-words">
+                  <h4 className="font-medium text-white text-sm leading-relaxed break-words">
                     {t.nombre}
                   </h4>
-                  <div className="mt-2 flex items-center gap-2 text-slate-400 text-sm">
-                    <FaCalendarAlt className="text-indigo-300 flex-shrink-0" />
+                  <div className="mt-1 text-slate-400 text-xs tabular-nums">
                     <span className="whitespace-normal">
                       {getAttentionDate(t) ? formatearFechaCita(getAttentionDate(t)) : "Sin fecha"}
                     </span>
@@ -91,12 +92,11 @@ export default function ListaTratamientos({ tratamientos, onSeleccionar, mostrar
 
               <AtencionPendienteBadge record={t} />
 
-              <div className="rounded-xl border border-slate-700/60 bg-slate-950/25 p-3">
-                <p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-400">
-                  <FaStethoscope className="text-indigo-300" />
+              <div className="min-w-0 md:w-2/5">
+                <p className="mb-1 text-xs text-slate-400">
                   Servicio
                 </p>
-                <p className="text-sm font-medium leading-relaxed text-indigo-100 break-words">
+                <p className="text-sm leading-relaxed text-slate-300 break-words">
                   {formatearServicios(t.servicio)}
                 </p>
               </div>

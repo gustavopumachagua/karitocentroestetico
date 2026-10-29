@@ -1,15 +1,12 @@
-import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const PasswordInput = ({ value, onChange, show, setShow }) => {
   return (
-    <div className="flex min-h-12 items-stretch overflow-hidden rounded-xl border border-slate-700 bg-slate-950/40 transition-colors hover:border-slate-500 focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-300/20">
-      <span
-        aria-hidden="true"
-        className="flex w-11 shrink-0 items-center justify-center border-r border-slate-700 text-slate-400"
-      >
-        <FaLock />
-      </span>
+    <div className="ui-field">
+      <label htmlFor="login-password" className="ui-label">Contraseña</label>
+      <div className="auth-input-shell">
       <input
+        id="login-password"
         type={show ? "text" : "password"}
         name="password"
         placeholder="Contraseña"
@@ -30,6 +27,7 @@ const PasswordInput = ({ value, onChange, show, setShow }) => {
           {show ? <FaEyeSlash /> : <FaEye />}
         </button>
       )}
+      </div>
     </div>
   );
 };

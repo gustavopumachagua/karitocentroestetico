@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaIdBadge, FaPen, FaCheck, FaTimes } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
 
 export default function CmpField({ cmp, onSave, onCancel, isSaving }) {
   const [editing, setEditing] = useState(!cmp);
@@ -45,8 +45,7 @@ export default function CmpField({ cmp, onSave, onCancel, isSaving }) {
         <label className="block text-sm font-medium text-slate-300">
           CMP (Colegio Médico del Perú)
         </label>
-        <div className="flex min-h-12 min-w-0 items-center gap-3 rounded-xl border border-slate-700 bg-slate-950/40 px-3 py-2">
-          <FaIdBadge className="shrink-0 text-indigo-300" aria-hidden="true" />
+        <div className="flex min-h-12 min-w-0 items-center gap-3 rounded-lg border border-slate-700 bg-slate-950/40 px-3 py-2">
           <span className="min-w-0 text-slate-100 font-medium tracking-widest">
             {cmp}
           </span>
@@ -70,16 +69,9 @@ export default function CmpField({ cmp, onSave, onCancel, isSaving }) {
         CMP (Colegio Médico del Perú)
       </label>
       <div
-        className={`flex min-h-12 min-w-0 items-center rounded-xl border bg-slate-950/40 px-3 py-2 transition-colors focus-within:ring-2 ${
-          error
-            ? "border-rose-400 focus-within:ring-rose-400/20"
-            : "border-slate-700 focus-within:border-indigo-300 focus-within:ring-indigo-300/20"
-        }`}
+        className="auth-input-shell"
+        data-invalid={Boolean(error)}
       >
-        <FaIdBadge
-          className={`mr-3 shrink-0 ${error ? "text-rose-300" : "text-slate-400"}`}
-          aria-hidden="true"
-        />
         <input
           id="profile-cmp"
           type="text"
@@ -92,7 +84,7 @@ export default function CmpField({ cmp, onSave, onCancel, isSaving }) {
           aria-invalid={Boolean(error)}
           className="min-w-0 w-full bg-transparent text-base tracking-widest text-slate-100 outline-none placeholder:text-slate-400"
         />
-        <span className="ml-2 text-xs text-slate-400 whitespace-nowrap">
+        <span className="flex items-center pr-3 text-xs text-slate-400 whitespace-nowrap">
           {value.length}/6
         </span>
       </div>
@@ -108,7 +100,6 @@ export default function CmpField({ cmp, onSave, onCancel, isSaving }) {
           disabled={isSaving}
           className="ui-button ui-button-secondary min-h-11"
         >
-          <FaTimes className="inline mr-1.5" size={12} />
           Cancelar
         </button>
         <button
@@ -121,7 +112,6 @@ export default function CmpField({ cmp, onSave, onCancel, isSaving }) {
               : "ui-button-primary"
           }`}
         >
-          <FaCheck className="inline mr-1.5" size={12} />
           {isSaving ? "Guardando..." : "Aceptar"}
         </button>
       </div>

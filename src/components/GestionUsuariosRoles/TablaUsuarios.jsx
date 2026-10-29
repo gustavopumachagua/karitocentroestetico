@@ -1,4 +1,4 @@
-import { FaBan, FaTrash, FaSpinner } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 
 export default function TablaUsuarios({
   usuarios,
@@ -26,14 +26,16 @@ export default function TablaUsuarios({
             >
               <td className="px-4 py-3 font-medium text-white">{u.nombre}</td>
               <td className="px-4 py-3 break-all">{u.email}</td>
-              <td className="px-4 py-3 capitalize text-indigo-100">{u.rol}</td>
+              <td className="px-4 py-3 capitalize text-slate-300">{u.rol}</td>
               <td className="px-4 py-3">
                 {u.activo ? (
-                  <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-xs font-semibold text-emerald-300">
+                  <span className="inline-flex items-center gap-2 whitespace-nowrap text-xs text-slate-300">
+                    <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
                     Activo
                   </span>
                 ) : (
-                  <span className="rounded-full border border-rose-400/20 bg-rose-400/10 px-2.5 py-1 text-xs font-semibold text-rose-300">
+                  <span className="inline-flex items-center gap-2 whitespace-nowrap text-xs text-rose-300">
+                    <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-rose-300" />
                     Suspendido
                   </span>
                 )}
@@ -43,11 +45,11 @@ export default function TablaUsuarios({
                 <button
                   onClick={() => suspenderUsuario(u._id)}
                   disabled={loading}
-                  className={`ui-button border-amber-400/20 bg-amber-400/10 text-amber-200 hover:bg-amber-400/15 ${
+                  className={`ui-button ui-button-secondary ${
                     loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                   }`}
                 >
-                  {loading ? <FaSpinner className="animate-spin" /> : <FaBan />}
+                  {loading && <FaSpinner className="animate-spin" />}
                   {u.activo ? "Suspender" : "Activar"}
                 </button>
                 <button
@@ -57,10 +59,8 @@ export default function TablaUsuarios({
                     loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
                   }`}
                 >
-                  {loading ? (
+                  {loading && (
                     <FaSpinner className="animate-spin" />
-                  ) : (
-                    <FaTrash />
                   )}
                   Eliminar
                 </button>

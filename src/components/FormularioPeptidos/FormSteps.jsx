@@ -323,7 +323,7 @@ export function StepAntecedentesPersonales({ formData, updateField }) {
           onChange={(e) => updateField("cirugiasPrevias", e.target.value)}
         />
         {formData.cirugiasPrevias === "Sí" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-2 border-l-2 border-indigo-400/20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-4 border-l border-slate-700">
             <TextField label="Cirugía/procedimiento" name="cirugiaProcedimiento" value={formData.cirugiaProcedimiento} onChange={(e) => updateField("cirugiaProcedimiento", e.target.value)} />
             <TextField label="Fecha" name="cirugiaFecha" type="date" value={formData.cirugiaFecha} onChange={(e) => updateField("cirugiaFecha", e.target.value)} />
             <YesNoField label="Complicaciones" name="cirugiaComplicaciones" value={formData.cirugiaComplicaciones} onChange={(e) => updateField("cirugiaComplicaciones", e.target.value)} />
@@ -339,7 +339,7 @@ export function StepAntecedentesPersonales({ formData, updateField }) {
           onChange={(e) => updateField("hospitalizacionesPrevias", e.target.value)}
         />
         {formData.hospitalizacionesPrevias === "Sí" && (
-          <TextField label="Motivo" name="hospitalizacionMotivo" value={formData.hospitalizacionMotivo} onChange={(e) => updateField("hospitalizacionMotivo", e.target.value)} className="pl-2 border-l-2 border-indigo-400/20" />
+          <TextField label="Motivo" name="hospitalizacionMotivo" value={formData.hospitalizacionMotivo} onChange={(e) => updateField("hospitalizacionMotivo", e.target.value)} className="pl-4 border-l border-slate-700" />
         )}
       </div>
 
@@ -351,7 +351,7 @@ export function StepAntecedentesPersonales({ formData, updateField }) {
           onChange={(e) => updateField("alergiaMedicamentos", e.target.value)}
         />
         {formData.alergiaMedicamentos === "Sí" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-2 border-l-2 border-indigo-400/20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-4 border-l border-slate-700">
             <TextField label="Medicamento" name="alergiaMedicamento" value={formData.alergiaMedicamento} onChange={(e) => updateField("alergiaMedicamento", e.target.value)} />
             <TextField label="Reacción" name="alergiaReaccion" value={formData.alergiaReaccion} onChange={(e) => updateField("alergiaReaccion", e.target.value)} />
           </div>
@@ -366,7 +366,7 @@ export function StepAntecedentesPersonales({ formData, updateField }) {
           onChange={(e) => updateField("alergiasAlimentarias", e.target.value)}
         />
         {formData.alergiasAlimentarias === "Sí" && (
-          <TextField label="¿Cuáles?" name="alergiaAlimentariaCual" value={formData.alergiaAlimentariaCual} onChange={(e) => updateField("alergiaAlimentariaCual", e.target.value)} className="pl-2 border-l-2 border-indigo-400/20" />
+          <TextField label="¿Cuáles?" name="alergiaAlimentariaCual" value={formData.alergiaAlimentariaCual} onChange={(e) => updateField("alergiaAlimentariaCual", e.target.value)} className="pl-4 border-l border-slate-700" />
         )}
       </div>
 
@@ -374,14 +374,14 @@ export function StepAntecedentesPersonales({ formData, updateField }) {
         <div className="ui-clinical-group space-y-3">
           <YesNoField label="Alergia a látex" name="alergiaLatex" value={formData.alergiaLatex} onChange={(e) => updateField("alergiaLatex", e.target.value)} />
           {formData.alergiaLatex === "Sí" && (
-            <TextField label="Otras" name="alergiaLatexOtras" value={formData.alergiaLatexOtras} onChange={(e) => updateField("alergiaLatexOtras", e.target.value)} className="pl-2 border-l-2 border-indigo-400/20" />
+            <TextField label="Otras" name="alergiaLatexOtras" value={formData.alergiaLatexOtras} onChange={(e) => updateField("alergiaLatexOtras", e.target.value)} className="pl-4 border-l border-slate-700" />
           )}
         </div>
 
         <div className="ui-clinical-group space-y-3">
           <YesNoField label="Reacciones adversas a medicamentos" name="reaccionesAdversas" value={formData.reaccionesAdversas} onChange={(e) => updateField("reaccionesAdversas", e.target.value)} />
           {formData.reaccionesAdversas === "Sí" && (
-            <TextField label="Medicamento/reacción" name="reaccionAdversaMedicamento" value={formData.reaccionAdversaMedicamento} onChange={(e) => updateField("reaccionAdversaMedicamento", e.target.value)} className="pl-2 border-l-2 border-indigo-400/20" />
+            <TextField label="Medicamento/reacción" name="reaccionAdversaMedicamento" value={formData.reaccionAdversaMedicamento} onChange={(e) => updateField("reaccionAdversaMedicamento", e.target.value)} className="pl-4 border-l border-slate-700" />
           )}
         </div>
       </div>
@@ -518,7 +518,7 @@ export function StepMedicacionActual({ formData, updateField }) {
         <div className="ui-table-wrap" role="region" aria-label="Tratamientos previos para control de peso" tabIndex={0}>
           <table className="ui-table ui-clinical-table text-sm">
             <thead>
-              <tr className="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-wider">
+              <tr className="bg-[var(--surface-raised)] text-slate-300 text-xs">
                 <th scope="col" className="px-3 py-2.5 text-left">Medicamento</th>
                 <th scope="col" className="px-3 py-2.5 text-left">Dosis</th>
                 <th scope="col" className="px-3 py-2.5 text-left">Tiempo de uso</th>
@@ -530,16 +530,16 @@ export function StepMedicacionActual({ formData, updateField }) {
               {treatmentRows.map((row, i) => (
                 <tr key={i} className="border-t border-slate-700/40">
                   <td className="p-1.5">
-                  <input type="text" aria-label={`Medicamento o tratamiento previo ${i + 1}`} name={`tratamientosPreviosPeso-${i}-medicamento`} value={row.medicamento || ""} onChange={(e) => updateTratamiento(i, "medicamento", e.target.value)} className="ui-control min-w-28 text-sm" />
+                  <input type="text" aria-label={`Medicamento o tratamiento previo ${i + 1}`} name={`tratamientosPreviosPeso-${i}-medicamento`} value={row.medicamento || ""} onChange={(e) => updateTratamiento(i, "medicamento", e.target.value)} className="ui-control min-w-32 text-sm" />
                   </td>
                   <td className="p-1.5">
-                    <input type="text" aria-label={`Dosis del tratamiento previo ${i + 1}`} name={`tratamientosPreviosPeso-${i}-dosis`} value={row.dosis || ""} onChange={(e) => updateTratamiento(i, "dosis", e.target.value)} className="ui-control min-w-28 text-sm" />
+                    <input type="text" aria-label={`Dosis del tratamiento previo ${i + 1}`} name={`tratamientosPreviosPeso-${i}-dosis`} value={row.dosis || ""} onChange={(e) => updateTratamiento(i, "dosis", e.target.value)} className="ui-control min-w-32 text-sm" />
                   </td>
                   <td className="p-1.5">
-                    <input type="text" aria-label={`Tiempo de uso del tratamiento previo ${i + 1}`} name={`tratamientosPreviosPeso-${i}-tiempoUso`} value={row.tiempoUso || ""} onChange={(e) => updateTratamiento(i, "tiempoUso", e.target.value)} className="ui-control min-w-28 text-sm" />
+                    <input type="text" aria-label={`Tiempo de uso del tratamiento previo ${i + 1}`} name={`tratamientosPreviosPeso-${i}-tiempoUso`} value={row.tiempoUso || ""} onChange={(e) => updateTratamiento(i, "tiempoUso", e.target.value)} className="ui-control min-w-32 text-sm" />
                   </td>
                   <td className="p-1.5">
-                    <input type="text" aria-label={`Resultado del tratamiento previo ${i + 1}`} name={`tratamientosPreviosPeso-${i}-resultado`} value={row.resultado || ""} onChange={(e) => updateTratamiento(i, "resultado", e.target.value)} className="ui-control min-w-28 text-sm" />
+                    <input type="text" aria-label={`Resultado del tratamiento previo ${i + 1}`} name={`tratamientosPreviosPeso-${i}-resultado`} value={row.resultado || ""} onChange={(e) => updateTratamiento(i, "resultado", e.target.value)} className="ui-control min-w-32 text-sm" />
                   </td>
                   <td className="p-1.5 text-right">
                     <button
@@ -574,7 +574,7 @@ export function StepMedicacionActual({ formData, updateField }) {
           onChange={(e) => updateField("agonistasGlp1", e.target.value)}
         />
         {formData.agonistasGlp1 === "Sí" && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pl-2 border-l-2 border-indigo-400/20">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pl-4 border-l border-slate-700">
             <TextField label="Medicamento" name="agonistaMedicamento" value={formData.agonistaMedicamento} onChange={(e) => updateField("agonistaMedicamento", e.target.value)} />
             <TextField label="Dosis" name="agonistaDosis" value={formData.agonistaDosis} onChange={(e) => updateField("agonistaDosis", e.target.value)} />
             <TextField label="Respuesta/tolerancia" name="agonistaRespuesta" value={formData.agonistaRespuesta} onChange={(e) => updateField("agonistaRespuesta", e.target.value)} />
@@ -628,7 +628,7 @@ export function StepHabitosEstilo({ formData, updateField }) {
           onChange={(e) => updateField("actividadFisica", e.target.value)}
         />
         {formData.actividadFisica === "Regular" && (
-          <TextField label="Frecuencia (veces/semana)" name="actividadFrecuencia" value={formData.actividadFrecuencia} onChange={(e) => updateField("actividadFrecuencia", e.target.value)} className="pl-2 border-l-2 border-indigo-400/20" />
+          <TextField label="Frecuencia (veces/semana)" name="actividadFrecuencia" value={formData.actividadFrecuencia} onChange={(e) => updateField("actividadFrecuencia", e.target.value)} className="pl-4 border-l border-slate-700" />
         )}
       </div>
 
@@ -707,7 +707,7 @@ export function StepSintomasActuales({ formData, updateField }) {
 export function StepEvaluacionSeguridad({ formData, updateField }) {
   const Section = ({ title, children }) => (
     <div className="ui-clinical-group space-y-3">
-      <p className="text-sm font-semibold text-indigo-200/90">{title}</p>
+      <p className="text-sm font-semibold text-slate-100">{title}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{children}</div>
     </div>
   );
@@ -826,7 +826,7 @@ export function StepExamenesAuxiliares({ formData, updateField }) {
         <table className="ui-table w-full min-w-[28rem] table-fixed text-sm">
           <colgroup><col /><col /><col className="w-32" /></colgroup>
           <thead>
-            <tr className="bg-slate-900/60 text-slate-400 text-xs uppercase tracking-wider">
+            <tr className="bg-[var(--surface-raised)] text-slate-300 text-xs">
               <th scope="col" className="px-3 py-2.5 text-left">Examen</th>
               <th scope="col" className="px-3 py-2.5 text-left">Resultado</th>
               <th scope="col" className="px-3 py-2.5 text-right">Acciones</th>
@@ -1067,7 +1067,7 @@ export function StepConstanciaMedica({ formData, updateField, firmaDigitalUrl })
       />
 
       <div className="p-4 rounded-lg border border-amber-400/20 bg-amber-400/5">
-        <p className="text-xs text-amber-200/80 leading-relaxed">
+        <p className="text-sm text-amber-200 leading-relaxed">
           <strong>Nota:</strong> Este documento corresponde a la historia clínica inicial.
           El consentimiento informado detallado sobre beneficios, riesgos, efectos adversos y
           criterios de suspensión se maneja en una hoja independiente, y la evolución semanal

@@ -80,8 +80,8 @@ export default function Login({ onLogin }) {
   return (
     <AuthPageLayout
       subtitle="Panel privado"
-      title="Control interno para el equipo de Karito Centro Estético."
-      description="Ingresa para gestionar la operación diaria con una experiencia oscura, ordenada y optimizada para escritorio y móvil."
+      title="Tu espacio de gestión diaria."
+      description="Accede a las citas, tratamientos, pagos y reportes de Karito Centro Estético."
       highlights={AUTH_HIGHLIGHTS}
       cardSubtitle="Acceso seguro"
       cardTitle="Ingresar"

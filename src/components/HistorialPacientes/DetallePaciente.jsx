@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import InfoPaciente from "./InfoPaciente";
 import ObservacionesImagenes from "./ObservacionesImagenes";
 import ListaTratamientosAnteriores from "./ListaTratamientosAnteriores";
-import { FaArrowLeft, FaFileAlt } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import {
   CLINICAL_HISTORY_UPDATED_EVENT,
   cacheClinicalHistoryRecord,
@@ -184,12 +184,12 @@ export default function DetallePaciente({
 
   return (
     <div className="min-w-0 space-y-6">
-      <div className="ui-page-header flex flex-col gap-4 rounded-2xl px-1 py-1 sm:flex-row sm:items-center sm:justify-between">
+      <div className="ui-page-header mb-0 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="ui-eyebrow">
             Paciente seleccionado
           </p>
-          <h3 className="mt-1 text-2xl font-semibold text-slate-100 break-words">
+          <h3 className="ui-title mt-1">
             {paciente.nombre}
           </h3>
           <AtencionPendienteBadge record={paciente} className="mt-3" />
@@ -201,7 +201,6 @@ export default function DetallePaciente({
               onClick={handleFormulario}
               className="ui-button ui-button-primary w-full sm:w-auto"
             >
-              <FaFileAlt />
               {FORM_BUTTON_LABELS[historyStatus]}
             </button>
           )}
@@ -214,7 +213,7 @@ export default function DetallePaciente({
         </div>
       </div>
 
-      <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2 xl:gap-6">
+      <div className="grid min-w-0 grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] xl:gap-6">
         <InfoPaciente paciente={paciente} />
         {esAtencionPendiente ? (
           <div className="ui-card p-5 sm:p-6">

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FaHistory } from "react-icons/fa";
 import Paginacion from "./Paginacion";
 import AtencionPendienteBadge from "./AtencionPendienteBadge";
 import { formatearFechaCita } from "../../utils/citasFecha";
@@ -34,22 +33,19 @@ export default function ListaTratamientosAnteriores({
   return (
     <div className="page-panel page-panel-pad">
       <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-400/15 bg-indigo-400/10">
-          <FaHistory className="text-indigo-300" />
-        </div>
-        <h4 className="text-lg font-semibold text-white">
+        <h4 className="text-base font-semibold text-white">
           {mostrarAtenciones ? "Otras atenciones" : "Tratamientos anteriores"}
         </h4>
       </div>
 
       {tratamientos.length > 0 ? (
         <>
-          <ul className="space-y-3">
+          <ul className="divide-y divide-slate-700/50">
             {tratamientosVisibles.map((t, i) => (
               <li
                 key={t._id || i}
                 onClick={() => onSeleccionar(t)}
-                className="flex cursor-pointer flex-col gap-2 rounded-xl border border-slate-700/60 bg-slate-950/25 p-3 transition hover:border-indigo-400/25 hover:bg-indigo-400/10 sm:flex-row sm:items-center sm:justify-between"
+                className="flex cursor-pointer flex-col gap-2 rounded-md px-2 py-4 transition-colors hover:bg-[var(--surface-hover)] sm:flex-row sm:items-center sm:justify-between"
               >
                 <span className="text-sm text-slate-300">
                   {getAttentionDate(t) ? formatearFechaCita(getAttentionDate(t)) : "Sin fecha"}

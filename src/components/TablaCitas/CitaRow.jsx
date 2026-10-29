@@ -17,10 +17,10 @@ export function CitaRow({
 
   return (
     <tr key={cita.id} className="bg-slate-950/10">
-      <td className="p-3 font-medium text-white">
+      <td className="p-3 min-w-44 font-medium text-white">
         {typeof cita.cliente === "object" ? cita.cliente?.nombre : cita.cliente}
       </td>
-      <td className="p-3 text-slate-300">{cita.rol}</td>
+      <td className="p-3 text-slate-400 capitalize">{cita.rol}</td>
       <td className="p-3 text-slate-300">
         {nombreProfesional || "Sin asignar"}
       </td>
@@ -30,7 +30,7 @@ export function CitaRow({
             {cita.servicio.map((serv, idx) => (
               <span
                 key={idx}
-                className="rounded-full border border-indigo-400/15 bg-indigo-300/12 px-2 py-1 text-xs font-medium text-indigo-100"
+                className="rounded-md bg-[var(--surface-raised)] px-2 py-1 text-xs text-slate-200"
               >
                 {serv}
               </span>
@@ -41,7 +41,7 @@ export function CitaRow({
         )}
       </td>
 
-      <td className="p-3 text-slate-300">
+      <td className="p-3 whitespace-nowrap tabular-nums text-slate-300">
         <FechaCita fecha={cita.fecha} />
       </td>
       <td className="p-3">

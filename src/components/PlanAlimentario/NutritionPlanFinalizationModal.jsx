@@ -56,8 +56,8 @@ export default function NutritionPlanFinalizationModal({
     >
       {open && <>
         {successful
-          ? <FaCheckCircle className="mx-auto text-4xl text-emerald-300" aria-hidden="true" />
-          : <FaClipboardCheck className="mx-auto text-4xl text-sky-300" aria-hidden="true" />}
+          ? <FaCheckCircle className="mx-auto text-3xl text-emerald-300" aria-hidden="true" />
+          : <FaClipboardCheck className="mx-auto text-3xl text-slate-300" aria-hidden="true" />}
         <h2 id={titleId} ref={headingRef} tabIndex={-1} className="mt-3 text-xl font-semibold text-white focus:outline-none">
           {successful ? "Plan alimentario finalizado" : "Finalizando plan alimentario…"}
         </h2>

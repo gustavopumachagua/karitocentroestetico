@@ -205,10 +205,10 @@ export default function ExportarExcelButton() {
     <button
       onClick={exportarExcel}
       disabled={exportando}
-      className="ui-button ui-button-primary w-full sm:w-auto"
+      className="ui-button ui-button-secondary w-full sm:w-auto"
       aria-label="Descargar clientes en Excel"
     >
-      <FiDownload className="h-4 w-4 sm:h-5 sm:w-5 " />
+      <FiDownload className="h-4 w-4" />
       {exportando ? "Generando Excel..." : "Descargar Excel"}
     </button>
   );

@@ -2,8 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FaChevronLeft,
   FaChevronRight,
-  FaImages,
-  FaNotesMedical,
   FaTimes,
 } from "react-icons/fa";
 import ProtectedImage from "../common/ProtectedImage";
@@ -64,10 +62,9 @@ export default function ObservacionesImagenes({ paciente }) {
       {paciente.observacion && (
         <div className="ui-card p-5">
           <div className="flex items-center gap-2 mb-2">
-            <FaNotesMedical className="text-indigo-300" />
             <h4 className="font-semibold text-white">Observación</h4>
           </div>
-          <p className="italic text-slate-300 text-sm sm:text-base leading-relaxed break-words">
+          <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap break-words">
             {paciente.observacion}
           </p>
         </div>
@@ -76,7 +73,6 @@ export default function ObservacionesImagenes({ paciente }) {
       {imagenes.length > 0 && (
         <div className="ui-card p-5">
           <div className="flex items-center gap-2 mb-3">
-            <FaImages className="text-indigo-300" />
             <h4 className="text-white font-medium">
               Imágenes del tratamiento
             </h4>
@@ -94,7 +90,7 @@ export default function ObservacionesImagenes({ paciente }) {
                 <ProtectedImage
                   src={img.thumbnailUrl || img.url}
                   alt={`Tratamiento ${i + 1}`}
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  className="h-full w-full object-cover"
                   loading="lazy"
                 />
                 <span className="pointer-events-none absolute inset-0 bg-slate-950/0 transition group-hover:bg-slate-950/20" />
@@ -106,7 +102,7 @@ export default function ObservacionesImagenes({ paciente }) {
 
       {modalAbierto && imagenSeleccionada && (
         <div
-          className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-950/95 px-3 py-4 backdrop-blur-sm sm:px-6"
+          className="fixed inset-0 z-[1000] flex items-center justify-center bg-slate-950/95 px-3 py-4 sm:px-6"
           onClick={cerrarGaleria}
           role="dialog"
           aria-modal="true"

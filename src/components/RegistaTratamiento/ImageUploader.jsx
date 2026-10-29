@@ -2,7 +2,7 @@ import { FaTrash, FaUpload } from "react-icons/fa";
 
 export default function ImageUploader({ imagenes, onUpload, onRemove }) {
   return (
-    <div>
+    <div className="rounded-lg border border-dashed border-slate-700 p-4">
       <label className="ui-button ui-button-secondary relative w-full cursor-pointer focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-300 sm:w-auto">
         <FaUpload /> Subir imágenes
         <input
@@ -15,7 +15,7 @@ export default function ImageUploader({ imagenes, onUpload, onRemove }) {
         />
       </label>
 
-      <p className="mt-2 text-sm italic text-slate-400">
+      <p className="mt-2 text-sm text-slate-400">
         {imagenes.length === 0
           ? "Sin archivos seleccionados"
           : `${imagenes.length} imagen${
@@ -28,12 +28,12 @@ export default function ImageUploader({ imagenes, onUpload, onRemove }) {
           {imagenes.map((img) => (
             <div
               key={img.id}
-              className="relative group overflow-hidden rounded-lg border border-slate-700/70 shadow-lg"
+              className="relative group overflow-hidden rounded-lg border border-slate-700/70"
             >
               <img
                 src={img.url}
                 alt="preview"
-                className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-32 object-cover"
               />
               <button
                 type="button"

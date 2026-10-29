@@ -16,7 +16,7 @@ export default function TablaPagos({
     <div className="ui-panel w-full">
       <div className="ui-toolbar mb-5">
         <div>
-          <h2 className="text-lg font-semibold text-white">Citas por cobrar</h2>
+          <h2 className="text-base font-semibold text-white">Citas por cobrar</h2>
           <p className="mt-1 text-sm text-slate-400">Selecciona una cita pendiente para registrar el pago o una pagada para ver su comprobante.</p>
         </div>
         <span className="ui-status">{citas.length} citas</span>
@@ -30,7 +30,7 @@ export default function TablaPagos({
               <th scope="col" className="p-3 text-left">Rol</th>
               <th scope="col" className="p-3 text-left min-w-[220px]">Servicios</th>
               <th scope="col" className="p-3 text-left">Método</th>
-              <th scope="col" className="p-3 text-left">Monto</th>
+              <th scope="col" className="p-3 text-right">Monto</th>
               <th scope="col" className="p-3 text-left">Fecha</th>
               <th scope="col" className="p-3 text-left">Estado</th>
             </tr>
@@ -75,7 +75,7 @@ export default function TablaPagos({
                   <td className="p-3 capitalize text-slate-300">
                     {pago ? pago.metodoPago : "—"}
                   </td>
-                  <td className="p-3 font-semibold tabular-nums text-emerald-300 whitespace-nowrap">
+                  <td className="p-3 text-right font-medium tabular-nums text-slate-100 whitespace-nowrap">
                     S/ {pago ? pago.total.toFixed(2) : "0.00"}
                   </td>
                   <td className="p-3 text-slate-400 whitespace-nowrap">
@@ -147,7 +147,7 @@ export default function TablaPagos({
               </p>
 
               <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-                <span className="text-sm font-semibold tabular-nums text-emerald-300">
+                <span className="text-sm font-semibold tabular-nums text-slate-100">
                   S/ {pago ? pago.total.toFixed(2) : "0.00"}
                 </span>
                 <span className="flex items-center gap-1 text-xs font-semibold">

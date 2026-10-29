@@ -1,4 +1,4 @@
-import { FaCheck, FaEye, FaSave } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 
 /** Actions follow the persisted plan state, never a local save attempt. */
 export default function NutritionPlanActions({
@@ -34,12 +34,11 @@ export default function NutritionPlanActions({
   return (
     <div className="ui-card nutrition-plan-actions">
       <button type="submit" className="ui-button ui-button-secondary" disabled={busy || conflict}>
-        <FaSave aria-hidden="true" />
         {busy ? "Guardando…" : "Guardar borrador"}
       </button>
       {isComplete && (
         <button ref={primaryActionRef} type="button" className="ui-button ui-button-primary" disabled={busy || conflict} onClick={onFinalize} aria-describedby="nutrition-finalize-help">
-          <FaCheck aria-hidden="true" /> Finalizar plan
+          Finalizar plan
         </button>
       )}
       <span className="ui-help self-center" role="status">

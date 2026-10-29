@@ -6,10 +6,10 @@ export default function InventarioHeader({
   setRolSeleccionado,
 }) {
   return (
-    <div className="ui-toolbar rounded-xl border border-slate-800/80 bg-slate-950/20 px-4 py-3">
+    <div className="ui-toolbar border-b border-slate-700/60 pb-4">
       <div>
-        <p className="text-sm font-semibold text-slate-200">Área de trabajo</p>
-        <p className="mt-1 text-xs text-slate-400">Elige el rol para administrar su catálogo.</p>
+        <p className="text-sm font-semibold text-slate-200">Catálogo por área</p>
+        <p className="mt-1 text-sm text-slate-400">Selecciona el área para consultar sus insumos y servicios.</p>
       </div>
       <CustomSelect
         value={rolSeleccionado}

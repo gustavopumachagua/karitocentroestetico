@@ -153,21 +153,24 @@ export default function GestionClientes() {
       <div className="page-stack">
         {!clienteSeleccionado ? (
           <>
-            <BuscadorClientes
-              busqueda={busqueda}
-              manejarCambioBusqueda={manejarCambioBusqueda}
-              sugerencias={sugerencias}
-              manejarSeleccion={manejarSeleccion}
-            />
-
-            <div className="flex w-full justify-end">
-              <ExportarExcelButton />
+            <div className="ui-panel flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end">
+              <div className="min-w-0 flex-1">
+                <BuscadorClientes
+                  busqueda={busqueda}
+                  manejarCambioBusqueda={manejarCambioBusqueda}
+                  sugerencias={sugerencias}
+                  manejarSeleccion={manejarSeleccion}
+                />
+              </div>
+              <div className="shrink-0">
+                <ExportarExcelButton />
+              </div>
             </div>
 
             {loading ? (
               <CardGridSkeleton count={9} />
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 animate-fade-in">
                 {clientesPagina.map((cliente) => (
                   <ClienteCard
                     key={cliente.patientKey}

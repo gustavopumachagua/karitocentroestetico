@@ -5,7 +5,6 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
-import { FaChartPie } from "react-icons/fa";
 import { CHART_COLORS, CHART_TOOLTIP_STYLE } from "../DashboardDoctor/chartTheme";
 
 const CustomTooltip = ({ active, payload }) => {
@@ -18,7 +17,7 @@ const CustomTooltip = ({ active, payload }) => {
       >
         <p
           style={{
-            color: "var(--text-primary, #F1F5F9)",
+            color: "var(--text-primary, #F0F0F1)",
             fontWeight: 700,
             fontSize: "14px",
             marginBottom: "6px",
@@ -26,8 +25,8 @@ const CustomTooltip = ({ active, payload }) => {
         >
           {item.name}
         </p>
-        <p style={{ color: "var(--text-secondary, #94A3B8)", fontSize: "13px" }}>
-          <span style={{ fontWeight: 700, color: "var(--text-primary, #F1F5F9)", fontSize: "16px" }}>
+        <p style={{ color: "var(--text-secondary, #A1A4AB)", fontSize: "13px" }}>
+          <span style={{ fontWeight: 700, color: "var(--text-primary, #F0F0F1)", fontSize: "16px" }}>
             S/{item.value.toLocaleString()}
           </span>
         </p>
@@ -43,18 +42,19 @@ export default function GraficoServiciosRentables({ rol, data }) {
 
   return (
     <div className="ui-panel ui-chart-card">
-      <div className="ui-chart-header">
+      <div className="ui-chart-header flex-col">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="ui-chart-icon">
-            <FaChartPie className="text-lg" />
-          </div>
-          <h3 className="text-base sm:text-lg font-semibold text-white capitalize tracking-tight">
-            Servicios más rentables ({rol})
+          <h3 className="text-base font-semibold text-white capitalize tracking-tight">
+            Ingresos por servicio ({rol})
           </h3>
+        </div>
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-medium tracking-tight tabular-nums text-slate-100">S/{total.toLocaleString()}</span>
+          <span className="text-xs text-slate-400">Total del período</span>
         </div>
       </div>
 
-      <div className="ui-chart-body relative min-w-0 w-full h-[280px] sm:h-[340px] md:h-[400px]">
+      <div className="ui-chart-body relative min-w-0 w-full h-[280px] sm:h-[320px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -62,13 +62,13 @@ export default function GraficoServiciosRentables({ rol, data }) {
               dataKey="value"
               nameKey="name"
               cx="50%"
-              cy="45%"
-              outerRadius="65%"
-              innerRadius="40%"
-              paddingAngle={3}
+              cy="50%"
+              outerRadius="82%"
+              innerRadius="57%"
+              paddingAngle={2}
               isAnimationActive={false}
               animationDuration={1000}
-              stroke="var(--surface-default, #161D29)"
+              stroke="var(--surface-default, #1A1C20)"
               strokeWidth={2}
             >
               {data.map((entry, i) => (
@@ -89,14 +89,6 @@ export default function GraficoServiciosRentables({ rol, data }) {
           </PieChart>
         </ResponsiveContainer>
 
-        <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center pointer-events-none ">
-          <span className="text-slate-400 text-xs uppercase tracking-wider font-medium">
-            Total
-          </span>
-          <span className="text-slate-100 text-xl sm:text-2xl font-semibold tabular-nums">
-            S/{total.toLocaleString()}
-          </span>
-        </div>
       </div>
     </div>
   );

@@ -13,11 +13,12 @@ export default function FormSelect({
       <label className="ui-label">{label}</label>
       <CustomSelect
         name={name}
+        ariaLabel={label}
         value={value}
         onChange={onChange}
         disabled={disabled}
         placeholder={`Seleccione ${label}`}
-        size="lg"
+        size="md"
         options={[
           { value: "", label: `Seleccione ${label}` },
           ...options.map((opt) =>

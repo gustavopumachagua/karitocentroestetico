@@ -1,5 +1,3 @@
-import { FaFilter, FaBoxOpen } from "react-icons/fa";
-
 export default function FiltrosInventario({
   mostrarSoloBajos,
   setMostrarSoloBajos,
@@ -9,38 +7,24 @@ export default function FiltrosInventario({
   };
 
   return (
-    <div className="ui-panel min-w-0 w-full">
-      <div className="flex min-w-0 items-start mb-5 gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="ui-chart-icon">
-            <FaFilter className="text-sm" />
-          </div>
-          <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight">
-            Filtros de Inventario
-          </h3>
-        </div>
+    <div className="ui-toolbar mb-5">
+      <div>
+        <h3 className="text-base font-semibold text-white tracking-tight">Inventario de cosmiatría</h3>
+        <p className="mt-1 text-sm text-slate-400">
+          {mostrarSoloBajos ? "Insumos por debajo del umbral de stock." : "Disponibilidad actual de todos los insumos."}
+        </p>
       </div>
-
-      <div className="flex flex-col items-stretch justify-between gap-4">
-        <div className="flex items-center gap-3 text-slate-400 text-sm">
-          <FaBoxOpen className="text-amber-400" />
-          <label>
-            Mostrar solo insumos con{" "}
-            <strong className="text-amber-300">bajo stock</strong>
-          </label>
-        </div>
-
         <button
           onClick={handleToggle}
-          className={`ui-button ui-button-secondary min-h-11 w-full text-sm ${
+          aria-pressed={mostrarSoloBajos}
+          className={`ui-button ui-button-secondary min-h-11 w-full text-sm sm:w-auto ${
             mostrarSoloBajos
               ? "border-indigo-400/40"
               : "border-slate-700"
           }`}
         >
-          {mostrarSoloBajos ? "Ver Todo" : "Ver Solo Bajos"}
+          {mostrarSoloBajos ? "Ver todos los insumos" : "Ver stock bajo"}
         </button>
-      </div>
     </div>
   );
 }

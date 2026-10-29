@@ -82,11 +82,9 @@ export default function EditarItemModal({ show, item, onClose, onSave }) {
   return (
     <div className="ui-modal-backdrop">
       <div role="dialog" aria-modal="true" aria-label="Editar ítem del catálogo" className="ui-modal max-w-lg p-5 sm:p-7">
-        <div className="mb-5 flex items-center gap-3 border-b border-slate-700/50 pb-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10">
-            <span className="text-lg font-semibold text-indigo-300">+</span>
-          </div>
-          <h3 className="text-lg sm:text-xl font-semibold text-white">
+        <div className="mb-5 border-b border-slate-700/50 pb-4">
+          <p className="ui-eyebrow">Catálogo</p>
+          <h3 className="text-lg font-semibold text-white">
             Editar {item.tipo === "insumo" ? "Insumo" : "Servicio"}
           </h3>
         </div>
@@ -180,7 +178,7 @@ export default function EditarItemModal({ show, item, onClose, onSave }) {
           )}
         </form>
 
-        <div className="flex justify-end gap-3 sm:gap-4 mt-6 sm:mt-8 flex-wrap">
+        <div className="flex justify-end gap-3 mt-6 border-t border-slate-700/50 pt-5 flex-wrap">
           <button
             onClick={onClose}
             className="ui-button ui-button-secondary w-full sm:w-auto"

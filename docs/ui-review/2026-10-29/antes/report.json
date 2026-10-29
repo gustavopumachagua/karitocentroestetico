@@ -1,0 +1,103 @@
+{
+  "results": [
+    {
+      "route": "/",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/login",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/login",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/login",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/login",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    },
+    {
+      "route": "/reset-password",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "overflow": false,
+      "background": "rgb(11, 15, 20)"
+    }
+  ],
+  "errors": [],
+  "interactions": [],
+  "blockedWrites": []
+}

@@ -1,4 +1,3 @@
-import { FaCalendarAlt, FaMoneyBillWave } from "react-icons/fa";
 import { calcularMonto, obtenerPagoRelacionado } from "./calcularMonto";
 import DatePickerField from "../common/DatePickerField";
 import { formatearFechaCita } from "../../utils/citasFecha";
@@ -19,10 +18,7 @@ export default function TablaServicios({
     <div className="ui-panel">
       <div className="ui-toolbar mb-6">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-indigo-400/20 bg-indigo-400/10">
-            <FaCalendarAlt className="text-indigo-300 text-lg" />
-          </div>
-          <h3 className="min-w-0 text-lg font-semibold leading-relaxed text-slate-100 break-words">
+          <h3 className="min-w-0 text-base font-semibold leading-relaxed text-slate-100 break-words">
             Reporte de Servicios del Día
           </h3>
         </div>
@@ -78,13 +74,13 @@ export default function TablaServicios({
                     <td className="p-4 border-b border-slate-700/70 font-medium text-white">
                       {t.nombre}
                     </td>
-                    <td className="p-4 border-b border-slate-700/70 max-w-[320px] whitespace-normal break-words leading-relaxed text-indigo-100">
+                    <td className="p-4 border-b border-slate-700/70 max-w-[320px] whitespace-normal break-words leading-relaxed text-slate-300">
                       {Array.isArray(t.servicio)
                         ? t.servicio.join(", ")
                         : t.servicio}
                       <AtencionPendienteBadge record={t} className="mt-1" />
                     </td>
-                    <td className="p-4 border-b border-slate-700/70 text-indigo-200">
+                    <td className="p-4 border-b border-slate-700/70 text-slate-400">
                       {t.rol || "—"}
                     </td>
                     <td className="p-4 border-b border-slate-700/70 text-slate-300">
@@ -97,7 +93,7 @@ export default function TablaServicios({
                         </span>
                       )}
                     </td>
-                    <td className="p-4 border-b border-slate-700/70 text-right text-emerald-300 font-semibold tabular-nums whitespace-nowrap">
+                    <td className="p-4 border-b border-slate-700/70 text-right text-slate-100 font-medium tabular-nums whitespace-nowrap">
                       S/. {monto}
                     </td>
                   </tr>
@@ -138,12 +134,12 @@ export default function TablaServicios({
                   <span className="text-sm text-slate-400">
                     {formatearFechaCita(getAttentionDate(t))}
                   </span>
-                  <span className="text-emerald-300 font-semibold">
+                  <span className="text-slate-100 font-semibold tabular-nums">
                     S/. {monto}
                   </span>
                 </div>
                 <p className="text-base font-medium break-words">{t.nombre}</p>
-                <p className="text-sm text-indigo-100 leading-relaxed break-words">
+                <p className="text-sm text-slate-300 leading-relaxed break-words">
                   {Array.isArray(t.servicio)
                     ? t.servicio.join(", ")
                     : t.servicio}
@@ -177,12 +173,12 @@ export default function TablaServicios({
         )}
       </div>
 
-      <div className="ui-card mt-6 flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
-        <span className="text-slate-300 font-medium text-base sm:text-lg">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-700/60 pt-5">
+        <span className="text-slate-300 font-medium text-sm">
           Total ingresos del día:
         </span>
-        <span className="flex flex-wrap items-center justify-center gap-2 text-lg font-semibold tabular-nums text-emerald-300 sm:text-2xl">
-          <FaMoneyBillWave className="text-emerald-300" /> S/.{" "}
+        <span className="text-2xl font-semibold tabular-nums text-slate-100">
+          S/.{" "}
           {Number(totalIngresos).toFixed(2)}
         </span>
       </div>

@@ -24,21 +24,21 @@ export default function LogoutButton() {
         onClick={() => setIsOpen(true)}
         className="ui-button ui-button-ghost min-h-11 w-full"
       >
-        <FaSignOutAlt className="text-lg" />
+        <FaSignOutAlt className="text-sm" aria-hidden="true" />
         <span className="truncate">Cerrar sesión</span>
       </button>
 
       {isOpen &&
         createPortal(
           <div className="ui-modal-backdrop z-[9999]">
-            <div role="dialog" aria-modal="true" aria-labelledby="logout-title" className="ui-modal w-full max-w-sm p-5 text-center sm:p-6">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-red-500/12 text-red-200">
-                <FaExclamationTriangle />
+            <div role="dialog" aria-modal="true" aria-labelledby="logout-title" className="ui-modal w-full max-w-sm p-5 sm:p-6">
+              <div className="mb-4 text-xl text-amber-200">
+                <FaExclamationTriangle aria-hidden="true" />
               </div>
-              <h2 id="logout-title" className="mb-3 text-xl font-semibold text-white">
-                ¿Estás seguro?
+              <h2 id="logout-title" className="mb-2 text-lg font-semibold text-white">
+                Cerrar sesión
               </h2>
-              <p className="mb-6 text-slate-400">
+              <p className="mb-6 text-sm leading-6 text-slate-400">
                 Si cierras sesión tendrás que volver a iniciar con tus
                 credenciales.
               </p>

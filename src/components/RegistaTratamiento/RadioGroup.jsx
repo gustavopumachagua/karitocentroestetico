@@ -1,4 +1,3 @@
-import { FaVenusMars } from "react-icons/fa";
 import CustomChoice from "../common/CustomChoice";
 
 export default function RadioGroup({
@@ -11,14 +10,14 @@ export default function RadioGroup({
 }) {
   return (
     <div>
-      <label className="mb-2 flex items-center gap-2 text-sm text-slate-300">
-        <FaVenusMars className="text-slate-300" /> {label}
+      <label className="ui-label mb-2 block">
+        {label}
       </label>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="flex flex-wrap gap-3">
         {options.map((opt) => (
           <label
             key={opt}
-            className={`group flex items-center gap-3 rounded-lg border px-4 py-3 text-slate-100 transition ${
+            className={`group flex min-h-11 items-center gap-3 rounded-lg border px-4 py-2 text-sm text-slate-100 transition ${
               value === opt
                 ? "border-indigo-400/40 bg-indigo-400/10"
                 : "border-slate-700 bg-slate-950/30"

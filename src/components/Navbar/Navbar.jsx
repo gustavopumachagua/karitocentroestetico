@@ -13,14 +13,10 @@ export default function Navbar() {
 
   return (
     <header
-      className="sticky top-0 z-50"
-      style={{
-        background: 'var(--bg-surface)',
-        borderBottom: '1px solid var(--border-subtle)',
-      }}
+      className="public-navbar sticky top-0 z-50"
     >
       <div
-        className={`mx-auto flex max-w-7xl gap-3 px-4 py-3 sm:px-6 sm:py-3.5 lg:px-12
+        className={`mx-auto flex max-w-7xl gap-3 px-5 py-3 sm:px-8 sm:py-3.5 lg:px-12
           ${
             isAuthPage
               ? "justify-center"

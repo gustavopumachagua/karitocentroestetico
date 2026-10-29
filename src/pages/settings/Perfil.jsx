@@ -138,17 +138,24 @@ export default function Perfil({ user, setUser }) {
 
   return (
     <section className="page-section ui-page">
-      <div className="page-stack page-stack-narrow">
-        <div className="ui-panel min-w-0 space-y-6">
-          <div>
+      <div className="page-stack account-settings">
+          <div className="ui-page-header mb-0">
+            <div>
             <p className="ui-eyebrow">Configuración de cuenta</p>
             <h1 className="ui-title mt-2">Editar perfil</h1>
             <p className="ui-description mt-2 text-sm">
               Actualiza tu nombre, foto y datos visibles dentro del sistema.
             </p>
+            </div>
           </div>
 
-          <div className="ui-card flex min-w-0 flex-col items-center py-6 text-center">
+        <div className="ui-panel account-section">
+          <div className="account-section-copy">
+            <h2>Información personal</h2>
+            <p>Nombre y foto que se muestran en tu perfil.</p>
+          </div>
+          <div className="min-w-0">
+          <div className="account-identity">
             <AvatarUploader
               avatar={avatar}
               setAvatar={(url) => {
@@ -157,8 +164,10 @@ export default function Perfil({ user, setUser }) {
               }}
               userId={userId}
             />
-            <p className="mt-3 max-w-full break-words text-lg font-semibold text-slate-100">{nombre}</p>
-            <p className="text-sm text-slate-400">{user?.rol || "Rol"}</p>
+            <div>
+              <p className="max-w-full break-words text-base font-semibold text-slate-100">{nombre}</p>
+              <p className="mt-1 text-sm text-slate-400">{user?.rol || "Rol"}</p>
+            </div>
           </div>
 
           <ProfileForm
@@ -168,14 +177,15 @@ export default function Perfil({ user, setUser }) {
             onCancel={handleCancel}
             isSaving={isSaving}
           />
+          </div>
         </div>
 
         {isDoctor && (
           <>
-            <div className="ui-panel min-w-0 space-y-5">
-              <div>
-                <h2 className="text-lg font-semibold text-slate-100">Registro CMP</h2>
-                <p className="ui-description mt-1 text-sm">
+            <div className="ui-panel account-section">
+              <div className="account-section-copy">
+                <h2>Registro CMP</h2>
+                <p>
                   Número de colegiatura del Colegio Médico del Perú.
                 </p>
               </div>
@@ -187,10 +197,10 @@ export default function Perfil({ user, setUser }) {
               />
             </div>
 
-            <div className="ui-panel min-w-0 space-y-5">
-              <div>
-                <h2 className="text-lg font-semibold text-slate-100">Firma Digital</h2>
-                <p className="ui-description mt-1 text-sm">
+            <div className="ui-panel account-section">
+              <div className="account-section-copy">
+                <h2>Firma digital</h2>
+                <p>
                   Sube una imagen de tu firma para los documentos clínicos.
                 </p>
               </div>
